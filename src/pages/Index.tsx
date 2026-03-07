@@ -58,7 +58,7 @@ const Index = () => {
         <div className="container py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { value: "500+", label: "RVs Sold" },
+              { value: "10,000+", label: "RVs Sold" },
               { value: "25+", label: "Years Experience" },
               { value: "4", label: "Countries Served" },
               { value: "98%", label: "Customer Satisfaction" },
