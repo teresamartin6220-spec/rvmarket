@@ -24,7 +24,7 @@ const Inventory = () => {
 
     if (typeFilter !== "All") list = list.filter((rv) => rv.type === typeFilter);
     if (maxPrice) list = list.filter((rv) => rv.price <= Number(maxPrice));
-    if (locationFilter) list = list.filter((rv) => rv.location.toLowerCase().includes(locationFilter.toLowerCase()));
+    if (locationFilter) list = list.filter((rv) => rv.location.toLowerCase().includes(locationFilter.toLowerCase()) || rv.country.toLowerCase().includes(locationFilter.toLowerCase()));
 
     switch (sort) {
       case "price-asc": list.sort((a, b) => a.price - b.price); break;

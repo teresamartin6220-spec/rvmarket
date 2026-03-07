@@ -8,6 +8,9 @@ import { Footer } from "@/components/layout/Footer";
 import Index from "./pages/Index";
 import Inventory from "./pages/Inventory";
 import RVDetail from "./pages/RVDetail";
+import TradeIn from "./pages/TradeIn";
+import About from "./pages/About";
+import CustomerCare from "./pages/CustomerCare";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +28,9 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/inventory" element={<Inventory />} />
               <Route path="/rv/:id" element={<RVDetail />} />
+              <Route path="/trade-in" element={<TradeIn />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/customer-care" element={<CustomerCare />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
