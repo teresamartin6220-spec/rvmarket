@@ -22,59 +22,25 @@ export interface RV {
   type: "Class C" | "Travel Trailer" | "Camper" | "Class A";
   description: string;
   location: string;
-  state: string;
+  country: string;
   images: string[];
-  dealerId: string;
   isFavorite?: boolean;
 }
 
-export interface Dealer {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  hours: string;
-  textNumber: string;
-}
-
-export const dealers: Dealer[] = [
-  {
-    id: "d1",
-    name: "Freedom RV Sales",
-    phone: "(800) 555-0123",
-    email: "sales@freedomrv.com",
-    address: "1234 Highway 66",
-    city: "Denver",
-    state: "CO",
-    hours: "Mon-Sat 9AM-6PM, Sun 10AM-4PM",
-    textNumber: "(800) 555-0124",
-  },
-  {
-    id: "d2",
-    name: "Sunshine RV Center",
-    phone: "(800) 555-0456",
-    email: "info@sunshinerv.com",
-    address: "5678 Coastal Blvd",
-    city: "Orlando",
-    state: "FL",
-    hours: "Mon-Sat 8AM-7PM, Sun 11AM-5PM",
-    textNumber: "(800) 555-0457",
-  },
-  {
-    id: "d3",
-    name: "Mountain View RV",
-    phone: "(800) 555-0789",
-    email: "hello@mountainviewrv.com",
-    address: "9012 Pine Ridge Rd",
-    city: "Phoenix",
-    state: "AZ",
-    hours: "Mon-Fri 9AM-6PM, Sat 9AM-5PM",
-    textNumber: "(800) 555-0790",
-  },
-];
+export const companyInfo = {
+  name: "RV Market",
+  phone: "(800) 555-0123",
+  email: "info@rvmarket.com",
+  address: "1234 Highway 66",
+  city: "Denver",
+  state: "CO",
+  country: "USA",
+  hours: "Mon-Sat 9AM-6PM, Sun 10AM-4PM",
+  textNumber: "(800) 555-0124",
+  whatsapp: "+18005550124",
+  tiktok: "https://tiktok.com/@rvmarket",
+  yearsInBusiness: 25,
+};
 
 export const rvListings: RV[] = [
   {
@@ -94,9 +60,8 @@ export const rvListings: RV[] = [
     type: "Travel Trailer",
     description: "This gently used Coachmen Apex 16 Travel Trailer is perfect for couples or small families seeking weekend getaways. Features include a fully equipped kitchen with a 3-burner stove, microwave, and refrigerator. The dinette converts into additional sleeping space. Equipped with air conditioning, furnace, and an awning for outdoor relaxation. Low mileage and meticulously maintained — ready for your next adventure.",
     location: "Denver, CO",
-    state: "CO",
+    country: "USA",
     images: [rv2, rvInterior1, rvInterior2, rv2],
-    dealerId: "d1",
   },
   {
     id: "rv-002",
@@ -115,9 +80,8 @@ export const rvListings: RV[] = [
     type: "Class C",
     description: "Spacious Class C motorhome with sleeping for 6. Features a cab-over bunk, rear queen bed, and convertible dinette. Full bathroom with shower. Upgraded entertainment system with backup camera. Ford E-450 chassis with reliable V10 engine.",
     location: "Orlando, FL",
-    state: "FL",
+    country: "USA",
     images: [rv1, rvInterior1, rvInterior2, rv1],
-    dealerId: "d2",
   },
   {
     id: "rv-003",
@@ -135,10 +99,9 @@ export const rvListings: RV[] = [
     condition: "Like New",
     type: "Camper",
     description: "Nearly new Winnebago Travato built on the Ram ProMaster chassis. Features a power sofa that converts to a bed, wet bath, and a well-appointed galley. Perfect for adventurous couples who want the freedom to explore without the bulk of a larger RV.",
-    location: "Phoenix, AZ",
-    state: "AZ",
+    location: "Toronto, ON",
+    country: "Canada",
     images: [rv3, rvInterior1, rvInterior2, rv3],
-    dealerId: "d3",
   },
   {
     id: "rv-004",
@@ -156,10 +119,9 @@ export const rvListings: RV[] = [
     condition: "Good",
     type: "Class A",
     description: "Luxury Class A motorhome from Tiffin. This Allegro Open Road features a spacious interior with dual slide-outs, residential refrigerator, and king-size bed. Full-body paint exterior with premium graphics. Equipped with Onan generator and leveling jacks.",
-    location: "Austin, TX",
-    state: "TX",
+    location: "London",
+    country: "UK",
     images: [rv4, rvInterior1, rvInterior2, rv4],
-    dealerId: "d1",
   },
   {
     id: "rv-005",
@@ -177,10 +139,9 @@ export const rvListings: RV[] = [
     condition: "Like New",
     type: "Travel Trailer",
     description: "Lightweight and easy to tow, the Rockwood Mini Lite is ideal for first-time RV owners. Features include a murphy bed, full kitchen, and outdoor shower. Frameless windows provide panoramic views. Solar panel ready.",
-    location: "Nashville, TN",
-    state: "TN",
+    location: "Sydney, NSW",
+    country: "Australia",
     images: [rv2, rvInterior2, rvInterior1, rv2],
-    dealerId: "d2",
   },
   {
     id: "rv-006",
@@ -198,16 +159,11 @@ export const rvListings: RV[] = [
     condition: "Good",
     type: "Class C",
     description: "Family-friendly Class C with sleeping for 8. Features include a cab-over bunk, rear bunk beds, and convertible dinette and sofa. Full bathroom, outdoor kitchen, and electric awning. Perfect for families who love to travel together.",
-    location: "Seattle, WA",
-    state: "WA",
+    location: "Vancouver, BC",
+    country: "Canada",
     images: [rv1, rvInterior1, rvInterior2, rv1],
-    dealerId: "d3",
   },
 ];
-
-export function getDealerById(id: string): Dealer | undefined {
-  return dealers.find((d) => d.id === id);
-}
 
 export function getRVById(id: string): RV | undefined {
   return rvListings.find((rv) => rv.id === id);

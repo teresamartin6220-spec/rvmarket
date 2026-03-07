@@ -10,26 +10,26 @@ interface FinancingCalculatorProps {
 }
 
 const LOAN_TERMS = [36, 48, 60, 72];
+const INTEREST_RATE = 3.7;
 
 export function FinancingCalculator({ price }: FinancingCalculatorProps) {
   const [open, setOpen] = useState(false);
   const [downPayment, setDownPayment] = useState(Math.round(price * 0.1));
-  const [interestRate, setInterestRate] = useState(6.99);
   const [loanTerm, setLoanTerm] = useState(60);
 
   const monthlyPayment = useMemo(() => {
     const principal = price - downPayment;
     if (principal <= 0) return 0;
-    const monthlyRate = interestRate / 100 / 12;
+    const monthlyRate = INTEREST_RATE / 100 / 12;
     if (monthlyRate === 0) return principal / loanTerm;
     return (
       (principal * monthlyRate * Math.pow(1 + monthlyRate, loanTerm)) /
       (Math.pow(1 + monthlyRate, loanTerm) - 1)
     );
-  }, [price, downPayment, interestRate, loanTerm]);
+  }, [price, downPayment, loanTerm]);
 
   return (
-    <div className="rounded-lg border bg-card overflow-hidden">
+    <div id="financing" className="rounded-lg border bg-card overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between p-5 text-left hover:bg-muted/50 transition"
@@ -40,7 +40,7 @@ export function FinancingCalculator({ price }: FinancingCalculatorProps) {
           </div>
           <div>
             <h3 className="font-heading font-semibold text-foreground">Apply for Financing</h3>
-            <p className="text-sm text-muted-foreground">Estimate your monthly payment</p>
+            <p className="text-sm text-muted-foreground">Fixed rate at {INTEREST_RATE}% APR</p>
           </div>
         </div>
         {open ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
@@ -72,15 +72,8 @@ export function FinancingCalculator({ price }: FinancingCalculatorProps) {
                   />
                 </div>
                 <div>
-                  <Label>Interest Rate (%)</Label>
-                  <Input
-                    type="number"
-                    value={interestRate}
-                    onChange={(e) => setInterestRate(Number(e.target.value))}
-                    min={0}
-                    max={30}
-                    step={0.01}
-                  />
+                  <Label>Interest Rate</Label>
+                  <Input value={`${INTEREST_RATE}%`} readOnly className="bg-muted" />
                 </div>
                 <div>
                   <Label>Loan Term</Label>

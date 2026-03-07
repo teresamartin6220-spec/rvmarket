@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "Inventory", to: "/inventory" },
+  { label: "Trade In", to: "/trade-in" },
+  { label: "About Us", to: "/about" },
+  { label: "Customer Care", to: "/customer-care" },
 ];
 
 export function Header() {
@@ -22,7 +25,7 @@ export function Header() {
           <span className="text-xl font-bold font-heading text-foreground">RV Market</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.to}
@@ -36,17 +39,14 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/inventory"><Heart className="h-5 w-5" /></Link>
-          </Button>
+        <div className="hidden lg:flex items-center gap-3">
           <Button asChild>
             <Link to="/inventory">Browse RVs</Link>
           </Button>
         </div>
 
         <button
-          className="md:hidden p-2"
+          className="lg:hidden p-2"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -55,7 +55,7 @@ export function Header() {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden border-t bg-card p-4 space-y-3">
+        <div className="lg:hidden border-t bg-card p-4 space-y-3">
           {navLinks.map((link) => (
             <Link
               key={link.to}
