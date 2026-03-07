@@ -8,7 +8,7 @@ import { FinancingCalculator } from "@/components/rv/FinancingCalculator";
 import { ContactForm } from "@/components/rv/ContactForm";
 import { Button } from "@/components/ui/button";
 
-const specs = [
+const specs: Array<{ key: string; icon: typeof Calendar; label: string; format?: (v: any) => string }> = [
   { key: "year", icon: Calendar, label: "Year" },
   { key: "mileage", icon: Gauge, label: "Mileage", format: (v: number) => `${v.toLocaleString()} mi` },
   { key: "sleeps", icon: Users, label: "Sleeps" },
@@ -16,7 +16,7 @@ const specs = [
   { key: "fuelType", icon: Fuel, label: "Fuel" },
   { key: "transmission", icon: Cog, label: "Transmission" },
   { key: "condition", icon: Shield, label: "Condition" },
-] as const;
+];
 
 const RVDetail = () => {
   const { id } = useParams<{ id: string }>();
