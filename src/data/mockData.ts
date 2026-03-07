@@ -29,15 +29,15 @@ export interface RV {
 
 export const companyInfo = {
   name: "RV Market",
-  phone: "(800) 555-0123",
+  phone: "+1 (940) 882-1140",
   email: "info@rvmarket.com",
   address: "1234 Highway 66",
   city: "Denver",
   state: "CO",
   country: "USA",
-  hours: "Mon-Sat 9AM-6PM, Sun 10AM-4PM",
-  textNumber: "(800) 555-0124",
-  whatsapp: "+18005550124",
+  hours: "Mon-Sat 9AM-6PM",
+  textNumber: "+1 (940) 882-1140",
+  whatsapp: "+19408821140",
   tiktok: "https://tiktok.com/@rvmarket",
   yearsInBusiness: 25,
 };
