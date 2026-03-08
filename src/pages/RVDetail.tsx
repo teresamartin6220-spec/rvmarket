@@ -1,15 +1,16 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Calendar, Gauge, Users, Cog, Shield, Globe, Hash, AlertTriangle } from "lucide-react";
-import { getRVById, companyInfo, DISCLAIMER } from "@/data/mockData";
+import { companyInfo, DISCLAIMER } from "@/data/mockData";
 import { ImageGallery } from "@/components/rv/ImageGallery";
 import { ShareButton } from "@/components/rv/ShareButton";
 import { FinancingCalculator } from "@/components/rv/FinancingCalculator";
 import { ContactForm } from "@/components/rv/ContactForm";
 import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/context/CurrencyContext";
+import { useListingById } from "@/hooks/useListings";
 
-const specs: Array<{ key: string; icon: typeof Calendar; label: string; format?: (v: any) => string }> = [
+const overviewSpecs: Array<{ key: string; icon: typeof Calendar; label: string; format?: (v: any) => string }> = [
   { key: "year", icon: Calendar, label: "Year" },
   { key: "mileage", icon: Gauge, label: "Mileage", format: (v: number) => `${v.toLocaleString()} mi` },
   { key: "sleeps", icon: Users, label: "Sleeps" },
@@ -20,8 +21,12 @@ const specs: Array<{ key: string; icon: typeof Calendar; label: string; format?:
 
 const RVDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const rv = getRVById(id || "");
+  const { listing: rv, loading } = useListingById(id);
   const { format } = useCurrency();
+
+  if (loading) {
+    return <div className="container py-20 text-center text-muted-foreground">Loading...</div>;
+  }
 
   if (!rv) {
     return (
@@ -32,24 +37,42 @@ const RVDetail = () => {
     );
   }
 
-  const specEntries = rv.specs ? [
-    { label: "Sleeping Capacity", value: `${rv.specs.sleepingCapacity} people` },
-    { label: "Generator", value: rv.specs.generator },
-    { label: "Fuel Tank Capacity", value: rv.specs.fuelTankCapacity },
-    { label: "Fresh Water Capacity", value: rv.specs.freshWaterCapacity },
-    { label: "LPG Capacity", value: rv.specs.lpgCapacity },
-    { label: "Grey Tank Capacity", value: rv.specs.greyTankCapacity },
-    { label: "Black Tank Capacity", value: rv.specs.blackTankCapacity },
-    { label: "Hot Water Capacity", value: rv.specs.hotWaterCapacity },
-    { label: "GVWR", value: rv.specs.gvwr },
-    { label: "Exterior Length", value: rv.specs.exteriorLength },
-    { label: "Exterior Height", value: rv.specs.exteriorHeight },
-    { label: "Exterior Width", value: rv.specs.exteriorWidth },
-  ].filter(e => e.value) : [];
+  const specs = rv.specs && typeof rv.specs === "object" ? rv.specs as Record<string, any> : {};
+  const features = rv.features && typeof rv.features === "object" ? rv.features as Record<string, any> : {};
+
+  const specEntries = [
+    { label: "Sleeping Capacity", value: specs.sleepingCapacity ? `${specs.sleepingCapacity} people` : null },
+    { label: "Generator", value: specs.generator },
+    { label: "Fuel Tank Capacity", value: specs.fuelTankCapacity },
+    { label: "Fresh Water Capacity", value: specs.freshWaterCapacity },
+    { label: "LPG Capacity", value: specs.lpgCapacity },
+    { label: "Grey Tank Capacity", value: specs.greyTankCapacity },
+    { label: "Black Tank Capacity", value: specs.blackTankCapacity },
+    { label: "Hot Water Capacity", value: specs.hotWaterCapacity },
+    { label: "GVWR", value: specs.gvwr },
+    { label: "Exterior Length", value: specs.exteriorLength },
+    { label: "Exterior Height", value: specs.exteriorHeight },
+    { label: "Exterior Width", value: specs.exteriorWidth },
+  ].filter(e => e.value);
+
+  const rvData: Record<string, any> = {
+    year: rv.year,
+    mileage: rv.mileage,
+    sleeps: rv.sleeps,
+    vin: rv.vin || "N/A",
+    transmission: rv.transmission || "N/A",
+    condition: rv.condition || "N/A",
+  };
+
+  const featureSections = [
+    { key: "coachFeatures", label: "Coach Features" },
+    { key: "chassisFeatures", label: "Chassis Features" },
+    { key: "coachConstruction", label: "Coach Construction" },
+    { key: "safetyFeatures", label: "Safety Features" },
+  ];
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen">
-      {/* Breadcrumb */}
       <div className="border-b bg-card">
         <div className="container py-3">
           <Link to="/inventory" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition">
@@ -60,22 +83,20 @@ const RVDetail = () => {
 
       <div className="container py-8">
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-          {/* Main Column */}
           <div className="space-y-8">
-            {/* Header */}
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                   <span>{rv.brand}</span>
                   <span>·</span>
-                  <span>Stock #{rv.stockNumber}</span>
+                  <span>Stock #{rv.stock_number || "N/A"}</span>
                   <span>·</span>
-                  <span>VIN: {rv.vin}</span>
+                  <span>VIN: {rv.vin || "N/A"}</span>
                 </div>
                 <h1 className="text-2xl md:text-3xl font-bold font-heading text-foreground">{rv.title}</h1>
                 <div className="flex items-center gap-4 mt-2 text-muted-foreground">
-                  <span className="flex items-center gap-1 text-sm"><MapPin className="h-4 w-4" /> {rv.location}</span>
-                  <span className="flex items-center gap-1 text-sm"><Globe className="h-4 w-4" /> {rv.country}</span>
+                  <span className="flex items-center gap-1 text-sm"><MapPin className="h-4 w-4" /> {rv.location || "N/A"}</span>
+                  <span className="flex items-center gap-1 text-sm"><Globe className="h-4 w-4" /> {rv.country || "N/A"}</span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -84,23 +105,19 @@ const RVDetail = () => {
               </div>
             </div>
 
-            <ImageGallery images={rv.images} title={rv.title} />
+            <ImageGallery images={rv.images || []} title={rv.title} />
 
             <div>
               <h2 className="text-xl font-bold font-heading text-foreground mb-4">RV Overview</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {specs.map(({ key, icon: Icon, label, format: fmt }) => {
-                  const value = rv[key as keyof typeof rv];
+                {overviewSpecs.map(({ key, icon: Icon, label, format: fmt }) => {
+                  const value = rvData[key];
                   return (
                     <div key={key} className="flex items-center gap-3 rounded-lg border bg-card p-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-md bg-muted">
-                        <Icon className="h-4 w-4 text-primary" />
-                      </div>
+                      <div className="flex h-9 w-9 items-center justify-center rounded-md bg-muted"><Icon className="h-4 w-4 text-primary" /></div>
                       <div>
                         <p className="text-xs text-muted-foreground">{label}</p>
-                        <p className="text-sm font-semibold text-foreground">
-                          {fmt ? fmt(value as number) : String(value)}
-                        </p>
+                        <p className="text-sm font-semibold text-foreground">{fmt ? fmt(value) : String(value)}</p>
                       </div>
                     </div>
                   );
@@ -127,41 +144,21 @@ const RVDetail = () => {
               </div>
             )}
 
-            {rv.features && (
+            {featureSections.some(s => features[s.key]?.length > 0) && (
               <div className="space-y-6">
                 <h2 className="text-xl font-bold font-heading text-foreground">Features & Equipment</h2>
-                {rv.features.coachFeatures && rv.features.coachFeatures.length > 0 && (
-                  <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-2">Coach Features</h3>
-                    <ul className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted-foreground">
-                      {rv.features.coachFeatures.map((f) => <li key={f} className="flex items-center gap-2">• {f}</li>)}
-                    </ul>
-                  </div>
-                )}
-                {rv.features.chassisFeatures && rv.features.chassisFeatures.length > 0 && (
-                  <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-2">Chassis Features</h3>
-                    <ul className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted-foreground">
-                      {rv.features.chassisFeatures.map((f) => <li key={f} className="flex items-center gap-2">• {f}</li>)}
-                    </ul>
-                  </div>
-                )}
-                {rv.features.coachConstruction && rv.features.coachConstruction.length > 0 && (
-                  <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-2">Coach Construction</h3>
-                    <ul className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted-foreground">
-                      {rv.features.coachConstruction.map((f) => <li key={f} className="flex items-center gap-2">• {f}</li>)}
-                    </ul>
-                  </div>
-                )}
-                {rv.features.safetyFeatures && rv.features.safetyFeatures.length > 0 && (
-                  <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-2">Safety Features</h3>
-                    <ul className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted-foreground">
-                      {rv.features.safetyFeatures.map((f) => <li key={f} className="flex items-center gap-2">• {f}</li>)}
-                    </ul>
-                  </div>
-                )}
+                {featureSections.map(({ key, label }) => {
+                  const items = features[key];
+                  if (!items || items.length === 0) return null;
+                  return (
+                    <div key={key}>
+                      <h3 className="font-heading font-semibold text-foreground mb-2">{label}</h3>
+                      <ul className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted-foreground">
+                        {items.map((f: string) => <li key={f} className="flex items-center gap-2">• {f}</li>)}
+                      </ul>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
@@ -175,19 +172,13 @@ const RVDetail = () => {
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
             <div className="rounded-lg border bg-card p-6 text-center lg:sticky lg:top-20">
               <p className="text-sm text-muted-foreground">Listed Price</p>
               <p className="text-4xl font-bold font-heading text-primary mt-1">{format(rv.price)}</p>
-              <Button className="w-full mt-4" size="lg" asChild>
-                <a href="#contact">Contact Us</a>
-              </Button>
-              <Button variant="outline" className="w-full mt-2" size="lg" asChild>
-                <a href="#financing">Apply for Financing</a>
-              </Button>
+              <Button className="w-full mt-4" size="lg" asChild><a href="#contact">Contact Us</a></Button>
+              <Button variant="outline" className="w-full mt-2" size="lg" asChild><a href="#financing">Apply for Financing</a></Button>
             </div>
-
             <div className="rounded-lg border bg-card p-6 space-y-3">
               <h3 className="font-heading font-semibold text-foreground">{companyInfo.name}</h3>
               <div className="text-sm text-muted-foreground space-y-2">
@@ -197,10 +188,7 @@ const RVDetail = () => {
                 <p>🕐 {companyInfo.hours}</p>
               </div>
             </div>
-
-            <div id="contact">
-              <ContactForm rvTitle={rv.title} rvId={rv.id} />
-            </div>
+            <div id="contact"><ContactForm rvTitle={rv.title} rvId={rv.id} /></div>
           </div>
         </div>
       </div>

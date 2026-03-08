@@ -12,7 +12,7 @@ serve(async (req) => {
 
   try {
     const { type, data } = await req.json();
-    const NOTIFY_EMAIL = "info@rvmarket.com";
+    const NOTIFY_EMAIL = "rvmarketused@gmail.com";
 
     let subject = "";
     let body = "";
@@ -62,7 +62,7 @@ Est. Monthly: $${data.estimated_monthly?.toLocaleString() || "N/A"}
     });
   } catch (error) {
     console.error("Error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

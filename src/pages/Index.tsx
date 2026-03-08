@@ -3,11 +3,34 @@ import { Search, ArrowRight, Shield, Award, Globe, Truck, RefreshCw, Headphones 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RVCard } from "@/components/rv/RVCard";
-import { rvListings, companyInfo } from "@/data/mockData";
+import { companyInfo } from "@/data/mockData";
+import { useListings } from "@/hooks/useListings";
 import heroImage from "@/assets/hero-rv.jpg";
 
 const Index = () => {
-  const featured = rvListings.slice(0, 4);
+  const { listings, loading } = useListings();
+
+  const featured = listings.slice(0, 4).map((rv) => ({
+    id: rv.id,
+    title: rv.title,
+    brand: rv.brand,
+    model: rv.model,
+    year: rv.year,
+    stockNumber: rv.stock_number || "",
+    vin: rv.vin || "",
+    price: rv.price,
+    mileage: rv.mileage,
+    sleeps: rv.sleeps,
+    transmission: rv.transmission || "Automatic",
+    condition: rv.condition || "Excellent",
+    type: rv.type as any,
+    description: rv.description || "",
+    location: rv.location || "",
+    country: rv.country || "USA",
+    images: rv.images || [],
+    specs: rv.specs,
+    features: rv.features,
+  }));
 
   return (
     <div className="min-h-screen">
@@ -17,37 +40,21 @@ const Index = () => {
           <img src={heroImage} alt="RV Adventure" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-overlay" />
         </div>
-
         <div className="container relative z-10 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="max-w-2xl"
-          >
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-secondary/20 backdrop-blur-sm px-4 py-1.5 text-sm text-primary-foreground mb-4">
               <Award className="h-4 w-4" />
               <span>Trusted for Over {companyInfo.yearsInBusiness} Years</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold font-heading text-primary-foreground leading-tight">
-              Find Your Perfect <br />
-              <span className="text-secondary">Used RV</span>
+              Find Your Perfect <br /><span className="text-secondary">Used RV</span>
             </h1>
             <p className="mt-4 text-lg text-primary-foreground/80 max-w-lg">
               Buy or trade in quality pre-owned motorhomes, travel trailers, and campers. Serving customers across the USA, Canada, UK & Australia.
             </p>
-
             <div className="flex flex-wrap gap-4 mt-8">
-              <Button size="lg" asChild>
-                <Link to="/inventory">
-                  <Search className="mr-2 h-4 w-4" /> Browse Inventory
-                </Link>
-              </Button>
-              <Button size="lg" variant="secondary" asChild>
-                <Link to="/trade-in">
-                  <RefreshCw className="mr-2 h-4 w-4" /> Trade In Your RV
-                </Link>
-              </Button>
+              <Button size="lg" asChild><Link to="/inventory"><Search className="mr-2 h-4 w-4" /> Browse Inventory</Link></Button>
+              <Button size="lg" variant="secondary" asChild><Link to="/trade-in"><RefreshCw className="mr-2 h-4 w-4" /> Trade In Your RV</Link></Button>
             </div>
           </motion.div>
         </div>
@@ -76,9 +83,7 @@ const Index = () => {
       <section className="container py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold font-heading text-foreground">Why Choose RV Market</h2>
-          <p className="text-muted-foreground mt-2 max-w-xl mx-auto">
-            With over {companyInfo.yearsInBusiness} years in the trade, we deliver trust, quality, and exceptional service worldwide.
-          </p>
+          <p className="text-muted-foreground mt-2 max-w-xl mx-auto">With over {companyInfo.yearsInBusiness} years in the trade, we deliver trust, quality, and exceptional service worldwide.</p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -88,9 +93,7 @@ const Index = () => {
             { icon: Headphones, title: "24/7 Support", desc: "Our customer care team is always here to help" },
           ].map(({ icon: Icon, title, desc }) => (
             <div key={title} className="rounded-xl border bg-card p-6 text-center shadow-card hover:shadow-card-hover transition-shadow">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
-                <Icon className="h-6 w-6 text-primary" />
-              </div>
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4"><Icon className="h-6 w-6 text-primary" /></div>
               <h3 className="font-heading font-semibold text-foreground">{title}</h3>
               <p className="text-sm text-muted-foreground mt-2">{desc}</p>
             </div>
@@ -106,16 +109,15 @@ const Index = () => {
               <h2 className="text-3xl font-bold font-heading text-foreground">Featured RVs</h2>
               <p className="text-muted-foreground mt-1">Hand-picked quality listings</p>
             </div>
-            <Button variant="outline" asChild>
-              <Link to="/inventory">View All <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
+            <Button variant="outline" asChild><Link to="/inventory">View All <ArrowRight className="ml-2 h-4 w-4" /></Link></Button>
           </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((rv, i) => (
-              <RVCard key={rv.id} rv={rv} index={i} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-16 text-muted-foreground">Loading featured RVs...</div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {featured.map((rv, i) => (<RVCard key={rv.id} rv={rv} index={i} />))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -124,12 +126,8 @@ const Index = () => {
         <div className="container py-16 text-center">
           <RefreshCw className="h-10 w-10 text-accent-foreground mx-auto mb-4" />
           <h2 className="text-3xl font-bold font-heading text-accent-foreground">Want to Sell or Trade In Your RV?</h2>
-          <p className="text-accent-foreground/80 mt-2 max-w-md mx-auto">
-            We buy used RVs and offer competitive trade-in values. Get a free valuation today.
-          </p>
-          <Button size="lg" variant="secondary" className="mt-6 bg-card text-foreground hover:bg-card/90" asChild>
-            <Link to="/trade-in">Get Your Free Valuation</Link>
-          </Button>
+          <p className="text-accent-foreground/80 mt-2 max-w-md mx-auto">We buy used RVs and offer competitive trade-in values. Get a free valuation today.</p>
+          <Button size="lg" variant="secondary" className="mt-6 bg-card text-foreground hover:bg-card/90" asChild><Link to="/trade-in">Get Your Free Valuation</Link></Button>
         </div>
       </section>
 
@@ -137,12 +135,8 @@ const Index = () => {
       <section className="bg-gradient-hero">
         <div className="container py-16 text-center">
           <h2 className="text-3xl font-bold font-heading text-primary-foreground">Ready to Hit the Road?</h2>
-          <p className="text-primary-foreground/80 mt-2 max-w-md mx-auto">
-            Browse our full inventory and find the RV that fits your lifestyle and budget.
-          </p>
-          <Button size="lg" variant="secondary" className="mt-6" asChild>
-            <Link to="/inventory">Browse All Inventory</Link>
-          </Button>
+          <p className="text-primary-foreground/80 mt-2 max-w-md mx-auto">Browse our full inventory and find the RV that fits your lifestyle and budget.</p>
+          <Button size="lg" variant="secondary" className="mt-6" asChild><Link to="/inventory">Browse All Inventory</Link></Button>
         </div>
       </section>
     </div>
