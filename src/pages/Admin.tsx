@@ -15,6 +15,8 @@ import type { DBListing } from "@/hooks/useListings";
 
 const ADMIN_PASS = "rvmarket2024";
 
+const SALES_PROS = ["JOHNNY WOOL"];
+
 const SPEC_FIELDS = [
   { key: "sleepingCapacity", label: "Sleeping Capacity", placeholder: "e.g. 6" },
   { key: "generator", label: "Generator", placeholder: "e.g. 4KW Onan Microlite" },
