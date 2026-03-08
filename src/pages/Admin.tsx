@@ -233,12 +233,22 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
   );
 }
 
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "az", label: "A → Z" },
+  { value: "za", label: "Z → A" },
+  { value: "price-high", label: "Price: High → Low" },
+  { value: "price-low", label: "Price: Low → High" },
+];
+
 const Admin = () => {
   const [authed, setAuthed] = useState(false);
   const [activeTab, setActiveTab] = useState("listings");
   const [editingRV, setEditingRV] = useState<Partial<DBListing> | null>(null);
   const [listings, setListings] = useState<DBListing[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sortBy, setSortBy] = useState("newest");
 
   const fetchListings = async () => {
     setLoading(true);
