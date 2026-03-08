@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Pencil, Trash2, LogOut, X, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RV_TYPES } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import type { DBListing } from "@/hooks/useListings";
 
 const ADMIN_PASS = "rvmarket2024";
@@ -233,6 +235,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
 const Admin = () => {
   const [authed, setAuthed] = useState(false);
+  const [activeTab, setActiveTab] = useState("listings");
   const [editingRV, setEditingRV] = useState<Partial<DBListing> | null>(null);
   const [listings, setListings] = useState<DBListing[]>([]);
   const [loading, setLoading] = useState(false);
@@ -310,54 +313,69 @@ const Admin = () => {
       </div>
 
       <div className="container py-8">
-        {editingRV ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg border bg-card p-6">
-            <h2 className="text-lg font-bold font-heading text-foreground mb-4">{editingRV.id ? "Edit RV" : "Add New RV"}</h2>
-            <RVForm listing={editingRV} onSave={handleSave} onCancel={() => setEditingRV(null)} />
-          </motion.div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-muted-foreground">{listings.length} listing(s) in database</p>
-              <Button onClick={() => setEditingRV({ ...emptyListing })}>
-                <Plus className="h-4 w-4 mr-2" /> Add RV
-              </Button>
-            </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-6">
+            <TabsTrigger value="listings">Listings</TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-1.5">
+              <BarChart3 className="h-3.5 w-3.5" /> Analytics
+            </TabsTrigger>
+          </TabsList>
 
-            {loading ? (
-              <div className="text-center py-16 text-muted-foreground">Loading...</div>
-            ) : listings.length === 0 ? (
-              <div className="text-center py-16 text-muted-foreground">
-                <p>No listings yet. Click "Add RV" to create one.</p>
-              </div>
+          <TabsContent value="listings">
+            {editingRV ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg border bg-card p-6">
+                <h2 className="text-lg font-bold font-heading text-foreground mb-4">{editingRV.id ? "Edit RV" : "Add New RV"}</h2>
+                <RVForm listing={editingRV} onSave={handleSave} onCancel={() => setEditingRV(null)} />
+              </motion.div>
             ) : (
-              <div className="space-y-3">
-                {listings.map((rv) => (
-                  <div key={rv.id} className="flex items-center gap-4 rounded-lg border bg-card p-4">
-                    {rv.images && rv.images[0] && (
-                      <img src={rv.images[0]} alt={rv.title} className="h-16 w-24 rounded object-cover shrink-0" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-foreground truncate">
-                        {rv.title}
-                        {rv.is_sold && <span className="ml-2 text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded">SOLD</span>}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
-                    </div>
-                    <div className="flex gap-2 shrink-0">
-                      <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv })}>
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleDelete(rv.id)}>
-                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                      </Button>
-                    </div>
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <p className="text-muted-foreground">{listings.length} listing(s) in database</p>
+                  <Button onClick={() => setEditingRV({ ...emptyListing })}>
+                    <Plus className="h-4 w-4 mr-2" /> Add RV
+                  </Button>
+                </div>
+
+                {loading ? (
+                  <div className="text-center py-16 text-muted-foreground">Loading...</div>
+                ) : listings.length === 0 ? (
+                  <div className="text-center py-16 text-muted-foreground">
+                    <p>No listings yet. Click "Add RV" to create one.</p>
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <div className="space-y-3">
+                    {listings.map((rv) => (
+                      <div key={rv.id} className="flex items-center gap-4 rounded-lg border bg-card p-4">
+                        {rv.images && rv.images[0] && (
+                          <img src={rv.images[0]} alt={rv.title} className="h-16 w-24 rounded object-cover shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-foreground truncate">
+                            {rv.title}
+                            {rv.is_sold && <span className="ml-2 text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded">SOLD</span>}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
+                        </div>
+                        <div className="flex gap-2 shrink-0">
+                          <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv })}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={() => handleDelete(rv.id)}>
+                            <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
-          </>
-        )}
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <AnalyticsDashboard />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
