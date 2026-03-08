@@ -4,30 +4,35 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const COUNTRY_CODES = [
-  { code: "+1", label: "US/CA", flag: "🇺🇸" },
-  { code: "+44", label: "UK", flag: "🇬🇧" },
-  { code: "+61", label: "AU", flag: "🇦🇺" },
-  { code: "+33", label: "FR", flag: "🇫🇷" },
-  { code: "+49", label: "DE", flag: "🇩🇪" },
-  { code: "+34", label: "ES", flag: "🇪🇸" },
-  { code: "+39", label: "IT", flag: "🇮🇹" },
-  { code: "+81", label: "JP", flag: "🇯🇵" },
-  { code: "+86", label: "CN", flag: "🇨🇳" },
-  { code: "+91", label: "IN", flag: "🇮🇳" },
-  { code: "+52", label: "MX", flag: "🇲🇽" },
-  { code: "+55", label: "BR", flag: "🇧🇷" },
-  { code: "+971", label: "AE", flag: "🇦🇪" },
-  { code: "+966", label: "SA", flag: "🇸🇦" },
-  { code: "+27", label: "ZA", flag: "🇿🇦" },
-  { code: "+82", label: "KR", flag: "🇰🇷" },
-  { code: "+65", label: "SG", flag: "🇸🇬" },
-  { code: "+64", label: "NZ", flag: "🇳🇿" },
+  { value: "US", code: "+1", flag: "🇺🇸" },
+  { value: "CA", code: "+1", flag: "🇨🇦" },
+  { value: "GB", code: "+44", flag: "🇬🇧" },
+  { value: "AU", code: "+61", flag: "🇦🇺" },
+  { value: "FR", code: "+33", flag: "🇫🇷" },
+  { value: "DE", code: "+49", flag: "🇩🇪" },
+  { value: "ES", code: "+34", flag: "🇪🇸" },
+  { value: "IT", code: "+39", flag: "🇮🇹" },
+  { value: "JP", code: "+81", flag: "🇯🇵" },
+  { value: "CN", code: "+86", flag: "🇨🇳" },
+  { value: "IN", code: "+91", flag: "🇮🇳" },
+  { value: "MX", code: "+52", flag: "🇲🇽" },
+  { value: "BR", code: "+55", flag: "🇧🇷" },
+  { value: "AE", code: "+971", flag: "🇦🇪" },
+  { value: "SA", code: "+966", flag: "🇸🇦" },
+  { value: "ZA", code: "+27", flag: "🇿🇦" },
+  { value: "KR", code: "+82", flag: "🇰🇷" },
+  { value: "SG", code: "+65", flag: "🇸🇬" },
+  { value: "NZ", code: "+64", flag: "🇳🇿" },
 ];
+
+export function getDialCode(value: string) {
+  return COUNTRY_CODES.find((c) => c.value === value)?.code ?? "+1";
+}
 
 interface PhoneInputProps {
   countryCode: string;
   phone: string;
-  onCountryCodeChange: (code: string) => void;
+  onCountryCodeChange: (value: string) => void;
   onPhoneChange: (phone: string) => void;
   required?: boolean;
   className?: string;
@@ -44,12 +49,12 @@ export function PhoneInput({
   return (
     <div className={cn("flex gap-2", className)}>
       <Select value={countryCode} onValueChange={onCountryCodeChange}>
-        <SelectTrigger className="w-[110px] shrink-0">
+        <SelectTrigger className="w-[120px] shrink-0">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {COUNTRY_CODES.map((c) => (
-            <SelectItem key={c.code} value={c.code}>
+            <SelectItem key={c.value} value={c.value}>
               {c.flag} {c.code}
             </SelectItem>
           ))}

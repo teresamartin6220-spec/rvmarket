@@ -4,7 +4,7 @@ import { Calculator, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PhoneInput } from "@/components/ui/phone-input";
+import { PhoneInput, getDialCode } from "@/components/ui/phone-input";
 import { useCurrency } from "@/context/CurrencyContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -23,7 +23,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
   const [downPayment, setDownPayment] = useState(Math.round(price * 0.1));
   const [loanTerm, setLoanTerm] = useState(60);
   const [applyOpen, setApplyOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", countryCode: "+1", phone: "" });
+  const [form, setForm] = useState({ name: "", email: "", countryCode: "US", phone: "" });
   const [loading, setLoading] = useState(false);
   const { format, currency } = useCurrency();
 
@@ -48,7 +48,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
         rv_price: price,
         name: form.name,
         email: form.email,
-        phone: `${form.countryCode} ${form.phone}`,
+        phone: `${getDialCode(form.countryCode)} ${form.phone}`,
         down_payment: downPayment,
         loan_term: loanTerm,
         estimated_monthly: Math.round(monthlyPayment),
@@ -62,7 +62,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
 
       toast.success("Financing application submitted! We'll be in touch.");
       setApplyOpen(false);
-      setForm({ name: "", email: "", countryCode: "+1", phone: "" });
+      setForm({ name: "", email: "", countryCode: "US", phone: "" });
     } catch (err: any) {
       toast.error("Failed to submit. Please try again.");
       console.error(err);
