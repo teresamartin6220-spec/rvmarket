@@ -62,7 +62,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
 
       toast.success("Financing application submitted! We'll be in touch.");
       setApplyOpen(false);
-      setForm({ name: "", email: "", phone: "" });
+      setForm({ name: "", email: "", countryCode: "+1", phone: "" });
     } catch (err: any) {
       toast.error("Failed to submit. Please try again.");
       console.error(err);
