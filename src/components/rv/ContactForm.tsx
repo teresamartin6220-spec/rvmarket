@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { companyInfo } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -14,7 +15,7 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: `I'm interested in the ${rvTitle}. Please send me more information.` });
+  const [form, setForm] = useState({ name: "", email: "", countryCode: "+1", phone: "", message: `I'm interested in the ${rvTitle}. Please send me more information.` });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,7 +27,7 @@ export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
         rv_title: rvTitle,
         name: form.name,
         email: form.email,
-        phone: form.phone || null,
+        phone: `${form.countryCode} ${form.phone}`,
         message: form.message || null,
       });
       if (error) throw error;
@@ -37,7 +38,7 @@ export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
       });
 
       toast.success("Inquiry sent! We'll contact you shortly.");
-      setForm({ name: "", email: "", phone: "", message: "" });
+      setForm({ name: "", email: "", countryCode: "+1", phone: "", message: "" });
     } catch (err: any) {
       toast.error("Failed to send inquiry. Please try again.");
       console.error(err);
@@ -78,7 +79,13 @@ export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
         </div>
         <div>
           <Label>Phone</Label>
-          <Input type="tel" value={form.phone} onChange={(e) => setForm({...form, phone: e.target.value})} />
+          <PhoneInput
+            countryCode={form.countryCode}
+            phone={form.phone}
+            onCountryCodeChange={(code) => setForm({ ...form, countryCode: code })}
+            onPhoneChange={(phone) => setForm({ ...form, phone })}
+            required
+          />
         </div>
         <div>
           <Label>Message</Label>
