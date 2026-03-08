@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const COUNTRY_CODES = [
-  { code: "+1", label: "US/CA", flag: "🇺🇸" },
-  { code: "+44", label: "UK", flag: "🇬🇧" },
+  { code: "+1", label: "US", flag: "🇺🇸" },
+  { code: "+1CA", label: "CA", flag: "🇨🇦" },
   { code: "+61", label: "AU", flag: "🇦🇺" },
   { code: "+33", label: "FR", flag: "🇫🇷" },
   { code: "+49", label: "DE", flag: "🇩🇪" },
