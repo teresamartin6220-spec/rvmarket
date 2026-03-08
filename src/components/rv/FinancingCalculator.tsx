@@ -48,7 +48,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
         rv_price: price,
         name: form.name,
         email: form.email,
-        phone: `${form.countryCode} ${form.phone}`,
+        phone: `${getDialCode(form.countryCode)} ${form.phone}`,
         down_payment: downPayment,
         loan_term: loanTerm,
         estimated_monthly: Math.round(monthlyPayment),
