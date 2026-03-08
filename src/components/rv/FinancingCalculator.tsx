@@ -23,7 +23,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
   const [downPayment, setDownPayment] = useState(Math.round(price * 0.1));
   const [loanTerm, setLoanTerm] = useState(60);
   const [applyOpen, setApplyOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [form, setForm] = useState({ name: "", email: "", countryCode: "+1", phone: "" });
   const [loading, setLoading] = useState(false);
   const { format, currency } = useCurrency();
 
