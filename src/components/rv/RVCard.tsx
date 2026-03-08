@@ -3,6 +3,7 @@ import { MapPin, Users, Gauge } from "lucide-react";
 import { motion } from "framer-motion";
 import type { RV } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface RVCardProps {
   rv: RV;
@@ -10,6 +11,8 @@ interface RVCardProps {
 }
 
 export function RVCard({ rv, index = 0 }: RVCardProps) {
+  const { format } = useCurrency();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -25,7 +28,7 @@ export function RVCard({ rv, index = 0 }: RVCardProps) {
           loading="lazy"
         />
         <div className="absolute top-3 left-3">
-          <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+          <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground line-clamp-1">
             {rv.type}
           </span>
         </div>
@@ -50,7 +53,7 @@ export function RVCard({ rv, index = 0 }: RVCardProps) {
 
         <div className="flex items-center justify-between pt-2 border-t">
           <span className="text-xl font-bold font-heading text-primary">
-            ${rv.price.toLocaleString()}
+            {format(rv.price)}
           </span>
           <Button size="sm" asChild>
             <Link to={`/rv/${rv.id}`}>View Details</Link>

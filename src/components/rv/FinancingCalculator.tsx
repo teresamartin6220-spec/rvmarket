@@ -4,6 +4,7 @@ import { Calculator, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface FinancingCalculatorProps {
   price: number;
@@ -16,6 +17,7 @@ export function FinancingCalculator({ price }: FinancingCalculatorProps) {
   const [open, setOpen] = useState(false);
   const [downPayment, setDownPayment] = useState(Math.round(price * 0.1));
   const [loanTerm, setLoanTerm] = useState(60);
+  const { format, currency } = useCurrency();
 
   const monthlyPayment = useMemo(() => {
     const principal = price - downPayment;
@@ -59,10 +61,10 @@ export function FinancingCalculator({ price }: FinancingCalculatorProps) {
               <div className="grid gap-4 sm:grid-cols-2 pt-4">
                 <div>
                   <Label>RV Price</Label>
-                  <Input value={`$${price.toLocaleString()}`} readOnly className="bg-muted" />
+                  <Input value={format(price)} readOnly className="bg-muted" />
                 </div>
                 <div>
-                  <Label>Down Payment</Label>
+                  <Label>Down Payment (USD)</Label>
                   <Input
                     type="number"
                     value={downPayment}
@@ -98,7 +100,7 @@ export function FinancingCalculator({ price }: FinancingCalculatorProps) {
               <div className="rounded-lg bg-muted p-4 text-center">
                 <p className="text-sm text-muted-foreground">Estimated Monthly Payment</p>
                 <p className="text-3xl font-bold font-heading text-primary mt-1">
-                  ${monthlyPayment.toFixed(0)}<span className="text-base font-normal text-muted-foreground">/mo</span>
+                  {currency.symbol}{Math.round(monthlyPayment * currency.rate).toLocaleString()}<span className="text-base font-normal text-muted-foreground">/mo</span>
                 </p>
               </div>
 

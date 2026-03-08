@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Heart } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { CurrencySelector } from "@/components/CurrencySelector";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -40,6 +41,7 @@ export function Header() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
+          <CurrencySelector />
           <Button asChild>
             <Link to="/inventory">Browse RVs</Link>
           </Button>
@@ -66,6 +68,9 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <div className="py-2">
+            <CurrencySelector />
+          </div>
           <Button className="w-full" asChild>
             <Link to="/inventory" onClick={() => setMobileOpen(false)}>Browse RVs</Link>
           </Button>

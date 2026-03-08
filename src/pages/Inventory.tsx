@@ -6,11 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RVCard } from "@/components/rv/RVCard";
-import { rvListings } from "@/data/mockData";
+import { rvListings, RV_TYPES } from "@/data/mockData";
 
 type SortKey = "price-asc" | "price-desc" | "newest" | "mileage";
-
-const RV_TYPES = ["All", "Class C", "Class A", "Travel Trailer", "Camper"] as const;
 
 const Inventory = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -91,7 +89,7 @@ const Inventory = () => {
             <div>
               <Label>Location</Label>
               <Input
-                placeholder="City or state..."
+                placeholder="City, state, or country..."
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
                 className="mt-1.5"
@@ -99,16 +97,22 @@ const Inventory = () => {
             </div>
 
             <div>
-              <Label>RV Type</Label>
-              <div className="mt-1.5 space-y-1.5">
+              <Label>RV Type / Category</Label>
+              <div className="mt-1.5 space-y-1 max-h-64 overflow-y-auto">
+                <button
+                  onClick={() => setTypeFilter("All")}
+                  className={`block w-full rounded-md px-3 py-2 text-sm text-left transition ${
+                    typeFilter === "All" ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
+                  }`}
+                >
+                  All Types
+                </button>
                 {RV_TYPES.map((type) => (
                   <button
                     key={type}
                     onClick={() => setTypeFilter(type)}
-                    className={`block w-full rounded-md px-3 py-2 text-sm text-left transition ${
-                      typeFilter === type
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-muted"
+                    className={`block w-full rounded-md px-3 py-2 text-xs text-left transition ${
+                      typeFilter === type ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
                     }`}
                   >
                     {type}
@@ -118,7 +122,7 @@ const Inventory = () => {
             </div>
 
             <div>
-              <Label>Max Price</Label>
+              <Label>Max Price (USD)</Label>
               <Input
                 type="number"
                 placeholder="e.g. 50000"
