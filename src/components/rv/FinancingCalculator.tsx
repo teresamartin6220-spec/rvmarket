@@ -162,10 +162,16 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
                       <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
                     </div>
                   </div>
-                  <div>
-                    <Label>Phone</Label>
-                    <Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-                  </div>
+                   <div>
+                     <Label>Phone</Label>
+                     <PhoneInput
+                       countryCode={form.countryCode}
+                       phone={form.phone}
+                       onCountryCodeChange={(code) => setForm({ ...form, countryCode: code })}
+                       onPhoneChange={(phone) => setForm({ ...form, phone })}
+                       required
+                     />
+                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Submitting..." : "Submit Financing Application"}
                   </Button>
