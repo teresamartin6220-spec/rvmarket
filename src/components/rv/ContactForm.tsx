@@ -5,19 +5,45 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { companyInfo } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface ContactFormProps {
   rvTitle: string;
+  rvId?: string;
 }
 
-export function ContactForm({ rvTitle }: ContactFormProps) {
+export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: `I'm interested in the ${rvTitle}. Please send me more information.` });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Inquiry sent! We'll contact you shortly.");
-    setForm({ name: "", email: "", phone: "", message: "" });
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("inquiries").insert({
+        rv_id: rvId || null,
+        rv_title: rvTitle,
+        name: form.name,
+        email: form.email,
+        phone: form.phone || null,
+        message: form.message || null,
+      });
+      if (error) throw error;
+
+      // Send email notification
+      await supabase.functions.invoke("notify-email", {
+        body: { type: "inquiry", data: { rv_title: rvTitle, ...form } },
+      });
+
+      toast.success("Inquiry sent! We'll contact you shortly.");
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch (err: any) {
+      toast.error("Failed to send inquiry. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,7 +84,9 @@ export function ContactForm({ rvTitle }: ContactFormProps) {
           <Label>Message</Label>
           <Textarea value={form.message} onChange={(e) => setForm({...form, message: e.target.value})} rows={4} />
         </div>
-        <Button type="submit" className="w-full" size="lg">Send Inquiry</Button>
+        <Button type="submit" className="w-full" size="lg" disabled={loading}>
+          {loading ? "Sending..." : "Send Inquiry"}
+        </Button>
       </form>
     </div>
   );
