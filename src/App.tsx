@@ -50,21 +50,6 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AppContent />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/inventory" element={<Inventory />} />
-                <Route path="/rv/:id" element={<RVDetail />} />
-                <Route path="/trade-in" element={<TradeIn />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/customer-care" element={<CustomerCare />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-            <WhatsAppButton />
-          </div>
         </BrowserRouter>
       </TooltipProvider>
     </CurrencyProvider>
