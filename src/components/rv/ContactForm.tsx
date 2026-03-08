@@ -38,7 +38,7 @@ export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
       });
 
       toast.success("Inquiry sent! We'll contact you shortly.");
-      setForm({ name: "", email: "", phone: "", message: "" });
+      setForm({ name: "", email: "", countryCode: "+1", phone: "", message: "" });
     } catch (err: any) {
       toast.error("Failed to send inquiry. Please try again.");
       console.error(err);
