@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { MapPin, Users, Gauge } from "lucide-react";
+import { MapPin, Users, Gauge, Heart } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import type { RV } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/context/CurrencyContext";
@@ -10,8 +11,25 @@ interface RVCardProps {
   index?: number;
 }
 
+function useFavorites() {
+  const getFavs = (): string[] => {
+    try { return JSON.parse(localStorage.getItem("rv_favorites") || "[]"); } catch { return []; }
+  };
+  const [favs, setFavs] = useState(getFavs);
+
+  const toggle = (id: string) => {
+    const updated = favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id];
+    localStorage.setItem("rv_favorites", JSON.stringify(updated));
+    setFavs(updated);
+  };
+
+  return { favs, toggle };
+}
+
 export function RVCard({ rv, index = 0 }: RVCardProps) {
   const { format } = useCurrency();
+  const { favs, toggle } = useFavorites();
+  const isFav = favs.includes(rv.id);
 
   return (
     <motion.div
@@ -32,7 +50,14 @@ export function RVCard({ rv, index = 0 }: RVCardProps) {
             {rv.type}
           </span>
         </div>
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-3 right-3 flex gap-2">
+          <button
+            onClick={(e) => { e.preventDefault(); toggle(rv.id); }}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-card/90 backdrop-blur-sm hover:bg-card transition"
+            aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart className={`h-4 w-4 ${isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
+          </button>
           <span className="rounded-full bg-card/90 px-3 py-1 text-xs font-semibold text-foreground backdrop-blur-sm">
             {rv.year}
           </span>

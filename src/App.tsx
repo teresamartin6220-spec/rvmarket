@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 import Index from "./pages/Index";
 import Inventory from "./pages/Inventory";
 import RVDetail from "./pages/RVDetail";
@@ -39,6 +40,7 @@ const App = () => (
               </Routes>
             </main>
             <Footer />
+            <WhatsAppButton />
           </div>
         </BrowserRouter>
       </TooltipProvider>

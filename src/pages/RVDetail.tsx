@@ -84,10 +84,8 @@ const RVDetail = () => {
               </div>
             </div>
 
-            {/* Gallery */}
             <ImageGallery images={rv.images} title={rv.title} />
 
-            {/* Quick Specs Grid */}
             <div>
               <h2 className="text-xl font-bold font-heading text-foreground mb-4">RV Overview</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -110,13 +108,11 @@ const RVDetail = () => {
               </div>
             </div>
 
-            {/* Description */}
             <div>
               <h2 className="text-xl font-bold font-heading text-foreground mb-3">Description</h2>
               <p className="text-muted-foreground leading-relaxed">{rv.description}</p>
             </div>
 
-            {/* Specifications */}
             {specEntries.length > 0 && (
               <div>
                 <h2 className="text-xl font-bold font-heading text-foreground mb-4">Specifications</h2>
@@ -131,7 +127,6 @@ const RVDetail = () => {
               </div>
             )}
 
-            {/* Features */}
             {rv.features && (
               <div className="space-y-6">
                 <h2 className="text-xl font-bold font-heading text-foreground">Features & Equipment</h2>
@@ -170,10 +165,8 @@ const RVDetail = () => {
               </div>
             )}
 
-            {/* Financing */}
-            <FinancingCalculator price={rv.price} />
+            <FinancingCalculator price={rv.price} rvTitle={rv.title} rvId={rv.id} />
 
-            {/* Disclaimer */}
             <div className="rounded-lg border bg-muted/50 p-4">
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
@@ -206,7 +199,7 @@ const RVDetail = () => {
             </div>
 
             <div id="contact">
-              <ContactForm rvTitle={rv.title} />
+              <ContactForm rvTitle={rv.title} rvId={rv.id} />
             </div>
           </div>
         </div>
