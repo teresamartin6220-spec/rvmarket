@@ -385,6 +385,7 @@ const Admin = () => {
                           <p className="font-semibold text-foreground truncate">
                             {rv.title}
                             {rv.is_sold && <span className="ml-2 text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded">SOLD</span>}
+                            {rv.is_super_special && <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded">⭐ SPECIAL</span>}
                           </p>
                           <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
                         </div>
