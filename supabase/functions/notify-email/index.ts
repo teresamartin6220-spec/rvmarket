@@ -12,7 +12,7 @@ serve(async (req) => {
 
   try {
     const { type, data } = await req.json();
-    const NOTIFY_EMAIL = "info@rvmarket.com";
+    const NOTIFY_EMAIL = "rvmarketused@gmail.com";
 
     let subject = "";
     let body = "";
