@@ -164,7 +164,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
         <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 20)</h3>
         <div className="flex gap-2 mt-2">
           <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste image URL..." className="flex-1" />
-          <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 7}>
+          <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 20}>
             <Plus className="h-4 w-4" />
           </Button>
         </div>
