@@ -14,7 +14,172 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      financing_applications: {
+        Row: {
+          created_at: string
+          down_payment: number | null
+          email: string
+          estimated_monthly: number | null
+          id: string
+          loan_term: number | null
+          name: string
+          phone: string | null
+          rv_id: string | null
+          rv_price: number | null
+          rv_title: string | null
+        }
+        Insert: {
+          created_at?: string
+          down_payment?: number | null
+          email: string
+          estimated_monthly?: number | null
+          id?: string
+          loan_term?: number | null
+          name: string
+          phone?: string | null
+          rv_id?: string | null
+          rv_price?: number | null
+          rv_title?: string | null
+        }
+        Update: {
+          created_at?: string
+          down_payment?: number | null
+          email?: string
+          estimated_monthly?: number | null
+          id?: string
+          loan_term?: number | null
+          name?: string
+          phone?: string | null
+          rv_id?: string | null
+          rv_price?: number | null
+          rv_title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financing_applications_rv_id_fkey"
+            columns: ["rv_id"]
+            isOneToOne: false
+            referencedRelation: "rv_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inquiries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          rv_id: string | null
+          rv_title: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          rv_id?: string | null
+          rv_title?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          rv_id?: string | null
+          rv_title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_rv_id_fkey"
+            columns: ["rv_id"]
+            isOneToOne: false
+            referencedRelation: "rv_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rv_listings: {
+        Row: {
+          brand: string
+          condition: string | null
+          country: string | null
+          created_at: string
+          description: string | null
+          features: Json | null
+          id: string
+          images: string[] | null
+          is_sold: boolean | null
+          location: string | null
+          mileage: number
+          model: string
+          price: number
+          sleeps: number
+          specs: Json | null
+          stock_number: string | null
+          title: string
+          transmission: string | null
+          type: string
+          updated_at: string
+          vin: string | null
+          year: number
+        }
+        Insert: {
+          brand: string
+          condition?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          images?: string[] | null
+          is_sold?: boolean | null
+          location?: string | null
+          mileage?: number
+          model: string
+          price?: number
+          sleeps?: number
+          specs?: Json | null
+          stock_number?: string | null
+          title: string
+          transmission?: string | null
+          type: string
+          updated_at?: string
+          vin?: string | null
+          year?: number
+        }
+        Update: {
+          brand?: string
+          condition?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          images?: string[] | null
+          is_sold?: boolean | null
+          location?: string | null
+          mileage?: number
+          model?: string
+          price?: number
+          sleeps?: number
+          specs?: Json | null
+          stock_number?: string | null
+          title?: string
+          transmission?: string | null
+          type?: string
+          updated_at?: string
+          vin?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
