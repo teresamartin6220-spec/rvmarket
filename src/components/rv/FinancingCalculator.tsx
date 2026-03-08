@@ -5,18 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCurrency } from "@/context/CurrencyContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface FinancingCalculatorProps {
   price: number;
+  rvTitle?: string;
+  rvId?: string;
 }
 
 const LOAN_TERMS = [36, 48, 60, 72];
 const INTEREST_RATE = 3.7;
 
-export function FinancingCalculator({ price }: FinancingCalculatorProps) {
+export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculatorProps) {
   const [open, setOpen] = useState(false);
   const [downPayment, setDownPayment] = useState(Math.round(price * 0.1));
   const [loanTerm, setLoanTerm] = useState(60);
+  const [applyOpen, setApplyOpen] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [loading, setLoading] = useState(false);
   const { format, currency } = useCurrency();
 
   const monthlyPayment = useMemo(() => {
@@ -29,6 +36,39 @@ export function FinancingCalculator({ price }: FinancingCalculatorProps) {
       (Math.pow(1 + monthlyRate, loanTerm) - 1)
     );
   }, [price, downPayment, loanTerm]);
+
+  const handleApply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const payload = {
+        rv_id: rvId || null,
+        rv_title: rvTitle || null,
+        rv_price: price,
+        name: form.name,
+        email: form.email,
+        phone: form.phone || null,
+        down_payment: downPayment,
+        loan_term: loanTerm,
+        estimated_monthly: Math.round(monthlyPayment),
+      };
+      const { error } = await supabase.from("financing_applications").insert(payload);
+      if (error) throw error;
+
+      await supabase.functions.invoke("notify-email", {
+        body: { type: "financing", data: payload },
+      });
+
+      toast.success("Financing application submitted! We'll be in touch.");
+      setApplyOpen(false);
+      setForm({ name: "", email: "", phone: "" });
+    } catch (err: any) {
+      toast.error("Failed to submit. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div id="financing" className="rounded-lg border bg-card overflow-hidden">
@@ -104,9 +144,32 @@ export function FinancingCalculator({ price }: FinancingCalculatorProps) {
                 </p>
               </div>
 
-              <Button className="w-full" size="lg">
-                Continue Financing Application
-              </Button>
+              {!applyOpen ? (
+                <Button className="w-full" size="lg" onClick={() => setApplyOpen(true)}>
+                  Continue Financing Application
+                </Button>
+              ) : (
+                <form onSubmit={handleApply} className="space-y-4 rounded-lg border p-4">
+                  <h4 className="font-heading font-semibold text-foreground">Your Details</h4>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <Label>Name</Label>
+                      <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                    </div>
+                    <div>
+                      <Label>Email</Label>
+                      <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Phone</Label>
+                    <Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Submitting..." : "Submit Financing Application"}
+                  </Button>
+                </form>
+              )}
             </div>
           </motion.div>
         )}
