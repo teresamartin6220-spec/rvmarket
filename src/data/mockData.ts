@@ -66,7 +66,7 @@ export interface RV {
 export const companyInfo = {
   name: "RV Market",
   phone: "+1 (940) 882-1140",
-  email: "info@rvmarket.com",
+  email: "rvmarketused@gmail.com",
   address: "1234 Highway 66",
   city: "Denver",
   state: "CO",
