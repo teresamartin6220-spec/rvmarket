@@ -27,7 +27,7 @@ export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
         rv_title: rvTitle,
         name: form.name,
         email: form.email,
-        phone: `${form.countryCode} ${form.phone}`,
+        phone: `${getDialCode(form.countryCode)} ${form.phone}`,
         message: form.message || null,
       });
       if (error) throw error;
