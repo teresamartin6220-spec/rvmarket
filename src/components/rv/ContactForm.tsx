@@ -79,7 +79,13 @@ export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
         </div>
         <div>
           <Label>Phone</Label>
-          <Input type="tel" value={form.phone} onChange={(e) => setForm({...form, phone: e.target.value})} />
+          <PhoneInput
+            countryCode={form.countryCode}
+            phone={form.phone}
+            onCountryCodeChange={(code) => setForm({ ...form, countryCode: code })}
+            onPhoneChange={(phone) => setForm({ ...form, phone })}
+            required
+          />
         </div>
         <div>
           <Label>Message</Label>
