@@ -45,10 +45,15 @@ export function RVCard({ rv, index = 0 }: RVCardProps) {
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground line-clamp-1">
             {rv.type}
           </span>
+          {rv.isSuperSpecial && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white shadow-lg animate-pulse">
+              <Sparkles className="h-3 w-3" /> SUPER SPECIAL
+            </span>
+          )}
         </div>
         <div className="absolute top-3 right-3 flex gap-2">
           <button

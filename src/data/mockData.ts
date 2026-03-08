@@ -61,6 +61,7 @@ export interface RV {
   specs?: RVSpecs;
   features?: RVFeatures;
   isFavorite?: boolean;
+  isSuperSpecial?: boolean;
 }
 
 export const companyInfo = {

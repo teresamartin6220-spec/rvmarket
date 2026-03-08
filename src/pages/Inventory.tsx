@@ -131,6 +131,7 @@ const Inventory = () => {
                     images: rv.images || [],
                     specs: rv.specs,
                     features: rv.features,
+                    isSuperSpecial: rv.is_super_special || false,
                   }} index={i} />
                 ))}
               </div>
