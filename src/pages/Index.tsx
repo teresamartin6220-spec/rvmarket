@@ -30,6 +30,7 @@ const Index = () => {
     images: rv.images || [],
     specs: rv.specs,
     features: rv.features,
+    isSuperSpecial: rv.is_super_special || false,
   }));
 
   return (

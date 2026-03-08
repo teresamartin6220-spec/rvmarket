@@ -41,7 +41,7 @@ const emptyListing: Partial<DBListing> = {
   title: "", brand: "", model: "", year: 2024, stock_number: "", vin: "",
   price: 0, mileage: 0, sleeps: 4, transmission: "Automatic",
   condition: "Excellent", type: "THOR MAJESTIC 23A",
-  description: "", location: "", country: "USA", images: [], is_sold: false,
+  description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false,
   specs: {}, features: {},
 };
 
@@ -144,10 +144,14 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               <SelectContent>{["USA", "Canada", "UK", "Australia"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-4">
             <Label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_sold || false} onChange={(e) => update("is_sold", e.target.checked)} className="rounded" />
               Mark as Sold
+            </Label>
+            <Label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.is_super_special || false} onChange={(e) => update("is_super_special", e.target.checked)} className="rounded accent-amber-500" />
+              ⭐ Super Special
             </Label>
           </div>
         </div>
@@ -297,6 +301,7 @@ const Admin = () => {
       specs: rv.specs || {},
       features: rv.features || {},
       is_sold: rv.is_sold || false,
+      is_super_special: rv.is_super_special || false,
     };
 
     if (rv.id) {
@@ -380,6 +385,7 @@ const Admin = () => {
                           <p className="font-semibold text-foreground truncate">
                             {rv.title}
                             {rv.is_sold && <span className="ml-2 text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded">SOLD</span>}
+                            {rv.is_super_special && <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded">⭐ SPECIAL</span>}
                           </p>
                           <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
                         </div>

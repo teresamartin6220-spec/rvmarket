@@ -1,0 +1,1 @@
+ALTER TABLE public.rv_listings ADD COLUMN is_super_special boolean DEFAULT false;
