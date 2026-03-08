@@ -7,7 +7,7 @@ import { rvListings, companyInfo } from "@/data/mockData";
 import heroImage from "@/assets/hero-rv.jpg";
 
 const Index = () => {
-  const featured = rvListings.slice(0, 3);
+  const featured = rvListings.slice(0, 4);
 
   return (
     <div className="min-h-screen">
@@ -111,7 +111,7 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {featured.map((rv, i) => (
               <RVCard key={rv.id} rv={rv} index={i} />
             ))}
