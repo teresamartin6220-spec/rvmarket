@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RV_TYPES } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import type { DBListing } from "@/hooks/useListings";
 
 const ADMIN_PASS = "rvmarket2024";
