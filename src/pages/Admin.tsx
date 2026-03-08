@@ -15,6 +15,8 @@ import type { DBListing } from "@/hooks/useListings";
 
 const ADMIN_PASS = "rvmarket2024";
 
+const SALES_PROS = ["JOHNNY WOOL"];
+
 const SPEC_FIELDS = [
   { key: "sleepingCapacity", label: "Sleeping Capacity", placeholder: "e.g. 6" },
   { key: "generator", label: "Generator", placeholder: "e.g. 4KW Onan Microlite" },
@@ -41,7 +43,7 @@ const emptyListing: Partial<DBListing> = {
   title: "", brand: "", model: "", year: 2024, stock_number: "", vin: "",
   price: 0, mileage: 0, sleeps: 4, transmission: "Automatic",
   condition: "Excellent", type: "THOR MAJESTIC 23A",
-  description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false,
+  description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false, sales_pro: null,
   specs: {}, features: {},
 };
 
@@ -142,6 +144,16 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
             <Select value={form.country || "USA"} onValueChange={(v) => update("country", v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{["USA", "Canada", "UK", "Australia"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Sales Pro</Label>
+            <Select value={form.sales_pro || "none"} onValueChange={(v) => update("sales_pro", v === "none" ? null : v)}>
+              <SelectTrigger><SelectValue placeholder="Select Sales Pro" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {SALES_PROS.map((sp) => <SelectItem key={sp} value={sp}>{sp}</SelectItem>)}
+              </SelectContent>
             </Select>
           </div>
           <div className="flex items-end gap-4">
@@ -302,6 +314,7 @@ const Admin = () => {
       features: rv.features || {},
       is_sold: rv.is_sold || false,
       is_super_special: rv.is_super_special || false,
+      sales_pro: rv.sales_pro || null,
     };
 
     if (rv.id) {
@@ -388,7 +401,7 @@ const Admin = () => {
                             {rv.is_super_special && <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded">⭐ SPECIAL</span>}
                           </p>
                           <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
-                          <p className="text-xs text-muted-foreground">{rv.location && `📍 ${rv.location}`}{rv.vin && ` · VIN: ${rv.vin}`}{rv.stock_number && ` · Stock #${rv.stock_number}`}</p>
+                          <p className="text-xs text-muted-foreground">{rv.location && `📍 ${rv.location}`}{rv.vin && ` · VIN: ${rv.vin}`}{rv.stock_number && ` · Stock #${rv.stock_number}`}{rv.sales_pro && ` · 🧑‍💼 ${rv.sales_pro}`}</p>
                         </div>
                         <div className="flex gap-2 shrink-0">
                           <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv, id: undefined, title: `${rv.title} (Copy)`, stock_number: null, vin: null })} title="Duplicate">

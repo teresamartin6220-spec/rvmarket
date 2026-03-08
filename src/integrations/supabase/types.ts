@@ -145,6 +145,7 @@ export type Database = {
           mileage: number
           model: string
           price: number
+          sales_pro: string | null
           sleeps: number
           specs: Json | null
           stock_number: string | null
@@ -170,6 +171,7 @@ export type Database = {
           mileage?: number
           model: string
           price?: number
+          sales_pro?: string | null
           sleeps?: number
           specs?: Json | null
           stock_number?: string | null
@@ -195,6 +197,7 @@ export type Database = {
           mileage?: number
           model?: string
           price?: number
+          sales_pro?: string | null
           sleeps?: number
           specs?: Json | null
           stock_number?: string | null

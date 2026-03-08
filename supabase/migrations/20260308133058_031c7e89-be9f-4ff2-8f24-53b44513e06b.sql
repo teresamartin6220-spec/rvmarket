@@ -1,0 +1,1 @@
+ALTER TABLE public.rv_listings ADD COLUMN sales_pro text DEFAULT NULL;
