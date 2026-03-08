@@ -15,7 +15,7 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
-  const [form, setForm] = useState({ name: "", email: "", countryCode: "+1", phone: "", message: `I'm interested in the ${rvTitle}. Please send me more information.` });
+  const [form, setForm] = useState({ name: "", email: "", countryCode: "US", phone: "", message: `I'm interested in the ${rvTitle}. Please send me more information.` });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
