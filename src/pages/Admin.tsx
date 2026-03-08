@@ -371,7 +371,7 @@ const Admin = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {listings.map((rv) => (
+                     {sortedListings.map((rv) => (
                       <div key={rv.id} className="flex items-center gap-4 rounded-lg border bg-card p-4">
                         {rv.images && rv.images[0] && (
                           <img src={rv.images[0]} alt={rv.title} className="h-16 w-24 rounded object-cover shrink-0" />
