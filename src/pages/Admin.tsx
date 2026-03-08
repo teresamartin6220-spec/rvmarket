@@ -92,7 +92,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
     setUploading(true);
     const newImages = [...(form.images || [])];
     for (const file of Array.from(files)) {
-      if (newImages.length >= 7) break;
+      if (newImages.length >= 20) break;
       const fileName = `${Date.now()}-${file.name}`;
       const { data, error } = await supabase.storage.from("rv-images").upload(fileName, file);
       if (error) { toast.error(`Failed to upload ${file.name}`); continue; }
@@ -161,10 +161,10 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
       {/* Images */}
       <div>
-        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 7)</h3>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 20)</h3>
         <div className="flex gap-2 mt-2">
           <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste image URL..." className="flex-1" />
-          <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 7}>
+          <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 20}>
             <Plus className="h-4 w-4" />
           </Button>
         </div>
@@ -172,7 +172,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
           <label className="inline-flex items-center gap-2 cursor-pointer rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
             <Image className="h-4 w-4" />
             {uploading ? "Uploading..." : "Upload from device"}
-            <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} disabled={uploading || (form.images?.length || 0) >= 7} />
+            <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} disabled={uploading || (form.images?.length || 0) >= 20} />
           </label>
         </div>
         {form.images && form.images.length > 0 && (
