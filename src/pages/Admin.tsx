@@ -235,6 +235,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
 const Admin = () => {
   const [authed, setAuthed] = useState(false);
+  const [activeTab, setActiveTab] = useState("listings");
   const [editingRV, setEditingRV] = useState<Partial<DBListing> | null>(null);
   const [listings, setListings] = useState<DBListing[]>([]);
   const [loading, setLoading] = useState(false);
