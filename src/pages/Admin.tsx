@@ -146,6 +146,16 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               <SelectContent>{["USA", "Canada", "UK", "Australia"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
             </Select>
           </div>
+          <div>
+            <Label>Sales Pro</Label>
+            <Select value={form.sales_pro || "none"} onValueChange={(v) => update("sales_pro", v === "none" ? null : v)}>
+              <SelectTrigger><SelectValue placeholder="Select Sales Pro" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {SALES_PROS.map((sp) => <SelectItem key={sp} value={sp}>{sp}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex items-end gap-4">
             <Label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_sold || false} onChange={(e) => update("is_sold", e.target.checked)} className="rounded" />
