@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Pencil, Trash2, LogOut, X, Upload, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, X, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,37 +9,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RV_TYPES } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { DBListing } from "@/hooks/useListings";
 
 const ADMIN_PASS = "rvmarket2024";
 
-interface DBListing {
-  id: string;
-  title: string;
-  brand: string;
-  model: string;
-  year: number;
-  stock_number: string | null;
-  vin: string | null;
-  price: number;
-  mileage: number;
-  sleeps: number;
-  transmission: string | null;
-  condition: string | null;
-  type: string;
-  description: string | null;
-  location: string | null;
-  country: string | null;
-  images: string[];
-  specs: any;
-  features: any;
-  is_sold: boolean | null;
-}
+const SPEC_FIELDS = [
+  { key: "sleepingCapacity", label: "Sleeping Capacity", placeholder: "e.g. 6" },
+  { key: "generator", label: "Generator", placeholder: "e.g. 4KW Onan Microlite" },
+  { key: "fuelTankCapacity", label: "Fuel Tank Capacity", placeholder: "e.g. 55 gal." },
+  { key: "freshWaterCapacity", label: "Fresh Water Capacity", placeholder: "e.g. 40 gal." },
+  { key: "lpgCapacity", label: "LPG Capacity", placeholder: "e.g. 12.2 gal." },
+  { key: "greyTankCapacity", label: "Grey Tank Capacity", placeholder: "e.g. 22 gal." },
+  { key: "blackTankCapacity", label: "Black Tank Capacity", placeholder: "e.g. 25 gal." },
+  { key: "hotWaterCapacity", label: "Hot Water Capacity", placeholder: "e.g. 6 gal." },
+  { key: "gvwr", label: "GVWR", placeholder: "e.g. 12,500 lbs." },
+  { key: "exteriorLength", label: "Exterior Length", placeholder: "e.g. 25 ft." },
+  { key: "exteriorHeight", label: "Exterior Height", placeholder: "e.g. 10.7 ft." },
+  { key: "exteriorWidth", label: "Exterior Width", placeholder: "e.g. 8.3 ft." },
+];
+
+const FEATURE_SECTIONS = [
+  { key: "coachFeatures", label: "Coach Features" },
+  { key: "chassisFeatures", label: "Chassis Features" },
+  { key: "coachConstruction", label: "Coach Construction" },
+  { key: "safetyFeatures", label: "Safety Features" },
+];
 
 const emptyListing: Partial<DBListing> = {
   title: "", brand: "", model: "", year: 2024, stock_number: "", vin: "",
   price: 0, mileage: 0, sleeps: 4, transmission: "Automatic",
   condition: "Excellent", type: "THOR MAJESTIC 23A",
   description: "", location: "", country: "USA", images: [], is_sold: false,
+  specs: {}, features: {},
 };
 
 function AdminLogin({ onLogin }: { onLogin: () => void }) {
@@ -61,11 +62,20 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 }
 
 function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; onSave: (l: Partial<DBListing>) => void; onCancel: () => void }) {
-  const [form, setForm] = useState<Partial<DBListing>>({ ...listing });
+  const [form, setForm] = useState<Partial<DBListing>>({
+    ...listing,
+    specs: listing.specs && typeof listing.specs === "object" ? listing.specs : {},
+    features: listing.features && typeof listing.features === "object" ? listing.features : {},
+  });
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const update = (key: string, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
+  const updateSpec = (key: string, value: string) => setForm((prev) => ({ ...prev, specs: { ...(prev.specs || {}), [key]: value } }));
+  const updateFeatureList = (sectionKey: string, value: string) => {
+    const items = value.split("\n").filter(Boolean);
+    setForm((prev) => ({ ...prev, features: { ...(prev.features || {}), [sectionKey]: items } }));
+  };
 
   const addImage = () => {
     if (imageUrl.trim()) {
@@ -79,79 +89,77 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
     if (!files || files.length === 0) return;
     setUploading(true);
     const newImages = [...(form.images || [])];
-
     for (const file of Array.from(files)) {
       if (newImages.length >= 7) break;
       const fileName = `${Date.now()}-${file.name}`;
       const { data, error } = await supabase.storage.from("rv-images").upload(fileName, file);
-      if (error) {
-        toast.error(`Failed to upload ${file.name}`);
-        continue;
-      }
+      if (error) { toast.error(`Failed to upload ${file.name}`); continue; }
       const { data: urlData } = supabase.storage.from("rv-images").getPublicUrl(data.path);
       newImages.push(urlData.publicUrl);
     }
-
     update("images", newImages);
     setUploading(false);
     toast.success("Images uploaded!");
   };
 
-  const removeImage = (idx: number) => {
-    update("images", (form.images || []).filter((_, i) => i !== idx));
-  };
+  const removeImage = (idx: number) => update("images", (form.images || []).filter((_, i) => i !== idx));
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div><Label>Title</Label><Input value={form.title} onChange={(e) => update("title", e.target.value)} placeholder="e.g. Thor Majestic 23A" /></div>
-        <div><Label>Brand</Label><Input value={form.brand} onChange={(e) => update("brand", e.target.value)} /></div>
-        <div><Label>Model</Label><Input value={form.model} onChange={(e) => update("model", e.target.value)} /></div>
-        <div>
-          <Label>RV Type / Category</Label>
-          <Select value={form.type} onValueChange={(v) => update("type", v)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>{RV_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-        <div><Label>Year</Label><Input type="number" value={form.year} onChange={(e) => update("year", Number(e.target.value))} /></div>
-        <div><Label>Stock Number</Label><Input value={form.stock_number || ""} onChange={(e) => update("stock_number", e.target.value)} /></div>
-        <div><Label>VIN #</Label><Input value={form.vin || ""} onChange={(e) => update("vin", e.target.value)} /></div>
-        <div><Label>Price (USD)</Label><Input type="number" value={form.price} onChange={(e) => update("price", Number(e.target.value))} /></div>
-        <div><Label>Mileage</Label><Input type="number" value={form.mileage} onChange={(e) => update("mileage", Number(e.target.value))} /></div>
-        <div><Label>Sleeps</Label><Input type="number" value={form.sleeps} onChange={(e) => update("sleeps", Number(e.target.value))} /></div>
-        <div><Label>Transmission</Label><Input value={form.transmission || ""} onChange={(e) => update("transmission", e.target.value)} /></div>
-        <div>
-          <Label>Condition</Label>
-          <Select value={form.condition || "Excellent"} onValueChange={(v) => update("condition", v)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>{["Like New", "Excellent", "Good", "Fair"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-        <div><Label>Location</Label><Input value={form.location || ""} onChange={(e) => update("location", e.target.value)} placeholder="e.g. Denver, CO" /></div>
-        <div>
-          <Label>Country</Label>
-          <Select value={form.country || "USA"} onValueChange={(v) => update("country", v)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>{["USA", "Canada", "UK", "Australia"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-end gap-2">
-          <Label className="flex items-center gap-2">
-            <input type="checkbox" checked={form.is_sold || false} onChange={(e) => update("is_sold", e.target.checked)} className="rounded" />
-            Mark as Sold
-          </Label>
+    <div className="space-y-8">
+      {/* Basic Info */}
+      <div>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Basic Information</h3>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div><Label>Title</Label><Input value={form.title} onChange={(e) => update("title", e.target.value)} placeholder="e.g. Thor Majestic 23A" /></div>
+          <div><Label>Brand</Label><Input value={form.brand} onChange={(e) => update("brand", e.target.value)} /></div>
+          <div><Label>Model</Label><Input value={form.model} onChange={(e) => update("model", e.target.value)} /></div>
+          <div>
+            <Label>RV Type / Category</Label>
+            <Select value={form.type} onValueChange={(v) => update("type", v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{RV_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div><Label>Year</Label><Input type="number" value={form.year} onChange={(e) => update("year", Number(e.target.value))} /></div>
+          <div><Label>Stock Number</Label><Input value={form.stock_number || ""} onChange={(e) => update("stock_number", e.target.value)} /></div>
+          <div><Label>VIN #</Label><Input value={form.vin || ""} onChange={(e) => update("vin", e.target.value)} placeholder="Enter VIN number" /></div>
+          <div><Label>Price (USD)</Label><Input type="number" value={form.price} onChange={(e) => update("price", Number(e.target.value))} /></div>
+          <div><Label>Mileage</Label><Input type="number" value={form.mileage} onChange={(e) => update("mileage", Number(e.target.value))} /></div>
+          <div><Label>Sleeps</Label><Input type="number" value={form.sleeps} onChange={(e) => update("sleeps", Number(e.target.value))} /></div>
+          <div><Label>Transmission</Label><Input value={form.transmission || ""} onChange={(e) => update("transmission", e.target.value)} /></div>
+          <div>
+            <Label>Condition</Label>
+            <Select value={form.condition || "Excellent"} onValueChange={(v) => update("condition", v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{["Like New", "Excellent", "Good", "Fair"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div><Label>Location</Label><Input value={form.location || ""} onChange={(e) => update("location", e.target.value)} placeholder="e.g. Denver, CO" /></div>
+          <div>
+            <Label>Country</Label>
+            <Select value={form.country || "USA"} onValueChange={(v) => update("country", v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{["USA", "Canada", "UK", "Australia"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-end gap-2">
+            <Label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.is_sold || false} onChange={(e) => update("is_sold", e.target.checked)} className="rounded" />
+              Mark as Sold
+            </Label>
+          </div>
         </div>
       </div>
 
+      {/* Description */}
       <div>
-        <Label>Description</Label>
-        <Textarea value={form.description || ""} onChange={(e) => update("description", e.target.value)} rows={4} />
+        <h3 className="font-heading font-semibold text-foreground mb-3">Description</h3>
+        <Textarea value={form.description || ""} onChange={(e) => update("description", e.target.value)} rows={5} placeholder="Full RV description..." />
       </div>
 
       {/* Images */}
       <div>
-        <Label>Images (up to 7)</Label>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 7)</h3>
         <div className="flex gap-2 mt-2">
           <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste image URL..." className="flex-1" />
           <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 7}>
@@ -177,6 +185,42 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
             ))}
           </div>
         )}
+      </div>
+
+      {/* Specifications */}
+      <div>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Specifications</h3>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {SPEC_FIELDS.map(({ key, label, placeholder }) => (
+            <div key={key}>
+              <Label>{label}</Label>
+              <Input
+                value={(form.specs as any)?.[key] || ""}
+                onChange={(e) => updateSpec(key, e.target.value)}
+                placeholder={placeholder}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Features */}
+      <div>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Features & Equipment</h3>
+        <p className="text-xs text-muted-foreground mb-4">Enter one feature per line</p>
+        <div className="grid gap-6 sm:grid-cols-2">
+          {FEATURE_SECTIONS.map(({ key, label }) => (
+            <div key={key}>
+              <Label>{label}</Label>
+              <Textarea
+                value={((form.features as any)?.[key] || []).join("\n")}
+                onChange={(e) => updateFeatureList(key, e.target.value)}
+                rows={6}
+                placeholder={`Enter ${label.toLowerCase()}, one per line...`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="flex gap-3">
@@ -226,6 +270,8 @@ const Admin = () => {
       location: rv.location || null,
       country: rv.country || "USA",
       images: rv.images || [],
+      specs: rv.specs || {},
+      features: rv.features || {},
       is_sold: rv.is_sold || false,
     };
 
@@ -243,6 +289,7 @@ const Admin = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this listing?")) return;
     const { error } = await supabase.from("rv_listings").delete().eq("id", id);
     if (error) { toast.error("Failed to delete"); return; }
     toast.success("RV deleted");
@@ -281,7 +328,6 @@ const Admin = () => {
               <div className="text-center py-16 text-muted-foreground">Loading...</div>
             ) : listings.length === 0 ? (
               <div className="text-center py-16 text-muted-foreground">
-                <Upload className="h-10 w-10 mx-auto mb-3 opacity-50" />
                 <p>No listings yet. Click "Add RV" to create one.</p>
               </div>
             ) : (
