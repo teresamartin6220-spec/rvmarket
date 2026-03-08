@@ -357,6 +357,9 @@ const Admin = () => {
                           <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
                         </div>
                         <div className="flex gap-2 shrink-0">
+                          <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv, id: undefined, title: `${rv.title} (Copy)`, stock_number: null, vin: null })} title="Duplicate">
+                            <Copy className="h-3.5 w-3.5" />
+                          </Button>
                           <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv })}>
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
