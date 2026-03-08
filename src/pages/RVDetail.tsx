@@ -15,7 +15,6 @@ const overviewSpecs: Array<{ key: string; icon: typeof Calendar; label: string; 
   { key: "mileage", icon: Gauge, label: "Mileage", format: (v: number) => `${v.toLocaleString()} mi` },
   { key: "sleeps", icon: Users, label: "Sleeps" },
   { key: "vin", icon: Hash, label: "VIN #" },
-  { key: "transmission", icon: Cog, label: "Transmission" },
   { key: "condition", icon: Shield, label: "Condition" },
 ];
 
