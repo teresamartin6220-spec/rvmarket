@@ -260,6 +260,17 @@ const Admin = () => {
 
   useEffect(() => { if (authed) fetchListings(); }, [authed]);
 
+  const sortedListings = [...listings].sort((a, b) => {
+    switch (sortBy) {
+      case "oldest": return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+      case "az": return (a.title || "").localeCompare(b.title || "");
+      case "za": return (b.title || "").localeCompare(a.title || "");
+      case "price-high": return (b.price || 0) - (a.price || 0);
+      case "price-low": return (a.price || 0) - (b.price || 0);
+      default: return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    }
+  });
+
   const handleSave = async (rv: Partial<DBListing>) => {
     if (!rv.title || !rv.brand || !rv.price) {
       toast.error("Title, brand, and price are required");
