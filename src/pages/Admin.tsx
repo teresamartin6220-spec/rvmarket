@@ -350,12 +350,18 @@ const Admin = () => {
               </motion.div>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-muted-foreground">{listings.length} listing(s) in database</p>
-                  <Button onClick={() => setEditingRV({ ...emptyListing })}>
-                    <Plus className="h-4 w-4 mr-2" /> Add RV
-                  </Button>
-                </div>
+                 <div className="flex items-center justify-between mb-6">
+                   <p className="text-muted-foreground">{listings.length} listing(s) in database</p>
+                   <div className="flex items-center gap-3">
+                     <Select value={sortBy} onValueChange={setSortBy}>
+                       <SelectTrigger className="w-[180px]"><SelectValue placeholder="Sort by..." /></SelectTrigger>
+                       <SelectContent>{SORT_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                     </Select>
+                     <Button onClick={() => setEditingRV({ ...emptyListing })}>
+                       <Plus className="h-4 w-4 mr-2" /> Add RV
+                     </Button>
+                   </div>
+                 </div>
 
                 {loading ? (
                   <div className="text-center py-16 text-muted-foreground">Loading...</div>
