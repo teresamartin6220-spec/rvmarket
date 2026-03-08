@@ -23,6 +23,7 @@ export interface DBListing {
   features: any;
   is_sold: boolean | null;
   created_at?: string;
+}
 
 export function useListings() {
   const [listings, setListings] = useState<DBListing[]>([]);
