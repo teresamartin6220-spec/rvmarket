@@ -233,12 +233,22 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
   );
 }
 
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "az", label: "A → Z" },
+  { value: "za", label: "Z → A" },
+  { value: "price-high", label: "Price: High → Low" },
+  { value: "price-low", label: "Price: Low → High" },
+];
+
 const Admin = () => {
   const [authed, setAuthed] = useState(false);
   const [activeTab, setActiveTab] = useState("listings");
   const [editingRV, setEditingRV] = useState<Partial<DBListing> | null>(null);
   const [listings, setListings] = useState<DBListing[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sortBy, setSortBy] = useState("newest");
 
   const fetchListings = async () => {
     setLoading(true);
@@ -249,6 +259,17 @@ const Admin = () => {
   };
 
   useEffect(() => { if (authed) fetchListings(); }, [authed]);
+
+  const sortedListings = [...listings].sort((a, b) => {
+    switch (sortBy) {
+      case "oldest": return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+      case "az": return (a.title || "").localeCompare(b.title || "");
+      case "za": return (b.title || "").localeCompare(a.title || "");
+      case "price-high": return (b.price || 0) - (a.price || 0);
+      case "price-low": return (a.price || 0) - (b.price || 0);
+      default: return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    }
+  });
 
   const handleSave = async (rv: Partial<DBListing>) => {
     if (!rv.title || !rv.brand || !rv.price) {
@@ -329,12 +350,18 @@ const Admin = () => {
               </motion.div>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-muted-foreground">{listings.length} listing(s) in database</p>
-                  <Button onClick={() => setEditingRV({ ...emptyListing })}>
-                    <Plus className="h-4 w-4 mr-2" /> Add RV
-                  </Button>
-                </div>
+                 <div className="flex items-center justify-between mb-6">
+                   <p className="text-muted-foreground">{listings.length} listing(s) in database</p>
+                   <div className="flex items-center gap-3">
+                     <Select value={sortBy} onValueChange={setSortBy}>
+                       <SelectTrigger className="w-[180px]"><SelectValue placeholder="Sort by..." /></SelectTrigger>
+                       <SelectContent>{SORT_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                     </Select>
+                     <Button onClick={() => setEditingRV({ ...emptyListing })}>
+                       <Plus className="h-4 w-4 mr-2" /> Add RV
+                     </Button>
+                   </div>
+                 </div>
 
                 {loading ? (
                   <div className="text-center py-16 text-muted-foreground">Loading...</div>
@@ -344,7 +371,7 @@ const Admin = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {listings.map((rv) => (
+                     {sortedListings.map((rv) => (
                       <div key={rv.id} className="flex items-center gap-4 rounded-lg border bg-card p-4">
                         {rv.images && rv.images[0] && (
                           <img src={rv.images[0]} alt={rv.title} className="h-16 w-24 rounded object-cover shrink-0" />

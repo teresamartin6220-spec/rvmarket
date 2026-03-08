@@ -22,6 +22,7 @@ export interface DBListing {
   specs: any;
   features: any;
   is_sold: boolean | null;
+  created_at?: string;
 }
 
 export function useListings() {
