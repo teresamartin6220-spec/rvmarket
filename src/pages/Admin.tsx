@@ -144,10 +144,14 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               <SelectContent>{["USA", "Canada", "UK", "Australia"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-4">
             <Label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_sold || false} onChange={(e) => update("is_sold", e.target.checked)} className="rounded" />
               Mark as Sold
+            </Label>
+            <Label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.is_super_special || false} onChange={(e) => update("is_super_special", e.target.checked)} className="rounded accent-amber-500" />
+              ⭐ Super Special
             </Label>
           </div>
         </div>
