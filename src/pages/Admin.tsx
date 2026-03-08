@@ -301,6 +301,7 @@ const Admin = () => {
       specs: rv.specs || {},
       features: rv.features || {},
       is_sold: rv.is_sold || false,
+      is_super_special: rv.is_super_special || false,
     };
 
     if (rv.id) {
