@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy, MessageCircle, CreditCard, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,7 @@ import type { DBListing } from "@/hooks/useListings";
 
 const ADMIN_PASS = "rvmarket2024";
 
-const SALES_PROS = ["TERESA MARTIN", "JOHNNY WOOL", "THOMAS WALKER", "SHERRY ROSS", "JANET WHITE", "SAM GILLS", "EMILY CARTER", "JAMES WHITAKER", "CHARLOTTE BENNETT", "THOMAS HARRINGTON", "SOPHIE MONTGOMERY"];
+const SALES_PROS = ["TERESA MARTIN", "JOHNNY WOOL", "THOMAS WALKER", "SHERRY ROSS", "JANET WHITE", "SAM GILLS"];
 
 const SPEC_FIELDS = [
   { key: "sleepingCapacity", label: "Sleeping Capacity", placeholder: "e.g. 6" },
@@ -110,7 +110,6 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
   return (
     <div className="space-y-8">
-      {/* Basic Info */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Basic Information</h3>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -169,13 +168,11 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
         </div>
       </div>
 
-      {/* Description */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Description</h3>
         <Textarea value={form.description || ""} onChange={(e) => update("description", e.target.value)} rows={5} placeholder="Full RV description..." />
       </div>
 
-      {/* Images */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 20)</h3>
         <div className="flex gap-2 mt-2">
@@ -205,7 +202,6 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
         )}
       </div>
 
-      {/* Specifications */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Specifications</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -222,7 +218,6 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
         </div>
       </div>
 
-      {/* Features */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Features & Equipment</h3>
         <p className="text-xs text-muted-foreground mb-4">Enter one feature per line</p>
@@ -258,6 +253,358 @@ const SORT_OPTIONS = [
   { value: "price-low", label: "Price: Low → High" },
 ];
 
+// ===== Admin Chat Component =====
+interface AdminConversation {
+  id: string;
+  user_id: string;
+  rv_title: string | null;
+  sales_pro: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface AdminMessage {
+  id: string;
+  conversation_id: string;
+  sender_type: string;
+  content: string;
+  created_at: string;
+}
+
+function AdminChat() {
+  const [conversations, setConversations] = useState<AdminConversation[]>([]);
+  const [selectedConv, setSelectedConv] = useState<string | null>(null);
+  const [messages, setMessages] = useState<AdminMessage[]>([]);
+  const [reply, setReply] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadConversations();
+
+    const channel = supabase
+      .channel("admin-messages")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => {
+        if (selectedConv) loadMessages(selectedConv);
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "conversations" }, () => {
+        loadConversations();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [selectedConv]);
+
+  const loadConversations = async () => {
+    const { data } = await supabase
+      .from("conversations")
+      .select("*")
+      .order("updated_at", { ascending: false });
+    if (data) setConversations(data);
+  };
+
+  const loadMessages = async (convId: string) => {
+    const { data } = await supabase
+      .from("messages")
+      .select("*")
+      .eq("conversation_id", convId)
+      .order("created_at", { ascending: true });
+    if (data) setMessages(data);
+  };
+
+  const selectConversation = (convId: string) => {
+    setSelectedConv(convId);
+    loadMessages(convId);
+  };
+
+  const sendReply = async () => {
+    if (!reply.trim() || !selectedConv) return;
+    setLoading(true);
+    const content = reply.trim();
+    setReply("");
+
+    await supabase.from("messages").insert({
+      conversation_id: selectedConv,
+      sender_type: "admin",
+      content,
+    });
+
+    await supabase.from("conversations").update({ updated_at: new Date().toISOString() }).eq("id", selectedConv);
+
+    loadMessages(selectedConv);
+    setLoading(false);
+  };
+
+  const conv = conversations.find((c) => c.id === selectedConv);
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4 min-h-[500px]">
+      {/* Conversation list */}
+      <div className="rounded-lg border bg-card overflow-y-auto max-h-[600px]">
+        <div className="p-3 border-b">
+          <p className="font-semibold text-foreground text-sm">{conversations.length} Conversation(s)</p>
+        </div>
+        {conversations.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => selectConversation(c.id)}
+            className={`w-full text-left p-3 border-b hover:bg-muted/50 transition ${
+              selectedConv === c.id ? "bg-muted" : ""
+            }`}
+          >
+            <p className="text-sm font-medium text-foreground truncate">{c.rv_title || "General Inquiry"}</p>
+            <p className="text-xs text-muted-foreground">
+              {c.sales_pro && `${c.sales_pro} · `}
+              {new Date(c.updated_at).toLocaleDateString()}
+            </p>
+          </button>
+        ))}
+        {conversations.length === 0 && (
+          <p className="p-4 text-sm text-muted-foreground text-center">No conversations yet</p>
+        )}
+      </div>
+
+      {/* Chat area */}
+      <div className="rounded-lg border bg-card flex flex-col">
+        {selectedConv ? (
+          <>
+            <div className="p-3 border-b">
+              <p className="font-semibold text-foreground text-sm">{conv?.rv_title || "General Inquiry"}</p>
+              {conv?.sales_pro && <p className="text-xs text-muted-foreground">Sales Pro: {conv.sales_pro}</p>}
+            </div>
+            <div className="flex-1 overflow-y-auto p-3 space-y-2 max-h-[400px]">
+              {messages.map((msg) => (
+                <div key={msg.id} className={`flex ${msg.sender_type === "admin" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+                    msg.sender_type === "admin"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-foreground"
+                  }`}>
+                    <p className="text-xs font-bold mb-0.5 opacity-70">
+                      {msg.sender_type === "admin" ? (conv?.sales_pro || "Admin") : "Customer"}
+                    </p>
+                    {msg.content}
+                    <p className="text-[10px] opacity-50 mt-1">
+                      {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="border-t p-3 flex gap-2">
+              <Input
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendReply()}
+                placeholder="Type reply..."
+                className="flex-1"
+              />
+              <Button onClick={sendReply} disabled={loading || !reply.trim()} size="icon">
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
+            Select a conversation to respond
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== Admin Transactions Component =====
+interface Transaction {
+  id: string;
+  user_id: string;
+  rv_id: string | null;
+  rv_title: string | null;
+  rv_price: number;
+  amount_paid: number;
+  payment_method: string | null;
+  status: string;
+  notes: string | null;
+  crypto_address: string | null;
+  crypto_qr_url: string | null;
+  created_at: string;
+}
+
+function AdminTransactions() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [editingTx, setEditingTx] = useState<string | null>(null);
+  const [editAmount, setEditAmount] = useState("");
+  const [editStatus, setEditStatus] = useState("");
+  const [editNotes, setEditNotes] = useState("");
+  const [editCryptoAddr, setEditCryptoAddr] = useState("");
+  const [cryptoQrUploading, setCryptoQrUploading] = useState(false);
+  const [editCryptoQr, setEditCryptoQr] = useState("");
+
+  useEffect(() => {
+    loadTransactions();
+  }, []);
+
+  const loadTransactions = async () => {
+    const { data } = await supabase
+      .from("transactions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (data) setTransactions(data);
+  };
+
+  const startEdit = (tx: Transaction) => {
+    setEditingTx(tx.id);
+    setEditAmount(String(tx.amount_paid));
+    setEditStatus(tx.status);
+    setEditNotes(tx.notes || "");
+    setEditCryptoAddr(tx.crypto_address || "");
+    setEditCryptoQr(tx.crypto_qr_url || "");
+  };
+
+  const handleCryptoQrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCryptoQrUploading(true);
+    const fileName = `crypto-qr-${Date.now()}-${file.name}`;
+    const { data, error } = await supabase.storage.from("rv-images").upload(fileName, file);
+    if (error) {
+      toast.error("Failed to upload QR code");
+      setCryptoQrUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("rv-images").getPublicUrl(data.path);
+    setEditCryptoQr(urlData.publicUrl);
+    setCryptoQrUploading(false);
+    toast.success("QR code uploaded!");
+  };
+
+  const saveEdit = async () => {
+    if (!editingTx) return;
+    const { error } = await supabase
+      .from("transactions")
+      .update({
+        amount_paid: Number(editAmount),
+        status: editStatus,
+        notes: editNotes || null,
+        crypto_address: editCryptoAddr || null,
+        crypto_qr_url: editCryptoQr || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", editingTx);
+
+    if (error) {
+      toast.error("Failed to update");
+      return;
+    }
+    toast.success("Transaction updated");
+    setEditingTx(null);
+    loadTransactions();
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-muted-foreground">{transactions.length} transaction(s)</p>
+      {transactions.length === 0 && (
+        <p className="text-center py-16 text-muted-foreground">No transactions yet</p>
+      )}
+      {transactions.map((tx) => (
+        <div key={tx.id} className="rounded-lg border bg-card p-5 space-y-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="font-semibold text-foreground">{tx.rv_title || "RV Purchase"}</p>
+              <p className="text-sm text-muted-foreground">
+                {tx.payment_method || "N/A"} · {new Date(tx.created_at).toLocaleDateString()}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`text-xs px-2 py-1 rounded font-medium ${
+                tx.status === "completed" ? "bg-primary/10 text-primary"
+                : tx.status === "partial" ? "bg-secondary/10 text-secondary"
+                : tx.status === "cancelled" ? "bg-destructive/10 text-destructive"
+                : "bg-muted text-muted-foreground"
+              }`}>
+                {tx.status.toUpperCase()}
+              </span>
+              <Button variant="outline" size="sm" onClick={() => startEdit(tx)}>
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 text-center rounded-lg bg-muted p-3">
+            <div>
+              <p className="text-xs text-muted-foreground">Total</p>
+              <p className="font-bold text-foreground">${tx.rv_price.toLocaleString()}</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Paid</p>
+              <p className="font-bold text-primary">${tx.amount_paid.toLocaleString()}</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Remaining</p>
+              <p className="font-bold text-destructive">${(tx.rv_price - tx.amount_paid).toLocaleString()}</p>
+            </div>
+          </div>
+
+          {editingTx === tx.id && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-3 border rounded-lg p-4">
+              <h4 className="font-heading font-semibold text-foreground">Edit Transaction</h4>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Amount Paid ($)</Label>
+                  <Input type="number" value={editAmount} onChange={(e) => setEditAmount(e.target.value)} />
+                </div>
+                <div>
+                  <Label>Status</Label>
+                  <Select value={editStatus} onValueChange={setEditStatus}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="partial">Partial</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Label>Notes</Label>
+                <Textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} rows={2} />
+              </div>
+
+              {tx.payment_method === "Cryptocurrency" && (
+                <div className="space-y-3 border-t pt-3">
+                  <h5 className="text-sm font-semibold text-foreground">Crypto Payment Details</h5>
+                  <div>
+                    <Label>Crypto Address</Label>
+                    <Input value={editCryptoAddr} onChange={(e) => setEditCryptoAddr(e.target.value)} placeholder="Enter wallet address..." />
+                  </div>
+                  <div>
+                    <Label>QR Code</Label>
+                    <div className="flex items-center gap-3 mt-1">
+                      {editCryptoQr && <img src={editCryptoQr} alt="QR" className="h-20 w-20 rounded border" />}
+                      <label className="inline-flex items-center gap-2 cursor-pointer rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
+                        <Image className="h-4 w-4" />
+                        {cryptoQrUploading ? "Uploading..." : "Upload QR Code"}
+                        <input type="file" accept="image/*" className="hidden" onChange={handleCryptoQrUpload} disabled={cryptoQrUploading} />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <Button onClick={saveEdit}>Save Changes</Button>
+                <Button variant="outline" onClick={() => setEditingTx(null)}>Cancel</Button>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ===== Main Admin Component =====
 const Admin = () => {
   const [authed, setAuthed] = useState(false);
   const [activeTab, setActiveTab] = useState("listings");
@@ -355,6 +702,12 @@ const Admin = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
             <TabsTrigger value="listings">Listings</TabsTrigger>
+            <TabsTrigger value="chat" className="flex items-center gap-1.5">
+              <MessageCircle className="h-3.5 w-3.5" /> Chat
+            </TabsTrigger>
+            <TabsTrigger value="transactions" className="flex items-center gap-1.5">
+              <CreditCard className="h-3.5 w-3.5" /> Transactions
+            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-1.5">
               <BarChart3 className="h-3.5 w-3.5" /> Analytics
             </TabsTrigger>
@@ -420,6 +773,14 @@ const Admin = () => {
                 )}
               </>
             )}
+          </TabsContent>
+
+          <TabsContent value="chat">
+            <AdminChat />
+          </TabsContent>
+
+          <TabsContent value="transactions">
+            <AdminTransactions />
           </TabsContent>
 
           <TabsContent value="analytics">

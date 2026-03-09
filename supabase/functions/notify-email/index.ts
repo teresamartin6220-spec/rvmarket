@@ -46,6 +46,18 @@ serve(async (req) => {
         <p><strong>Loan Term:</strong> ${data.loan_term || 60} months</p>
         <p><strong>Est. Monthly:</strong> $${data.estimated_monthly?.toLocaleString() || "N/A"}</p>
       `;
+    } else if (type === "chat") {
+      subject = `💬 New Chat Message: ${data.rv_title || "General"}`;
+      html = `
+        <h2>New Chat Message</h2>
+        <p><strong>RV:</strong> ${data.rv_title || "N/A"}</p>
+        <p><strong>Sales Pro:</strong> ${data.sales_pro || "Unassigned"}</p>
+        <p><strong>Customer Email:</strong> ${data.customer_email || "N/A"}</p>
+        <h3>Message:</h3>
+        <p>${data.message || "No message"}</p>
+        <hr/>
+        <p><em>Reply from your admin panel at /admin</em></p>
+      `;
     } else {
       return new Response(JSON.stringify({ error: "Invalid type" }), {
         status: 400,
