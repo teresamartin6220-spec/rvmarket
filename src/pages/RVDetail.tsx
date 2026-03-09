@@ -1,14 +1,19 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Calendar, Gauge, Users, Cog, Shield, Globe, Hash, AlertTriangle } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Gauge, Users, Cog, Shield, Globe, Hash, AlertTriangle, Heart } from "lucide-react";
 import { companyInfo, DISCLAIMER } from "@/data/mockData";
 import { ImageGallery } from "@/components/rv/ImageGallery";
 import { ShareButton } from "@/components/rv/ShareButton";
 import { FinancingCalculator } from "@/components/rv/FinancingCalculator";
 import { ContactForm } from "@/components/rv/ContactForm";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useListingById } from "@/hooks/useListings";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useState, useEffect } from "react";
 
 const overviewSpecs: Array<{ key: string; icon: typeof Calendar; label: string; format?: (v: any) => string }> = [
   { key: "year", icon: Calendar, label: "Year" },
@@ -22,6 +27,38 @@ const RVDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { listing: rv, loading } = useListingById(id);
   const { format } = useCurrency();
+  const { user } = useAuth();
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (!user || !id) return;
+    supabase
+      .from("wishlists")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("rv_id", id)
+      .then(({ data }) => {
+        if (data && data.length > 0) setIsSaved(true);
+      });
+  }, [user, id]);
+
+  const toggleWishlist = async () => {
+    if (!user) {
+      toast.error("Please sign in to save RVs");
+      return;
+    }
+    if (!id) return;
+
+    if (isSaved) {
+      await supabase.from("wishlists").delete().eq("user_id", user.id).eq("rv_id", id);
+      setIsSaved(false);
+      toast.success("Removed from saved RVs");
+    } else {
+      await supabase.from("wishlists").insert({ user_id: user.id, rv_id: id });
+      setIsSaved(true);
+      toast.success("Saved to your portal!");
+    }
+  };
 
   if (loading) {
     return <div className="container py-20 text-center text-muted-foreground">Loading...</div>;
@@ -100,6 +137,15 @@ const RVDetail = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
+                <button
+                  onClick={toggleWishlist}
+                  className={`flex h-10 w-10 items-center justify-center rounded-lg border transition ${
+                    isSaved ? "bg-destructive/10 border-destructive text-destructive" : "hover:bg-muted"
+                  }`}
+                  title={isSaved ? "Remove from saved" : "Save RV"}
+                >
+                  <Heart className={`h-5 w-5 ${isSaved ? "fill-current" : ""}`} />
+                </button>
                 <ShareButton title={rv.title} />
                 <p className="text-3xl font-bold font-heading text-primary">{format(rv.price)}</p>
               </div>
@@ -192,6 +238,9 @@ const RVDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Chat Widget */}
+      <ChatWidget rvId={rv.id} rvTitle={rv.title} salesPro={rv.sales_pro || undefined} />
     </motion.div>
   );
 };

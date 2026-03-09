@@ -1,8 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Heart, LogIn, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CurrencySelector } from "@/components/CurrencySelector";
+import { useAuth } from "@/hooks/useAuth";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -15,6 +16,7 @@ const navLinks = [
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
@@ -42,9 +44,23 @@ export function Header() {
 
         <div className="hidden lg:flex items-center gap-3">
           <CurrencySelector />
-          <Button asChild>
-            <Link to="/inventory">Browse RVs</Link>
-          </Button>
+          {user ? (
+            <>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/portal"><Heart className="h-4 w-4 mr-1" /> My Portal</Link>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={signOut}>Sign Out</Button>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/auth"><LogIn className="h-4 w-4 mr-1" /> Sign In</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link to="/auth"><UserPlus className="h-4 w-4 mr-1" /> Join Today</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <button
@@ -71,9 +87,25 @@ export function Header() {
           <div className="py-2">
             <CurrencySelector />
           </div>
-          <Button className="w-full" asChild>
-            <Link to="/inventory" onClick={() => setMobileOpen(false)}>Browse RVs</Link>
-          </Button>
+          {user ? (
+            <>
+              <Button className="w-full" variant="outline" asChild>
+                <Link to="/portal" onClick={() => setMobileOpen(false)}>My Portal</Link>
+              </Button>
+              <Button className="w-full" variant="ghost" onClick={() => { signOut(); setMobileOpen(false); }}>
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button className="w-full" variant="outline" asChild>
+                <Link to="/auth" onClick={() => setMobileOpen(false)}>Sign In</Link>
+              </Button>
+              <Button className="w-full" asChild>
+                <Link to="/auth" onClick={() => setMobileOpen(false)}>Join Today</Link>
+              </Button>
+            </>
+          )}
         </div>
       )}
     </header>

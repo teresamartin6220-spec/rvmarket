@@ -15,6 +15,9 @@ import TradeIn from "./pages/TradeIn";
 import About from "./pages/About";
 import CustomerCare from "./pages/CustomerCare";
 import Admin from "./pages/Admin";
+import Auth from "./pages/Auth";
+import Portal from "./pages/Portal";
+import PortalChat from "./pages/PortalChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +36,9 @@ function AppContent() {
           <Route path="/about" element={<About />} />
           <Route path="/customer-care" element={<CustomerCare />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/portal" element={<Portal />} />
+          <Route path="/portal/chat/:conversationId" element={<PortalChat />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
