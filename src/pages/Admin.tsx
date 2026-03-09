@@ -15,7 +15,7 @@ import type { DBListing } from "@/hooks/useListings";
 
 const ADMIN_PASS = "rvmarket2024";
 
-const SALES_PROS = ["TERESA MARTIN", "JOHNNY WOOL", "THOMAS WALKER", "SHERRY ROSS", "JANET WHITE", "SAM GILLS"];
+const SALES_PROS = ["TERESA MARTIN", "JOHNNY WOOL", "THOMAS WALKER", "SHERRY ROSS", "JANET WHITE", "SAM GILLS", "EMILY CARTER", "JAMES WHITAKER", "CHARLOTTE BENNETT", "THOMAS HARRINGTON", "SOPHIE MONTGOMERY"];
 
 const SPEC_FIELDS = [
   { key: "sleepingCapacity", label: "Sleeping Capacity", placeholder: "e.g. 6" },
