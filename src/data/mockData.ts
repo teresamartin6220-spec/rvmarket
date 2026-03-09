@@ -79,7 +79,7 @@ export const companyInfo = {
   yearsInBusiness: 25,
 };
 
-export const DISCLAIMER = `*Vehicle stock images are for illustration purposes. Motorhomes may differ from the stock images shown. Please contact your local sales center for actual images and or availability.\n\nGovernment fees, taxes, title fees, registration fees, temporary tag fees, local emission fees, and dealer document fees are not included in the price.\n\nPrices and promotions are subject to change without notice. We have made every effort to ensure accuracy in the information provided. Specifications, equipment, technical data, photographs, and illustrations are based on information available at the time of posting and are subject to change without notice.`;
+export const DISCLAIMER = `*Vehicle stock images are for illustration purposes. Motorhomes may differ from the stock images shown. Please contact us for actual images and or availability.\n\nGovernment fees, taxes, title fees, registration fees, temporary tag fees, local emission fees, and dealer document fees are not included in the price.\n\nPrices and promotions are subject to change without notice. We have made every effort to ensure accuracy in the information provided. Specifications, equipment, technical data, photographs, and illustrations are based on information available at the time of posting and are subject to change without notice.`;
 
 const defaultSpecs: RVSpecs = {
   sleepingCapacity: 6,
