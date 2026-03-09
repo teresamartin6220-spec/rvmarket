@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput, getDialCode } from "@/components/ui/phone-input";
 import { useCurrency } from "@/context/CurrencyContext";
-import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -20,26 +18,14 @@ interface FinancingCalculatorProps {
 const LOAN_TERMS = [36, 48, 60, 72];
 const INTEREST_RATE = 3.7;
 
-const PAYMENT_METHODS = [
-  "Cash Deposit",
-  "Direct Deposit",
-  "Wire Transfer",
-  "Cryptocurrency",
-  "PayPal",
-  "Bank Transfer",
-];
-
 export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculatorProps) {
   const [open, setOpen] = useState(false);
   const [downPayment, setDownPayment] = useState(Math.round(price * 0.1));
   const [loanTerm, setLoanTerm] = useState(60);
   const [applyOpen, setApplyOpen] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("");
   const [form, setForm] = useState({ name: "", email: "", countryCode: "US", phone: "" });
   const [loading, setLoading] = useState(false);
   const { format, currency } = useCurrency();
-  const { user } = useAuth();
-  const navigate = useNavigate();
 
   const monthlyPayment = useMemo(() => {
     const principal = price - downPayment;
@@ -52,21 +38,8 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
     );
   }, [price, downPayment, loanTerm]);
 
-  const handleApplyClick = () => {
-    if (!user) {
-      toast.info("Please create an account or sign in to apply for financing.");
-      navigate("/auth");
-      return;
-    }
-    setApplyOpen(true);
-  };
-
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!paymentMethod) {
-      toast.error("Please select a payment method");
-      return;
-    }
     setLoading(true);
     try {
       const payload = {
@@ -83,25 +56,13 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
       const { error } = await supabase.from("financing_applications").insert(payload);
       if (error) throw error;
 
-      // Also create a transaction record
-      await supabase.from("transactions").insert({
-        user_id: user!.id,
-        rv_id: rvId || null,
-        rv_title: rvTitle || null,
-        rv_price: price,
-        amount_paid: 0,
-        payment_method: paymentMethod,
-        status: "pending",
-      });
-
       await supabase.functions.invoke("notify-email", {
-        body: { type: "financing", data: { ...payload, payment_method: paymentMethod } },
+        body: { type: "financing", data: payload },
       });
 
       toast.success("Financing application submitted! We'll be in touch.");
       setApplyOpen(false);
       setForm({ name: "", email: "", countryCode: "US", phone: "" });
-      setPaymentMethod("");
     } catch (err: any) {
       toast.error("Failed to submit. Please try again.");
       console.error(err);
@@ -185,8 +146,8 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
               </div>
 
               {!applyOpen ? (
-                <Button className="w-full" size="lg" onClick={handleApplyClick}>
-                  {user ? "Continue Financing Application" : "Sign Up to Apply"}
+                <Button className="w-full" size="lg" onClick={() => setApplyOpen(true)}>
+                  Continue Financing Application
                 </Button>
               ) : (
                 <form onSubmit={handleApply} className="space-y-4 rounded-lg border p-4">
@@ -211,28 +172,6 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
                        required
                      />
                    </div>
-
-                  {/* Payment Method */}
-                  <div>
-                    <Label>Preferred Payment Method</Label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1.5">
-                      {PAYMENT_METHODS.map((method) => (
-                        <button
-                          key={method}
-                          type="button"
-                          onClick={() => setPaymentMethod(method)}
-                          className={`rounded-md border px-3 py-2 text-sm font-medium transition ${
-                            paymentMethod === method
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : "bg-card text-foreground hover:bg-muted"
-                          }`}
-                        >
-                          {method}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Submitting..." : "Submit Financing Application"}
                   </Button>
