@@ -71,7 +71,7 @@ export const companyInfo = {
   address: "850 S Northlake Rd",
   city: "Coppell",
   state: "TX",
-  zip code: "75019",
+  zipcode: "75019",
   country: "USA",
   hours: "Mon-Sat 8AM-6PM",
   textNumber: "+1 (940) 882-1140",
