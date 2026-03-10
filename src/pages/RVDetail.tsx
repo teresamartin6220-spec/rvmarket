@@ -24,12 +24,12 @@ const RVDetail = () => {
   const { format } = useCurrency();
 
   if (loading) {
-    return <div className="container w-full max-w-7xl mx-auto px-4 py-10 text-center text-muted-foreground">Loading...</div>;
+    return <div className="container py-20 text-center text-muted-foreground">Loading...</div>;
   }
 
   if (!rv) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 py-10 text-center">
+      <div className="container py-20 text-center">
         <h1 className="text-2xl font-bold font-heading">RV Not Found</h1>
         <Button className="mt-4" asChild><Link to="/inventory">Back to Inventory</Link></Button>
       </div>
