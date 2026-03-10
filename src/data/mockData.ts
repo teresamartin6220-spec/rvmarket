@@ -75,7 +75,7 @@ export const companyInfo = {
   hours: "Mon-Sat 8AM-6PM",
   textNumber: "+1 (940) 882-1140",
   whatsapp: "+19408821140",
-  tiktok: "https://tiktok.com/@rvmarket",
+  tiktok: "https://tiktok.com/@rvmarkt",
   yearsInBusiness: 25,
 };
 
