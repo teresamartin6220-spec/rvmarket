@@ -24,12 +24,12 @@ const RVDetail = () => {
   const { format } = useCurrency();
 
   if (loading) {
-    return <div className="container py-20 text-center text-muted-foreground">Loading...</div>;
+    return <div className="w-full max-w-7xl mx-auto px-4 py-20 text-center text-muted-foreground">Loading...</div>;
   }
 
   if (!rv) {
     return (
-      <div className="container py-20 text-center">
+      <div className="w-full max-w-7xl mx-auto px-4 py-20 text-center">
         <h1 className="text-2xl font-bold font-heading">RV Not Found</h1>
         <Button className="mt-4" asChild><Link to="/inventory">Back to Inventory</Link></Button>
       </div>
@@ -71,35 +71,35 @@ const RVDetail = () => {
   ];
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen overflow-x-hidden">
       <div className="border-b bg-card">
-        <div className="container py-3">
+        <div className="w-full max-w-7xl mx-auto px-4 py-3">
           <Link to="/inventory" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition">
             <ArrowLeft className="h-4 w-4" /> Back to Inventory
           </Link>
         </div>
       </div>
 
-      <div className="container py-8">
+      <div className="w-full max-w-7xl mx-auto px-4 py-8">
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-          <div className="space-y-8">
+          <div className="space-y-8 overflow-hidden">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+              <div className="max-w-full overflow-hidden">
+                <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-1">
                   <span>{rv.brand}</span>
                   <span>·</span>
                   <span>Stock #{rv.stock_number || "N/A"}</span>
-                  <span>·</span>
-                  <span>VIN: {rv.vin || "N/A"}</span>
+                  <span className="hidden sm:inline">·</span>
+                  <span className="break-all">VIN: {rv.vin || "N/A"}</span>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold font-heading text-foreground">{rv.title}</h1>
-                <div className="flex items-center gap-4 mt-2 text-muted-foreground">
+                <h1 className="text-2xl md:text-3xl font-bold font-heading text-foreground break-words">{rv.title}</h1>
+                <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
                   <span className="flex items-center gap-1 text-sm"><MapPin className="h-4 w-4" /> {rv.location || "N/A"}</span>
                   <span className="flex items-center gap-1 text-sm"><Globe className="h-4 w-4" /> {rv.country || "N/A"}</span>
                   {rv.sales_pro && <span className="text-sm font-medium text-primary">🧑‍💼 {rv.sales_pro}</span>}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col items-start sm:items-end gap-1">
                 <ShareButton title={rv.title} />
                 <p className="text-3xl font-bold font-heading text-primary">{format(rv.price)}</p>
               </div>
@@ -114,10 +114,10 @@ const RVDetail = () => {
                   const value = rvData[key];
                   return (
                     <div key={key} className="flex items-center gap-3 rounded-lg border bg-card p-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-md bg-muted"><Icon className="h-4 w-4 text-primary" /></div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">{label}</p>
-                        <p className="text-sm font-semibold text-foreground">{fmt ? fmt(value) : String(value)}</p>
+                      <div className="flex h-9 w-9 items-center justify-center rounded-md bg-muted shrink-0"><Icon className="h-4 w-4 text-primary" /></div>
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground truncate">{label}</p>
+                        <p className="text-sm font-semibold text-foreground truncate">{fmt ? fmt(value) : String(value)}</p>
                       </div>
                     </div>
                   );
@@ -133,11 +133,11 @@ const RVDetail = () => {
             {specEntries.length > 0 && (
               <div>
                 <h2 className="text-xl font-bold font-heading text-foreground mb-4">Specifications</h2>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0">
                   {specEntries.map(({ label, value }) => (
                     <div key={label} className="flex justify-between py-2 border-b text-sm">
-                      <span className="text-muted-foreground">{label}</span>
-                      <span className="font-medium text-foreground">{value}</span>
+                      <span className="text-muted-foreground pr-2">{label}</span>
+                      <span className="font-medium text-foreground text-right">{value}</span>
                     </div>
                   ))}
                 </div>
@@ -153,7 +153,7 @@ const RVDetail = () => {
                   return (
                     <div key={key}>
                       <h3 className="font-heading font-semibold text-foreground mb-2">{label}</h3>
-                      <ul className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted-foreground">
+                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted-foreground">
                         {items.map((f: string) => <li key={f} className="flex items-center gap-2">• {f}</li>)}
                       </ul>
                     </div>
