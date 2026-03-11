@@ -156,7 +156,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-end gap-4">
+          <div className="flex items-end gap-4 flex-wrap">
             <Label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_sold || false} onChange={(e) => update("is_sold", e.target.checked)} className="rounded" />
               Mark as Sold
@@ -164,6 +164,10 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
             <Label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_super_special || false} onChange={(e) => update("is_super_special", e.target.checked)} className="rounded accent-amber-500" />
               ⭐ Super Special
+            </Label>
+            <Label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.is_featured || false} onChange={(e) => update("is_featured", e.target.checked)} className="rounded" />
+              ⭐ Featured on Homepage
             </Label>
           </div>
         </div>
