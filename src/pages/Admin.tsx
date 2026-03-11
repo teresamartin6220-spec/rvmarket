@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import type { DBListing } from "@/hooks/useListings";
 
-const ADMIN_PASS = "rvmarket2024";
+
 
 const SALES_PROS = ["TERESA MARTIN", "JOHNNY WOOL", "THOMAS WALKER", "SHERRY ROSS", "JANET WHITE", "SAM GILLS", "EMILY CARTER", "JAMES WHITAKER", "CHARLOTTE BENNETT", "THOMAS HARRINGTON", "SOPHIE MONTGOMERY"];
 
