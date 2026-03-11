@@ -174,10 +174,11 @@ const RVDetail = () => {
 
           <div className="space-y-6">
             <div className="rounded-lg border bg-card p-6 text-center lg:sticky lg:top-20">
-              <p className="text-sm text-muted-foreground">Listed Price</p>
+              <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Available for Sale</p>
               <p className="text-4xl font-bold font-heading text-primary mt-1">{format(rv.price)}</p>
-              <Button className="w-full mt-4" size="lg" asChild><a href="#contact">Contact Us</a></Button>
-              <Button variant="outline" className="w-full mt-2" size="lg" asChild><a href="#financing">Apply for Financing</a></Button>
+              <p className="text-xs text-muted-foreground mt-1">Buy outright or finance — contact us to get started</p>
+              <Button className="w-full mt-4" size="lg" asChild><a href="#contact">Buy Now — Contact Us</a></Button>
+              <Button variant="outline" className="w-full mt-2" size="lg" asChild><a href="#financing">Explore Financing Options</a></Button>
             </div>
             <div className="rounded-lg border bg-card p-6 space-y-3">
               <h3 className="font-heading font-semibold text-foreground">{companyInfo.name}</h3>
