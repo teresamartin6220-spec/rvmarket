@@ -380,9 +380,15 @@ const Admin = () => {
               </motion.div>
             ) : (
               <>
-                 <div className="flex items-center justify-between mb-6">
-                   <p className="text-muted-foreground">{listings.length} listing(s) in database</p>
-                   <div className="flex items-center gap-3">
+                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+                   <p className="text-muted-foreground">{filteredListings.length} of {listings.length} listing(s)</p>
+                   <div className="flex flex-wrap items-center gap-3">
+                     <Input
+                       placeholder="Search VIN or Stock #..."
+                       value={searchQuery}
+                       onChange={(e) => setSearchQuery(e.target.value)}
+                       className="w-[200px]"
+                     />
                      <Select value={sortBy} onValueChange={setSortBy}>
                        <SelectTrigger className="w-[180px]"><SelectValue placeholder="Sort by..." /></SelectTrigger>
                        <SelectContent>{SORT_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
