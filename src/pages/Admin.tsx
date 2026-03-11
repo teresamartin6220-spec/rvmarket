@@ -314,6 +314,7 @@ const Admin = () => {
       features: rv.features || {},
       is_sold: rv.is_sold || false,
       is_super_special: rv.is_super_special || false,
+      is_featured: rv.is_featured || false,
       sales_pro: rv.sales_pro || null,
     };
 
