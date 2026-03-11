@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Search, ArrowRight, Shield, Award, Globe, Truck, RefreshCw, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
@@ -10,28 +11,34 @@ import heroImage from "@/assets/hero-rv.jpg";
 const Index = () => {
   const { listings, loading } = useListings();
 
-  const featured = listings.slice(0, 4).map((rv) => ({
-    id: rv.id,
-    title: rv.title,
-    brand: rv.brand,
-    model: rv.model,
-    year: rv.year,
-    stockNumber: rv.stock_number || "",
-    vin: rv.vin || "",
-    price: rv.price,
-    mileage: rv.mileage,
-    sleeps: rv.sleeps,
-    transmission: rv.transmission || "Automatic",
-    condition: rv.condition || "Excellent",
-    type: rv.type as any,
-    description: rv.description || "",
-    location: rv.location || "",
-    country: rv.country || "USA",
-    images: rv.images || [],
-    specs: rv.specs,
-    features: rv.features,
-    isSuperSpecial: rv.is_super_special || false,
-  }));
+  const featured = useMemo(() => {
+    const featuredListings = listings.filter((rv) => rv.is_featured);
+    const source = featuredListings.length > 0
+      ? featuredListings.sort((a, b) => a.price - b.price)
+      : [...listings].sort((a, b) => a.price - b.price);
+    return source.slice(0, 4).map((rv) => ({
+      id: rv.id,
+      title: rv.title,
+      brand: rv.brand,
+      model: rv.model,
+      year: rv.year,
+      stockNumber: rv.stock_number || "",
+      vin: rv.vin || "",
+      price: rv.price,
+      mileage: rv.mileage,
+      sleeps: rv.sleeps,
+      transmission: rv.transmission || "Automatic",
+      condition: rv.condition || "Excellent",
+      type: rv.type as any,
+      description: rv.description || "",
+      location: rv.location || "",
+      country: rv.country || "USA",
+      images: rv.images || [],
+      specs: rv.specs,
+      features: rv.features,
+      isSuperSpecial: rv.is_super_special || false,
+    }));
+  }, [listings]);
 
   return (
     <div className="min-h-screen">

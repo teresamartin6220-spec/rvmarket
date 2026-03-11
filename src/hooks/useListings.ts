@@ -23,6 +23,7 @@ export interface DBListing {
   features: any;
   is_sold: boolean | null;
   is_super_special: boolean | null;
+  is_featured: boolean | null;
   sales_pro: string | null;
   created_at?: string;
 }

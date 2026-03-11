@@ -43,7 +43,7 @@ const emptyListing: Partial<DBListing> = {
   title: "", brand: "", model: "", year: 2024, stock_number: "", vin: "",
   price: 0, mileage: 0, sleeps: 4, transmission: "Automatic",
   condition: "Excellent", type: "THOR MAJESTIC 23A",
-  description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false, sales_pro: null,
+  description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false, is_featured: false, sales_pro: null,
   specs: {}, features: {},
 };
 
@@ -156,7 +156,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-end gap-4">
+          <div className="flex items-end gap-4 flex-wrap">
             <Label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_sold || false} onChange={(e) => update("is_sold", e.target.checked)} className="rounded" />
               Mark as Sold
@@ -164,6 +164,10 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
             <Label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_super_special || false} onChange={(e) => update("is_super_special", e.target.checked)} className="rounded accent-amber-500" />
               ⭐ Super Special
+            </Label>
+            <Label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.is_featured || false} onChange={(e) => update("is_featured", e.target.checked)} className="rounded" />
+              ⭐ Featured on Homepage
             </Label>
           </div>
         </div>
@@ -314,6 +318,7 @@ const Admin = () => {
       features: rv.features || {},
       is_sold: rv.is_sold || false,
       is_super_special: rv.is_super_special || false,
+      is_featured: rv.is_featured || false,
       sales_pro: rv.sales_pro || null,
     };
 
@@ -399,6 +404,7 @@ const Admin = () => {
                             {rv.title}
                             {rv.is_sold && <span className="ml-2 text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded">SOLD</span>}
                             {rv.is_super_special && <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded">⭐ SPECIAL</span>}
+                            {rv.is_featured && <span className="ml-2 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">⭐ FEATURED</span>}
                           </p>
                           <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
                           <p className="text-xs text-muted-foreground">{rv.location && `📍 ${rv.location}`}{rv.vin && ` · VIN: ${rv.vin}`}{rv.stock_number && ` · Stock #${rv.stock_number}`}{rv.sales_pro && ` · 🧑‍💼 ${rv.sales_pro}`}</p>
