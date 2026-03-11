@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Search, ArrowRight, Shield, Award, Globe, Truck, RefreshCw, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
