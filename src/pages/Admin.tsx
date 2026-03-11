@@ -281,7 +281,13 @@ const Admin = () => {
 
   useEffect(() => { if (authed) fetchListings(); }, [authed]);
 
-  const sortedListings = [...listings].sort((a, b) => {
+  const filteredListings = listings.filter((rv) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (rv.vin || "").toLowerCase().includes(q) || (rv.stock_number || "").toLowerCase().includes(q);
+  });
+
+  const sortedListings = [...filteredListings].sort((a, b) => {
     switch (sortBy) {
       case "oldest": return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
       case "az": return (a.title || "").localeCompare(b.title || "");
