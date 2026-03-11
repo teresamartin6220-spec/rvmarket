@@ -17,7 +17,7 @@ const Inventory = () => {
   const [typeFilter, setTypeFilter] = useState("All");
   const [maxPrice, setMaxPrice] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
-  const [sort, setSort] = useState<SortKey>("newest");
+  const [sort, setSort] = useState<SortKey>("price-asc");
 
   const filtered = useMemo(() => {
     let list = [...listings];
