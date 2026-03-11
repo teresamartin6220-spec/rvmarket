@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import type { DBListing } from "@/hooks/useListings";
 
-const ADMIN_PASS = "rvmarket2024";
+
 
 const SALES_PROS = ["TERESA MARTIN", "JOHNNY WOOL", "THOMAS WALKER", "SHERRY ROSS", "JANET WHITE", "SAM GILLS", "EMILY CARTER", "JAMES WHITAKER", "CHARLOTTE BENNETT", "THOMAS HARRINGTON", "SOPHIE MONTGOMERY"];
 
@@ -49,16 +49,35 @@ const emptyListing: Partial<DBListing> = {
 
 function AdminLogin({ onLogin }: { onLogin: () => void }) {
   const [pass, setPass] = useState("");
+  const [checking, setChecking] = useState(false);
+
+  const handleLogin = async () => {
+    if (!pass.trim()) return;
+    setChecking(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-login", {
+        body: { password: pass },
+      });
+      if (error) { toast.error("Login failed"); return; }
+      if (data?.valid) onLogin();
+      else toast.error("Invalid password");
+    } catch {
+      toast.error("Login failed");
+    } finally {
+      setChecking(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted">
       <div className="rounded-lg border bg-card p-8 w-full max-w-sm space-y-4">
         <h1 className="text-2xl font-bold font-heading text-foreground text-center">Admin Login</h1>
         <div>
           <Label>Password</Label>
-          <Input type="password" value={pass} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => e.key === "Enter" && pass === ADMIN_PASS && onLogin()} />
+          <Input type="password" value={pass} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleLogin()} />
         </div>
-        <Button className="w-full" onClick={() => { if (pass === ADMIN_PASS) onLogin(); else toast.error("Invalid password"); }}>
-          Login
+        <Button className="w-full" onClick={handleLogin} disabled={checking}>
+          {checking ? "Checking..." : "Login"}
         </Button>
       </div>
     </div>
