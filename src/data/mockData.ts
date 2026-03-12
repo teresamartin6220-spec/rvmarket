@@ -49,7 +49,6 @@ export interface RV {
   stockNumber: string;
   vin: string;
   price: number;
-  mileage: number;
   sleeps: number;
   transmission: string;
   condition: string;
@@ -195,7 +194,6 @@ function generateListings(): RV[] {
     const loc = locs[i % locs.length];
     const year = 2019 + (i % 5);
     const price = cfg.priceRange[0] + Math.round(((i * 3571) % (cfg.priceRange[1] - cfg.priceRange[0])));
-    const mileage = 1000 + ((i * 2731) % 50000);
     const sleeps = [2, 4, 6, 8][i % 4];
 
     listings.push({
@@ -211,7 +209,7 @@ function generateListings(): RV[] {
       transmission: transmissions[i % 2],
       condition: conditions[i % conditions.length],
       type: cfg.type,
-      description: `This ${year} ${cfg.brand} ${cfg.model} is in ${conditions[i % conditions.length].toLowerCase()} condition with ${mileage.toLocaleString()} miles. Features include a fully equipped kitchen, comfortable sleeping quarters for ${sleeps}, and all the amenities you need for your next adventure. Located in ${loc}, ${country}. Contact us today to schedule a viewing or learn more about financing options.`,
+      description: `This ${year} ${cfg.brand} ${cfg.model} is in ${conditions[i % conditions.length].toLowerCase()} condition with. Features include a fully equipped kitchen, comfortable sleeping quarters for ${sleeps}, and all the amenities you need for your next adventure. Contact us today to learn more about financing options.`,
       location: loc,
       country,
       images: getImages(i),
