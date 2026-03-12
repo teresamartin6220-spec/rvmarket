@@ -109,9 +109,10 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
                   <Input
                     type="number"
                     value={downPayment}
-                    onChange={(e) => setDownPayment(Number(e.target.value))}
+                    onChange={(e) => setDownPayment(e.target.value === "" ? "" : Number(e.target.value))}
                     min={0}
                     max={price}
+                    placeholder="Enter down payment"
                   />
                 </div>
                 <div>
