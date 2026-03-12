@@ -207,7 +207,6 @@ function generateListings(): RV[] {
       stockNumber: `STK-${1000 + id}`,
       vin: generateVIN(id),
       price,
-      mileage,
       sleeps,
       transmission: transmissions[i % 2],
       condition: conditions[i % conditions.length],
