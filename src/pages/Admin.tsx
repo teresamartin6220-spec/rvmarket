@@ -463,6 +463,10 @@ const Admin = () => {
             )}
           </TabsContent>
 
+          <TabsContent value="applications">
+            <ApplicationsTab />
+          </TabsContent>
+
           <TabsContent value="analytics">
             <AnalyticsDashboard />
           </TabsContent>
