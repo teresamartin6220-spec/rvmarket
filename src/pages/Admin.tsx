@@ -527,6 +527,15 @@ const Admin = () => {
                           <p className="text-xs text-muted-foreground">{rv.location && `📍 ${rv.location}`}{rv.vin && ` · VIN: ${rv.vin}`}{rv.stock_number && ` · Stock #${rv.stock_number}`}</p>
                         </div>
                         <div className="flex gap-2 shrink-0">
+                          <Button variant="outline" size="sm" onClick={async () => {
+                            const newHidden = !rv.is_hidden;
+                            const { error } = await supabase.from("rv_listings").update({ is_hidden: newHidden }).eq("id", rv.id);
+                            if (error) { toast.error("Failed to toggle visibility"); return; }
+                            toast.success(newHidden ? "Vehicle hidden" : "Vehicle visible");
+                            fetchListings();
+                          }} title={rv.is_hidden ? "Unhide" : "Hide"}>
+                            {rv.is_hidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                          </Button>
                           <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv, id: undefined, title: `${rv.title} (Copy)`, stock_number: null, vin: null })} title="Duplicate">
                             <Copy className="h-3.5 w-3.5" />
                           </Button>
