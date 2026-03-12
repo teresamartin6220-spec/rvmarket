@@ -9,7 +9,7 @@ import { RVCard } from "@/components/rv/RVCard";
 import { RV_TYPES } from "@/data/mockData";
 import { useListings } from "@/hooks/useListings";
 
-type SortKey = "price-asc" | "price-desc" | "newest" | "mileage";
+type SortKey = "price-asc" | "price-desc" | "newest" ;
 
 const Inventory = () => {
   const { listings, loading } = useListings();
