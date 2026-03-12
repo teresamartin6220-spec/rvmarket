@@ -20,7 +20,7 @@ const INTEREST_RATE = 3.7;
 
 export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculatorProps) {
   const [open, setOpen] = useState(false);
-  const [downPayment, setDownPayment] = useState(Math.round(price * 0.1));
+  const [downPayment, setDownPayment] = useState<number | "">("");
   const [loanTerm, setLoanTerm] = useState(60);
   const [applyOpen, setApplyOpen] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", countryCode: "US", phone: "" });

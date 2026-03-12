@@ -43,7 +43,7 @@ const CustomerCare = () => {
         {/* Contact Cards */}
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: Phone, title: "Call Us", value: companyInfo.phone, href: `tel:${companyInfo.phone}` },
+            { icon: Phone, title: "Text Us", value: companyInfo.textNumber, href: `sms:${companyInfo.textNumber.replace(/\D/g, '')}` },
             { icon: Mail, title: "Email Us", value: companyInfo.email, href: `mailto:${companyInfo.email}` },
             { icon: MessageCircle, title: "WhatsApp", value: "Chat with us", href: `https://wa.me/${companyInfo.whatsapp.replace(/\D/g, '')}` },
             { icon: Clock, title: "Business Hours", value: companyInfo.hours, href: undefined },
