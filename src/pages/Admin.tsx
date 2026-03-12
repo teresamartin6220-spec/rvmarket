@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -272,6 +272,86 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
   );
 }
 
+function ApplicationsTab() {
+  const [apps, setApps] = useState<any[]>([]);
+  const [inquiries, setInquiries] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<"financing" | "inquiries">("financing");
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      const [{ data: fin }, { data: inq }] = await Promise.all([
+        supabase.from("financing_applications").select("*").order("created_at", { ascending: false }),
+        supabase.from("inquiries").select("*").order("created_at", { ascending: false }),
+      ]);
+      setApps(fin || []);
+      setInquiries(inq || []);
+      setLoading(false);
+    };
+    load();
+  }, []);
+
+  if (loading) return <div className="text-center py-16 text-muted-foreground">Loading applications...</div>;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex gap-2">
+        <Button variant={tab === "financing" ? "default" : "outline"} size="sm" onClick={() => setTab("financing")}>
+          Financing Applications ({apps.length})
+        </Button>
+        <Button variant={tab === "inquiries" ? "default" : "outline"} size="sm" onClick={() => setTab("inquiries")}>
+          Inquiries ({inquiries.length})
+        </Button>
+      </div>
+
+      {tab === "financing" && (
+        <div className="space-y-3">
+          {apps.length === 0 ? (
+            <p className="text-center py-8 text-muted-foreground">No financing applications yet.</p>
+          ) : apps.map((app) => (
+            <div key={app.id} className="rounded-lg border bg-card p-4 space-y-2">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="font-semibold text-foreground">{app.name}</p>
+                  <p className="text-sm text-muted-foreground">{app.email}{app.phone && ` · ${app.phone}`}</p>
+                </div>
+                <span className="text-xs text-muted-foreground">{new Date(app.created_at).toLocaleDateString()}</span>
+              </div>
+              {app.rv_title && <p className="text-sm text-foreground">RV: {app.rv_title}</p>}
+              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                {app.rv_price != null && <span>Price: ${Number(app.rv_price).toLocaleString()}</span>}
+                {app.down_payment != null && <span>Down: ${Number(app.down_payment).toLocaleString()}</span>}
+                {app.loan_term && <span>Term: {app.loan_term} mo</span>}
+                {app.estimated_monthly != null && <span>Est. Monthly: ${Number(app.estimated_monthly).toLocaleString()}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === "inquiries" && (
+        <div className="space-y-3">
+          {inquiries.length === 0 ? (
+            <p className="text-center py-8 text-muted-foreground">No inquiries yet.</p>
+          ) : inquiries.map((inq) => (
+            <div key={inq.id} className="rounded-lg border bg-card p-4 space-y-2">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="font-semibold text-foreground">{inq.name}</p>
+                  <p className="text-sm text-muted-foreground">{inq.email}{inq.phone && ` · ${inq.phone}`}</p>
+                </div>
+                <span className="text-xs text-muted-foreground">{new Date(inq.created_at).toLocaleDateString()}</span>
+              </div>
+              {inq.rv_title && <p className="text-sm text-foreground">RV: {inq.rv_title}</p>}
+              {inq.message && <p className="text-sm text-muted-foreground">{inq.message}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest First" },
   { value: "oldest", label: "Oldest First" },
@@ -386,6 +466,9 @@ const Admin = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
             <TabsTrigger value="listings">Listings</TabsTrigger>
+            <TabsTrigger value="applications" className="flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5" /> Applications
+            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-1.5">
               <BarChart3 className="h-3.5 w-3.5" /> Analytics
             </TabsTrigger>
@@ -458,6 +541,10 @@ const Admin = () => {
                 )}
               </>
             )}
+          </TabsContent>
+
+          <TabsContent value="applications">
+            <ApplicationsTab />
           </TabsContent>
 
           <TabsContent value="analytics">
