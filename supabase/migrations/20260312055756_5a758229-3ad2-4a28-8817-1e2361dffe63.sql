@@ -1,0 +1,2 @@
+CREATE POLICY "Anyone can view financing apps" ON public.financing_applications FOR SELECT TO public USING (true);
+CREATE POLICY "Anyone can view inquiries" ON public.inquiries FOR SELECT TO public USING (true);
