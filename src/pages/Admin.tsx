@@ -113,7 +113,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
     setUploading(true);
     const newImages = [...(form.images || [])];
     for (const file of Array.from(files)) {
-      if (newImages.length >= 20) break;
+      if (newImages.length >= 30) break;
       const fileName = `${Date.now()}-${file.name}`;
       const { data, error } = await supabase.storage.from("rv-images").upload(fileName, file);
       if (error) { toast.error(`Failed to upload ${file.name}`); continue; }
