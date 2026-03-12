@@ -386,6 +386,9 @@ const Admin = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
             <TabsTrigger value="listings">Listings</TabsTrigger>
+            <TabsTrigger value="applications" className="flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5" /> Applications
+            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-1.5">
               <BarChart3 className="h-3.5 w-3.5" /> Analytics
             </TabsTrigger>
