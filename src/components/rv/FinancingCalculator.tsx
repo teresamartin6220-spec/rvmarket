@@ -49,7 +49,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
         name: form.name,
         email: form.email,
         phone: `${getDialCode(form.countryCode)} ${form.phone}`,
-        down_payment: downPayment,
+        down_payment: typeof downPayment === "number" ? downPayment : 0,
         loan_term: loanTerm,
         estimated_monthly: Math.round(monthlyPayment),
       };
