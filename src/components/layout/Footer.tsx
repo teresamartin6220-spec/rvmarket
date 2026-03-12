@@ -53,7 +53,6 @@ export function Footer() {
             <h4 className="font-heading font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-3 text-sm opacity-70">
               <li className="flex items-center gap-2"><MapPin className="h-4 w-4 shrink-0" /> {companyInfo.address}, {companyInfo.city}, {companyInfo.state}</li>
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0" /> {companyInfo.phone}</li>
               <li className="flex items-center gap-2"><Mail className="h-4 w-4 shrink-0" /> {companyInfo.email}</li>
               <li className="flex items-center gap-2"><Clock className="h-4 w-4 shrink-0" /> {companyInfo.hours}</li>
               <li className="flex items-center gap-2"><MessageCircle className="h-4 w-4 shrink-0" /> Text: {companyInfo.textNumber}</li>

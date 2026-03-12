@@ -20,7 +20,7 @@ const INTEREST_RATE = 3.7;
 
 export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculatorProps) {
   const [open, setOpen] = useState(false);
-  const [downPayment, setDownPayment] = useState(Math.round(price * 0.1));
+  const [downPayment, setDownPayment] = useState<number | "">("");
   const [loanTerm, setLoanTerm] = useState(60);
   const [applyOpen, setApplyOpen] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", countryCode: "US", phone: "" });
@@ -28,8 +28,8 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
   const { format, currency } = useCurrency();
 
   const monthlyPayment = useMemo(() => {
-    const principal = price - downPayment;
-    if (principal <= 0) return 0;
+    const dp = typeof downPayment === "number" ? downPayment : 0;
+    const principal = price - dp;
     const monthlyRate = INTEREST_RATE / 100 / 12;
     if (monthlyRate === 0) return principal / loanTerm;
     return (
@@ -49,7 +49,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
         name: form.name,
         email: form.email,
         phone: `${getDialCode(form.countryCode)} ${form.phone}`,
-        down_payment: downPayment,
+        down_payment: typeof downPayment === "number" ? downPayment : 0,
         loan_term: loanTerm,
         estimated_monthly: Math.round(monthlyPayment),
       };
@@ -109,9 +109,10 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
                   <Input
                     type="number"
                     value={downPayment}
-                    onChange={(e) => setDownPayment(Number(e.target.value))}
+                    onChange={(e) => setDownPayment(e.target.value === "" ? "" : Number(e.target.value))}
                     min={0}
                     max={price}
+                    placeholder="Enter down payment"
                   />
                 </div>
                 <div>
