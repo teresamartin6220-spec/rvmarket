@@ -94,7 +94,7 @@ const RVDetail = () => {
                 <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
                   <span className="flex items-center gap-1 text-sm"><MapPin className="h-4 w-4" /> {rv.location || "N/A"}</span>
                   <span className="flex items-center gap-1 text-sm"><Globe className="h-4 w-4" /> {rv.country || "N/A"}</span>
-                  {rv.sales_pro && <span className="text-sm font-medium text-primary">🧑‍💼 {rv.sales_pro}</span>}
+                  
                 </div>
               </div>
               <div className="flex flex-col items-start sm:items-end gap-1">
