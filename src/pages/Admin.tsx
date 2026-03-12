@@ -211,7 +211,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
           <label className="inline-flex items-center gap-2 cursor-pointer rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
             <Image className="h-4 w-4" />
             {uploading ? "Uploading..." : "Upload from device"}
-            <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} disabled={uploading || (form.images?.length || 0) >= 20} />
+            <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} disabled={uploading || (form.images?.length || 0) >= 30} />
           </label>
         </div>
         {form.images && form.images.length > 0 && (
