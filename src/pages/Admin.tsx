@@ -425,6 +425,7 @@ const Admin = () => {
       is_sold: rv.is_sold || false,
       is_super_special: rv.is_super_special || false,
       is_featured: rv.is_featured || false,
+      is_hidden: rv.is_hidden || false,
       sales_pro: rv.sales_pro || null,
     };
 
