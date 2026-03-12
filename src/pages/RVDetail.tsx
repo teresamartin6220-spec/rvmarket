@@ -189,7 +189,7 @@ const RVDetail = () => {
                 <p>🕐 {companyInfo.hours}</p>
               </div>
             </div>
-            <div id="contact"><ContactForm rvTitle={rv.title} rvId={rv.id} /></div>
+            <div id="contact"><ContactForm rvTitle={rv.title} rvId={rv.id} stockNumber={rv.stock_number} /></div>
           </div>
         </div>
       </div>

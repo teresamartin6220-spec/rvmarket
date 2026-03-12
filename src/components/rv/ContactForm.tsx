@@ -57,13 +57,13 @@ export function ContactForm({ rvTitle, rvId, stockNumber }: ContactFormProps) {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <a href={`sms:${companyInfo.textNumber.replace(/\D/g, '')}?body=${encodeURIComponent(`Hi, I'm interested in the ${rvTitle}`)}`} className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
+        <a href={`sms:${companyInfo.textNumber.replace(/\D/g, '')}?body=${encodeURIComponent(`Hi, I'm interested in the ${contactLabel}`)}`} className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
           <Phone className="h-4 w-4 text-primary" /> Text Us
         </a>
-        <a href={`mailto:${companyInfo.email}?subject=${encodeURIComponent(`RV Inquiry - ${rvTitle}`)}`} className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
+        <a href={`mailto:${companyInfo.email}?subject=${encodeURIComponent(`RV Inquiry - ${contactLabel}`)}`} className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
           <Mail className="h-4 w-4 text-primary" /> Email Us
         </a>
-        <a href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in the ${rvTitle}`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
+        <a href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi, I'm interested in the ${contactLabel}`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
           <MessageCircle className="h-4 w-4 text-primary" /> WhatsApp
         </a>
       </div>
