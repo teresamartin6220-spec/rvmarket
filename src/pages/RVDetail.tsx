@@ -88,8 +88,7 @@ const RVDetail = () => {
                   <span>{rv.brand}</span>
                   <span>·</span>
                   <span>Stock #{rv.stock_number || "N/A"}</span>
-                  <span className="hidden sm:inline">·</span>
-                  <span className="break-all">VIN: {rv.vin || "N/A"}</span>
+                  
                 </div>
                 <h1 className="text-2xl md:text-3xl font-bold font-heading text-foreground break-words">{rv.title}</h1>
                 <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
