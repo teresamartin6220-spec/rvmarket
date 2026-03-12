@@ -14,7 +14,6 @@ const overviewSpecs: Array<{ key: string; icon: typeof Calendar; label: string; 
   { key: "year", icon: Calendar, label: "Year" },
   { key: "mileage", icon: Gauge, label: "Mileage", format: (v: number) => `${v.toLocaleString()} mi` },
   { key: "sleeps", icon: Users, label: "Sleeps" },
-  { key: "vin", icon: Hash, label: "VIN #" },
   { key: "condition", icon: Shield, label: "Condition" },
 ];
 
@@ -58,8 +57,6 @@ const RVDetail = () => {
     year: rv.year,
     mileage: rv.mileage,
     sleeps: rv.sleeps,
-    vin: rv.vin || "N/A",
-    transmission: rv.transmission || "N/A",
     condition: rv.condition || "N/A",
   };
 
@@ -89,14 +86,13 @@ const RVDetail = () => {
                   <span>{rv.brand}</span>
                   <span>·</span>
                   <span>Stock #{rv.stock_number || "N/A"}</span>
-                  <span className="hidden sm:inline">·</span>
-                  <span className="break-all">VIN: {rv.vin || "N/A"}</span>
+                  
                 </div>
                 <h1 className="text-2xl md:text-3xl font-bold font-heading text-foreground break-words">{rv.title}</h1>
                 <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
                   <span className="flex items-center gap-1 text-sm"><MapPin className="h-4 w-4" /> {rv.location || "N/A"}</span>
                   <span className="flex items-center gap-1 text-sm"><Globe className="h-4 w-4" /> {rv.country || "N/A"}</span>
-                  {rv.sales_pro && <span className="text-sm font-medium text-primary">🧑‍💼 {rv.sales_pro}</span>}
+                  
                 </div>
               </div>
               <div className="flex flex-col items-start sm:items-end gap-1">

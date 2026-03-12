@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy, FileText, EyeOff, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,7 +43,7 @@ const emptyListing: Partial<DBListing> = {
   title: "", brand: "", model: "", year: 2024, stock_number: "", vin: "",
   price: 0, mileage: 0, sleeps: 4, transmission: "Automatic",
   condition: "Excellent", type: "THOR MAJESTIC 23A",
-  description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false, is_featured: false, sales_pro: null,
+  description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false, is_featured: false, is_hidden: false, sales_pro: null,
   specs: {}, features: {},
 };
 
@@ -113,7 +113,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
     setUploading(true);
     const newImages = [...(form.images || [])];
     for (const file of Array.from(files)) {
-      if (newImages.length >= 20) break;
+      if (newImages.length >= 30) break;
       const fileName = `${Date.now()}-${file.name}`;
       const { data, error } = await supabase.storage.from("rv-images").upload(fileName, file);
       if (error) { toast.error(`Failed to upload ${file.name}`); continue; }
@@ -200,10 +200,10 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
       {/* Images */}
       <div>
-        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 20)</h3>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 30)</h3>
         <div className="flex gap-2 mt-2">
           <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste image URL..." className="flex-1" />
-          <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 20}>
+          <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 30}>
             <Plus className="h-4 w-4" />
           </Button>
         </div>
@@ -211,7 +211,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
           <label className="inline-flex items-center gap-2 cursor-pointer rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition">
             <Image className="h-4 w-4" />
             {uploading ? "Uploading..." : "Upload from device"}
-            <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} disabled={uploading || (form.images?.length || 0) >= 20} />
+            <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} disabled={uploading || (form.images?.length || 0) >= 30} />
           </label>
         </div>
         {form.images && form.images.length > 0 && (
@@ -425,6 +425,7 @@ const Admin = () => {
       is_sold: rv.is_sold || false,
       is_super_special: rv.is_super_special || false,
       is_featured: rv.is_featured || false,
+      is_hidden: rv.is_hidden || false,
       sales_pro: rv.sales_pro || null,
     };
 
@@ -520,11 +521,21 @@ const Admin = () => {
                             {rv.is_sold && <span className="ml-2 text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded">SOLD</span>}
                             {rv.is_super_special && <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded">⭐ SPECIAL</span>}
                             {rv.is_featured && <span className="ml-2 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">⭐ FEATURED</span>}
+                            {rv.is_hidden && <span className="ml-2 text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">HIDDEN</span>}
                           </p>
                           <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
-                          <p className="text-xs text-muted-foreground">{rv.location && `📍 ${rv.location}`}{rv.vin && ` · VIN: ${rv.vin}`}{rv.stock_number && ` · Stock #${rv.stock_number}`}{rv.sales_pro && ` · 🧑‍💼 ${rv.sales_pro}`}</p>
+                          <p className="text-xs text-muted-foreground">{rv.location && `📍 ${rv.location}`}{rv.vin && ` · VIN: ${rv.vin}`}{rv.stock_number && ` · Stock #${rv.stock_number}`}</p>
                         </div>
                         <div className="flex gap-2 shrink-0">
+                          <Button variant="outline" size="sm" onClick={async () => {
+                            const newHidden = !rv.is_hidden;
+                            const { error } = await supabase.from("rv_listings").update({ is_hidden: newHidden }).eq("id", rv.id);
+                            if (error) { toast.error("Failed to toggle visibility"); return; }
+                            toast.success(newHidden ? "Vehicle hidden" : "Vehicle visible");
+                            fetchListings();
+                          }} title={rv.is_hidden ? "Unhide" : "Hide"}>
+                            {rv.is_hidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                          </Button>
                           <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv, id: undefined, title: `${rv.title} (Copy)`, stock_number: null, vin: null })} title="Duplicate">
                             <Copy className="h-3.5 w-3.5" />
                           </Button>
