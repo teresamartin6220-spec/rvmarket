@@ -58,7 +58,6 @@ const RVDetail = () => {
     mileage: rv.mileage,
     sleeps: rv.sleeps,
     condition: rv.condition || "N/A",
-    condition: rv.condition || "N/A",
   };
 
   const featureSections = [
