@@ -12,10 +12,12 @@ import { toast } from "sonner";
 interface ContactFormProps {
   rvTitle: string;
   rvId?: string;
+  stockNumber?: string | null;
 }
 
-export function ContactForm({ rvTitle, rvId }: ContactFormProps) {
-  const [form, setForm] = useState({ name: "", email: "", countryCode: "US", phone: "", message: `I'm interested in the ${rvTitle}. Please send me more information.` });
+export function ContactForm({ rvTitle, rvId, stockNumber }: ContactFormProps) {
+  const contactLabel = `${rvTitle}${stockNumber ? ` (Stock #${stockNumber})` : ""}`;
+  const [form, setForm] = useState({ name: "", email: "", countryCode: "US", phone: "", message: `I'm interested in the ${contactLabel}. Please send me more information.` });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
