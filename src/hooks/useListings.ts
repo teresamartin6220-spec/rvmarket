@@ -10,7 +10,6 @@ export interface DBListing {
   stock_number: string | null;
   vin: string | null;
   price: number;
-  mileage: number;
   sleeps: number;
   transmission: string | null;
   condition: string | null;
