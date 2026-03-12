@@ -28,8 +28,8 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
   const { format, currency } = useCurrency();
 
   const monthlyPayment = useMemo(() => {
-    const principal = price - downPayment;
-    if (principal <= 0) return 0;
+    const dp = typeof downPayment === "number" ? downPayment : 0;
+    const principal = price - dp;
     const monthlyRate = INTEREST_RATE / 100 / 12;
     if (monthlyRate === 0) return principal / loanTerm;
     return (
