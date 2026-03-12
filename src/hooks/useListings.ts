@@ -22,6 +22,7 @@ export interface DBListing {
   specs: any;
   features: any;
   is_sold: boolean | null;
+  is_hidden: boolean | null;
   is_super_special: boolean | null;
   is_featured: boolean | null;
   sales_pro: string | null;
