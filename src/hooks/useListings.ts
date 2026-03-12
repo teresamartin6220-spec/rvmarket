@@ -37,6 +37,7 @@ export function useListings() {
     const { data, error } = await supabase
       .from("rv_listings")
       .select("*")
+      .eq("is_hidden", false)
       .order("created_at", { ascending: false });
     if (!error) setListings(data || []);
     setLoading(false);

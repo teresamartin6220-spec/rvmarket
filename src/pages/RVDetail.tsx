@@ -57,8 +57,7 @@ const RVDetail = () => {
     year: rv.year,
     mileage: rv.mileage,
     sleeps: rv.sleeps,
-    vin: rv.vin || "N/A",
-    transmission: rv.transmission || "N/A",
+    condition: rv.condition || "N/A",
     condition: rv.condition || "N/A",
   };
 
