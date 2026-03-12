@@ -352,8 +352,7 @@ function ApplicationsTab() {
     </div>
   );
 }
-
-
+const SORT_OPTIONS = [
   { value: "newest", label: "Newest First" },
   { value: "oldest", label: "Oldest First" },
   { value: "az", label: "A → Z" },
