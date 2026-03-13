@@ -16,10 +16,7 @@ import type { DBListing } from "@/hooks/useListings";
 
 
 
-const SALES_PROS = ["TERESA MARTIN", "JOHNNY WOOL", "THOMAS WALKER", "SHERRY ROSS", "JANET WHITE", "SAM GILLS", "EMILY CARTER", "JAMES WHITAKER", "CHARLOTTE BENNETT", "THOMAS HARRINGTON", "SOPHIE MONTGOMERY"];
-
-const SPEC_FIELDS = [
-  { key: "sleepingCapacity", label: "Sleeping Capacity", placeholder: "e.g. 6" },
+const TOGGLEABLE_SPEC_FIELDS = [
   { key: "generator", label: "Generator", placeholder: "e.g. 4KW Onan Microlite" },
   { key: "fuelTankCapacity", label: "Fuel Tank Capacity", placeholder: "e.g. 55 gal." },
   { key: "freshWaterCapacity", label: "Fresh Water Capacity", placeholder: "e.g. 40 gal." },
@@ -27,6 +24,9 @@ const SPEC_FIELDS = [
   { key: "greyTankCapacity", label: "Grey Tank Capacity", placeholder: "e.g. 22 gal." },
   { key: "blackTankCapacity", label: "Black Tank Capacity", placeholder: "e.g. 25 gal." },
   { key: "hotWaterCapacity", label: "Hot Water Capacity", placeholder: "e.g. 6 gal." },
+];
+
+const ALWAYS_VISIBLE_SPEC_FIELDS = [
   { key: "gvwr", label: "GVWR", placeholder: "e.g. 12,500 lbs." },
   { key: "exteriorLength", label: "Exterior Length", placeholder: "e.g. 25 ft." },
   { key: "exteriorHeight", label: "Exterior Height", placeholder: "e.g. 10.7 ft." },
