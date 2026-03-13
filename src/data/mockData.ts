@@ -14,16 +14,6 @@ export const RV_TYPES = [
   "TIFFIN ADVENTURE 28TM",
   "WINNEBAGO MINNIE WINNIE 325AR",
   "WINNEBAGO MINNIE WINNIE 328QR",
-  "ULTRA-LIGHT TRAVEL TRAILER",
-  "FIFTH WHEEL",
-  "TRAVEL TRAILER",
-  "FIFTH WHEEL",
-  "CLASS A MOTORHOME",
-  "FIFTH WHEEL TOY HAULER",
-  "DESTINATION TRAILER",
-  "TRAVEL TRAILER (Bunkhouse)",
-  "TRAVEL TRAILER (Ultra-Lite)",
-  "TRAVEL TRAILER / FIFTH WHEEL",
 ] as const;
 
 export type RVType = typeof RV_TYPES[number];
@@ -59,6 +49,7 @@ export interface RV {
   stockNumber: string;
   vin: string;
   price: number;
+  mileage: number;
   sleeps: number;
   transmission: string;
   condition: string;
@@ -195,52 +186,6 @@ function generateListings(): RV[] {
     { type: "TIFFIN ADVENTURE 28TM" as RVType, brand: "Tiffin", model: "Adventure 28TM", priceRange: [95000, 145000] },
     { type: "WINNEBAGO MINNIE WINNIE 325AR" as RVType, brand: "Winnebago", model: "Minnie Winnie 325AR", priceRange: [90000, 135000] },
     { type: "WINNEBAGO MINNIE WINNIE 328QR" as RVType, brand: "Winnebago", model: "Minnie Winnie 328QR", priceRange: [95000, 150000] },
-    { type: "ULTRA-LIGHT TRAVEL TRAILER" as RVType, brand: "Coachemn", model: "Clipper Cadet 17CBH", priceRange: [0, 40000] },
-    { type: "ULTRA-LIGHT TRAVEL TRAILER" as RVType, brand: "Jayco", model: "Jay Feather 218", priceRange: [0, 40000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "Grand Design", model: "Reflection 280RS", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "CrossRoads", model: "Volante 29RB", priceRange: [0, 40000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Prime Time", model: "Avenger 27DBS", priceRange: [0, 40000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "Heartland", model: "Bighorn 3160EL", priceRange: [0, 40000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "Heartland", model: "Sundance Ultra Lite 255BH", priceRange: [0, 40000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Forest River", model: "Tracer Air 255", priceRange: [0, 40000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "CrossRoads", model: "Zinger 260RL", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Forest River", model: "Puma 31RLQS", priceRange: [0, 50000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "Dutchment", model: "Denali 28RK", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Palomino", model: "Puma 26FKDS", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Gulf Stream", model: "Cavalier 6280", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Jayco", model: "Jay Flight SLX 250BHW", priceRange: [0, 50000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "Forest River", model: "Blue Ridge 2950RK", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Jayco", model: "Jay Flight SLX 210QBW", priceRange: [0, 50000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "Northwood", model: "Arctic Fox Grande Ronde 36-5VS", priceRange: [0, 80000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "East to West", model: "Della Terra 28KRD", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Jayco", model: "Jay Flight SLX 263HSW", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Lance Camper", model: "1985", priceRange: [0, 50000] },
-    { type: "CLASS A MOTORHOME" as RVType, brand: "Thor Motor Coach", model: "Miramar 37.1", priceRange: [0, 50000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "CrossRoads", model: "Cruiser 29RK", priceRange: [0, 50000] },
-    { type: "FIFTH WHEEL TOY HAULER" as RVType, brand: "Forest River", model: "Wolf Pack 325PACK13", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Gulf Stream", model: "Kingsport 281RL", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Forest River", model: "Vibe 6504", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Forest River (Rockwood)", model: "Rockwood Ultra Lite 2608BS", priceRange: [0, 50000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "Lifestyle Luxury", model: "Lifestyle LS37CKSL", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Starcraft", model: "Super Lite 233ML", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Dutchmen", model: "Kodiak Ultimate 292FKDS", priceRange: [0, 50000] },
-    { type: "CLASS A MOTORHOME" as RVType, brand: "Newmar", model: "Bay Star Sport 2702", priceRange: [0, 50000] },
-    { type: "FIFTH WHEEL TOY HAULER" as RVType, brand: "Dutchmen", model: "Voltage 3950", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Keystone", model: "Springdale 260BH", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Grand Design", model: "Transcend Xplor 221RB", priceRange: [0, 50000] },
-    { type: "CLASS A MOTORHOME" as RVType, brand: "Itasca", model: "Sunrise 31W", priceRange: [0, 50000] },
-    { type: "CLASS A MOTORHOME" as RVType, brand: "Winnebago", model: "Adventurer 35U", priceRange: [0, 50000] },
-    { type: "CLASS A MOTORHOME" as RVType, brand: "Coachmen (by Forest River)", model: "Catalina 240WB", priceRange: [0, 50000] },
-    { type: "DESTINATION TRAILER" as RVType, brand: "Forest River (Cherokee)", model: "Timberwolf 39DL", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Starcraft", model: "Autumn Ridge 29RH", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "CrossRoads", model: "Zinger 280RB", priceRange: [0, 50000] },
-    { type: "FIFTH WHEEL" as RVType, brand: "Forest River (Columbus)", model: "River Ranch 391MK", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Forest River (Salem)", model: "Salem 27RK", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER (Ultra-Lite)" as RVType, brand: "Keystone", model: "Bullet 261RBS", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Heartland", model: "Pioneer DS320", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER / FIFTH WHEEL" as RVType, brand: "Dutchmen", model: "Astoria", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER" as RVType, brand: "Coleman (by Dutchmen)", model: "Expedition CTS192RD", priceRange: [0, 50000] },
-    { type: "TRAVEL TRAILER (Bunkhouse)" as RVType, brand: "Forest River (Vibe)", model: "Vibe 34BH", priceRange: [0, 50000] },    
   ];
 
   for (let i = 0; i < 25; i++) {
@@ -250,6 +195,7 @@ function generateListings(): RV[] {
     const loc = locs[i % locs.length];
     const year = 2019 + (i % 5);
     const price = cfg.priceRange[0] + Math.round(((i * 3571) % (cfg.priceRange[1] - cfg.priceRange[0])));
+    const mileage = 1000 + ((i * 2731) % 50000);
     const sleeps = [2, 4, 6, 8][i % 4];
 
     listings.push({
@@ -261,11 +207,12 @@ function generateListings(): RV[] {
       stockNumber: `STK-${1000 + id}`,
       vin: generateVIN(id),
       price,
+      mileage,
       sleeps,
       transmission: transmissions[i % 2],
       condition: conditions[i % conditions.length],
       type: cfg.type,
-      description: `This ${year} ${cfg.brand} ${cfg.model} is in ${conditions[i % conditions.length].toLowerCase()} condition with. Features include a fully equipped kitchen, comfortable sleeping quarters for ${sleeps}, and all the amenities you need for your next adventure. Contact us today to learn more about financing options.`,
+      description: `This ${year} ${cfg.brand} ${cfg.model} is in ${conditions[i % conditions.length].toLowerCase()} condition with ${mileage.toLocaleString()} miles. Features include a fully equipped kitchen, comfortable sleeping quarters for ${sleeps}, and all the amenities you need for your next adventure. Located in ${loc}, ${country}. Contact us today to schedule a viewing or learn more about financing options.`,
       location: loc,
       country,
       images: getImages(i),

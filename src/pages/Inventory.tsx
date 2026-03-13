@@ -9,7 +9,7 @@ import { RVCard } from "@/components/rv/RVCard";
 import { RV_TYPES } from "@/data/mockData";
 import { useListings } from "@/hooks/useListings";
 
-type SortKey = "price-asc" | "price-desc" | "newest" ;
+type SortKey = "price-asc" | "price-desc" | "newest" | "mileage";
 
 const Inventory = () => {
   const { listings, loading } = useListings();
@@ -33,6 +33,7 @@ const Inventory = () => {
       case "price-asc": list.sort((a, b) => a.price - b.price); break;
       case "price-desc": list.sort((a, b) => b.price - a.price); break;
       case "newest": list.sort((a, b) => b.year - a.year); break;
+      case "mileage": list.sort((a, b) => a.mileage - b.mileage); break;
     }
 
     return list;
@@ -65,7 +66,7 @@ const Inventory = () => {
               <SelectItem value="newest">Newest</SelectItem>
               <SelectItem value="price-asc">Price: Low → High</SelectItem>
               <SelectItem value="price-desc">Price: High → Low</SelectItem>
-              
+              <SelectItem value="mileage">Mileage</SelectItem>
             </SelectContent>
           </Select>
           <span className="text-sm text-muted-foreground">{filtered.length} results</span>
