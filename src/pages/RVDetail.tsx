@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Calendar, Gauge, Users, Cog, Shield, Globe, Hash, AlertTriangle } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Users, Cog, Shield, Globe, Hash, AlertTriangle } from "lucide-react";
 import { companyInfo, DISCLAIMER } from "@/data/mockData";
 import { ImageGallery } from "@/components/rv/ImageGallery";
 import { ShareButton } from "@/components/rv/ShareButton";

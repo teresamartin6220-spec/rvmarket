@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Users, Gauge, Heart, Sparkles } from "lucide-react";
+import { MapPin, Users, Heart, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import type { RV } from "@/data/mockData";
