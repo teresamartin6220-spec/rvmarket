@@ -229,7 +229,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Specifications</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {SPEC_FIELDS.map(({ key, label, placeholder }) => (
+          {ALWAYS_VISIBLE_SPEC_FIELDS.map(({ key, label, placeholder }) => (
             <div key={key}>
               <Label>{label}</Label>
               <Input
@@ -239,6 +239,33 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               />
             </div>
           ))}
+        </div>
+        <h4 className="font-heading font-medium text-foreground mt-6 mb-3">Optional Specs (toggle to enable)</h4>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {TOGGLEABLE_SPEC_FIELDS.map(({ key, label, placeholder }) => {
+            const hasValue = !!(form.specs as any)?.[key];
+            return (
+              <div key={key} className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label>{label}</Label>
+                  <Switch
+                    checked={hasValue}
+                    onCheckedChange={(checked) => {
+                      if (!checked) updateSpec(key, "");
+                    }}
+                  />
+                </div>
+                {hasValue || true ? (
+                  <Input
+                    value={(form.specs as any)?.[key] || ""}
+                    onChange={(e) => updateSpec(key, e.target.value)}
+                    placeholder={placeholder}
+                    disabled={false}
+                  />
+                ) : null}
+              </div>
+            );
+          })}
         </div>
       </div>
 
