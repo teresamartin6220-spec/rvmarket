@@ -158,22 +158,18 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               <SelectContent>{["Like New", "Excellent", "Good", "Fair"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <div><Label>Location</Label><Input value={form.location || ""} onChange={(e) => update("location", e.target.value)} placeholder="e.g. Denver, CO" /></div>
+          <div>
+            <Label>Location</Label>
+            <Select value={form.location || ""} onValueChange={(v) => update("location", v)}>
+              <SelectTrigger><SelectValue placeholder="Select location..." /></SelectTrigger>
+              <SelectContent>{US_LOCATIONS.map((loc) => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
           <div>
             <Label>Country</Label>
             <Select value={form.country || "USA"} onValueChange={(v) => update("country", v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{["USA", "Canada", "UK", "Australia"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Sales Pro</Label>
-            <Select value={form.sales_pro || "none"} onValueChange={(v) => update("sales_pro", v === "none" ? null : v)}>
-              <SelectTrigger><SelectValue placeholder="Select Sales Pro" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                {SALES_PROS.map((sp) => <SelectItem key={sp} value={sp}>{sp}</SelectItem>)}
-              </SelectContent>
             </Select>
           </div>
           <div className="flex items-end gap-4 flex-wrap">
