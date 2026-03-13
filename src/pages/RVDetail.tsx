@@ -38,7 +38,6 @@ const RVDetail = () => {
   const features = rv.features && typeof rv.features === "object" ? rv.features as Record<string, any> : {};
 
   const specEntries = [
-    { label: "Sleeping Capacity", value: specs.sleepingCapacity ? `${specs.sleepingCapacity} people` : null },
     { label: "Generator", value: specs.generator },
     { label: "Fuel Tank Capacity", value: specs.fuelTankCapacity },
     { label: "Fresh Water Capacity", value: specs.freshWaterCapacity },
