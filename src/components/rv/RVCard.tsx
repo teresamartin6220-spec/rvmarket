@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Users, Gauge, Heart, Sparkles } from "lucide-react";
+import { MapPin, Users, Heart, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import type { RV } from "@/data/mockData";
@@ -78,7 +78,6 @@ export function RVCard({ rv, index = 0 }: RVCardProps) {
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{rv.location}</span>
           <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />Sleeps {rv.sleeps}</span>
-          <span className="flex items-center gap-1"><Gauge className="h-3.5 w-3.5" />{rv.mileage.toLocaleString()} mi</span>
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t">

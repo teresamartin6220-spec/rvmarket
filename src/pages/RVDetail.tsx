@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Calendar, Gauge, Users, Cog, Shield, Globe, Hash, AlertTriangle } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Users, Cog, Shield, Globe, Hash, AlertTriangle } from "lucide-react";
 import { companyInfo, DISCLAIMER } from "@/data/mockData";
 import { ImageGallery } from "@/components/rv/ImageGallery";
 import { ShareButton } from "@/components/rv/ShareButton";
@@ -12,7 +12,6 @@ import { useListingById } from "@/hooks/useListings";
 
 const overviewSpecs: Array<{ key: string; icon: typeof Calendar; label: string; format?: (v: any) => string }> = [
   { key: "year", icon: Calendar, label: "Year" },
-  { key: "mileage", icon: Gauge, label: "Mileage", format: (v: number) => `${v.toLocaleString()} mi` },
   { key: "sleeps", icon: Users, label: "Sleeps" },
   { key: "condition", icon: Shield, label: "Condition" },
 ];
@@ -39,7 +38,6 @@ const RVDetail = () => {
   const features = rv.features && typeof rv.features === "object" ? rv.features as Record<string, any> : {};
 
   const specEntries = [
-    { label: "Sleeping Capacity", value: specs.sleepingCapacity ? `${specs.sleepingCapacity} people` : null },
     { label: "Generator", value: specs.generator },
     { label: "Fuel Tank Capacity", value: specs.fuelTankCapacity },
     { label: "Fresh Water Capacity", value: specs.freshWaterCapacity },

@@ -6,14 +6,31 @@ import rvInterior1 from "@/assets/rv-interior-1.jpg";
 import rvInterior2 from "@/assets/rv-interior-2.jpg";
 
 export const RV_TYPES = [
+  "CLASS A MOTORHOME",
   "COACHMEN APEX 16 TRAVEL TRAILER",
+  "DESTINATION TRAILER",
+  "FIFTH WHEEL",
+  "FIFTH WHEEL TOY HAULER",
   "THOR MAJESTIC 19G",
   "THOR MAJESTIC 23A",
   "THOR MAJESTIC 28A",
   "TIFFIN ADVENTURE 23TM",
   "TIFFIN ADVENTURE 28TM",
+  "TRAVEL TRAILER",
+  "TRAVEL TRAILER (Bunkhouse)",
+  "TRAVEL TRAILER (Ultra-Lite)",
+  "TRAVEL TRAILER / FIFTH WHEEL",
+  "ULTRA-LIGHT TRAVEL TRAILER",
   "WINNEBAGO MINNIE WINNIE 325AR",
   "WINNEBAGO MINNIE WINNIE 328QR",
+] as const;
+
+export const US_LOCATIONS = [
+  "Dallas, TX", "Houston, TX", "Austin, TX", "San Antonio, TX", "Fort Worth, TX",
+  "Denver, CO", "Phoenix, AZ", "Tucson, AZ", "Las Vegas, NV", "Orlando, FL",
+  "Tampa, FL", "Miami, FL", "Atlanta, GA", "Charlotte, NC", "Nashville, TN",
+  "Seattle, WA", "Portland, OR", "Salt Lake City, UT", "Boise, ID", "Albuquerque, NM",
+  "Oklahoma City, OK", "Kansas City, MO", "Memphis, TN", "Raleigh, NC", "Jacksonville, FL",
 ] as const;
 
 export type RVType = typeof RV_TYPES[number];

@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RV_TYPES } from "@/data/mockData";
+import { RV_TYPES, US_LOCATIONS } from "@/data/mockData";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -15,10 +16,7 @@ import type { DBListing } from "@/hooks/useListings";
 
 
 
-const SALES_PROS = ["TERESA MARTIN", "JOHNNY WOOL", "THOMAS WALKER", "SHERRY ROSS", "JANET WHITE", "SAM GILLS", "EMILY CARTER", "JAMES WHITAKER", "CHARLOTTE BENNETT", "THOMAS HARRINGTON", "SOPHIE MONTGOMERY"];
-
-const SPEC_FIELDS = [
-  { key: "sleepingCapacity", label: "Sleeping Capacity", placeholder: "e.g. 6" },
+const TOGGLEABLE_SPEC_FIELDS = [
   { key: "generator", label: "Generator", placeholder: "e.g. 4KW Onan Microlite" },
   { key: "fuelTankCapacity", label: "Fuel Tank Capacity", placeholder: "e.g. 55 gal." },
   { key: "freshWaterCapacity", label: "Fresh Water Capacity", placeholder: "e.g. 40 gal." },
@@ -26,6 +24,9 @@ const SPEC_FIELDS = [
   { key: "greyTankCapacity", label: "Grey Tank Capacity", placeholder: "e.g. 22 gal." },
   { key: "blackTankCapacity", label: "Black Tank Capacity", placeholder: "e.g. 25 gal." },
   { key: "hotWaterCapacity", label: "Hot Water Capacity", placeholder: "e.g. 6 gal." },
+];
+
+const ALWAYS_VISIBLE_SPEC_FIELDS = [
   { key: "gvwr", label: "GVWR", placeholder: "e.g. 12,500 lbs." },
   { key: "exteriorLength", label: "Exterior Length", placeholder: "e.g. 25 ft." },
   { key: "exteriorHeight", label: "Exterior Height", placeholder: "e.g. 10.7 ft." },
@@ -157,22 +158,18 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               <SelectContent>{["Like New", "Excellent", "Good", "Fair"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <div><Label>Location</Label><Input value={form.location || ""} onChange={(e) => update("location", e.target.value)} placeholder="e.g. Denver, CO" /></div>
+          <div>
+            <Label>Location</Label>
+            <Select value={form.location || ""} onValueChange={(v) => update("location", v)}>
+              <SelectTrigger><SelectValue placeholder="Select location..." /></SelectTrigger>
+              <SelectContent>{US_LOCATIONS.map((loc) => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
           <div>
             <Label>Country</Label>
             <Select value={form.country || "USA"} onValueChange={(v) => update("country", v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{["USA", "Canada", "UK", "Australia"].map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Sales Pro</Label>
-            <Select value={form.sales_pro || "none"} onValueChange={(v) => update("sales_pro", v === "none" ? null : v)}>
-              <SelectTrigger><SelectValue placeholder="Select Sales Pro" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                {SALES_PROS.map((sp) => <SelectItem key={sp} value={sp}>{sp}</SelectItem>)}
-              </SelectContent>
             </Select>
           </div>
           <div className="flex items-end gap-4 flex-wrap">
@@ -232,7 +229,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Specifications</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {SPEC_FIELDS.map(({ key, label, placeholder }) => (
+          {ALWAYS_VISIBLE_SPEC_FIELDS.map(({ key, label, placeholder }) => (
             <div key={key}>
               <Label>{label}</Label>
               <Input
@@ -242,6 +239,33 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
               />
             </div>
           ))}
+        </div>
+        <h4 className="font-heading font-medium text-foreground mt-6 mb-3">Optional Specs (toggle to enable)</h4>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {TOGGLEABLE_SPEC_FIELDS.map(({ key, label, placeholder }) => {
+            const hasValue = !!(form.specs as any)?.[key];
+            return (
+              <div key={key} className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label>{label}</Label>
+                  <Switch
+                    checked={hasValue}
+                    onCheckedChange={(checked) => {
+                      if (!checked) updateSpec(key, "");
+                    }}
+                  />
+                </div>
+                {hasValue || true ? (
+                  <Input
+                    value={(form.specs as any)?.[key] || ""}
+                    onChange={(e) => updateSpec(key, e.target.value)}
+                    placeholder={placeholder}
+                    disabled={false}
+                  />
+                ) : null}
+              </div>
+            );
+          })}
         </div>
       </div>
 
