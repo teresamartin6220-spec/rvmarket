@@ -564,8 +564,21 @@ const Admin = () => {
             ) : (
               <>
                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-                   <p className="text-muted-foreground">{filteredListings.length} of {listings.length} listing(s)</p>
+                   <p className="text-muted-foreground">{filteredListings.length} of {listings.length} listing(s){selectedIds.size > 0 && ` · ${selectedIds.size} selected`}</p>
                    <div className="flex flex-wrap items-center gap-3">
+                     {selectedIds.size > 0 && (
+                       <>
+                         <Button variant="outline" size="sm" onClick={() => bulkHide(true)}>
+                           <EyeOff className="h-3.5 w-3.5 mr-1" /> Hide Selected
+                         </Button>
+                         <Button variant="outline" size="sm" onClick={() => bulkHide(false)}>
+                           <Eye className="h-3.5 w-3.5 mr-1" /> Show Selected
+                         </Button>
+                         <Button variant="destructive" size="sm" onClick={bulkDelete}>
+                           <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete Selected
+                         </Button>
+                       </>
+                     )}
                      <Input
                        placeholder="Search VIN or Stock #..."
                        value={searchQuery}
