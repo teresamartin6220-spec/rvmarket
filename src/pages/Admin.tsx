@@ -111,6 +111,17 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
     }
   };
 
+  const addBulkImages = () => {
+    const urls = bulkImageUrls.split(/[\n,]+/).map(u => u.trim()).filter(u => u && (u.startsWith("http://") || u.startsWith("https://")));
+    if (urls.length === 0) { toast.error("No valid URLs found"); return; }
+    const current = form.images || [];
+    const remaining = 30 - current.length;
+    const toAdd = urls.slice(0, remaining);
+    update("images", [...current, ...toAdd]);
+    setBulkImageUrls("");
+    toast.success(`Added ${toAdd.length} image(s)${urls.length > remaining ? `, ${urls.length - remaining} skipped (max 30)` : ""}`);
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
