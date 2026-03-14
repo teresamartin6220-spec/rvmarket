@@ -18,20 +18,18 @@ import type { DBListing } from "@/hooks/useListings";
 
 
 const TOGGLEABLE_SPEC_FIELDS = [
+  { key: "vin", label: "VIN #", placeholder: "Enter VIN number" },
   { key: "generator", label: "Generator", placeholder: "e.g. 4KW Onan Microlite" },
-  { key: "fuelTankCapacity", label: "Fuel Tank Capacity", placeholder: "e.g. 55 gal." },
-  { key: "freshWaterCapacity", label: "Fresh Water Capacity", placeholder: "e.g. 40 gal." },
-  { key: "lpgCapacity", label: "LPG Capacity", placeholder: "e.g. 12.2 gal." },
-  { key: "greyTankCapacity", label: "Grey Tank Capacity", placeholder: "e.g. 22 gal." },
-  { key: "blackTankCapacity", label: "Black Tank Capacity", placeholder: "e.g. 25 gal." },
-  { key: "hotWaterCapacity", label: "Hot Water Capacity", placeholder: "e.g. 6 gal." },
-];
-
-const ALWAYS_VISIBLE_SPEC_FIELDS = [
-  { key: "gvwr", label: "GVWR", placeholder: "e.g. 12,500 lbs." },
-  { key: "exteriorLength", label: "Exterior Length", placeholder: "e.g. 25 ft." },
-  { key: "exteriorHeight", label: "Exterior Height", placeholder: "e.g. 10.7 ft." },
-  { key: "exteriorWidth", label: "Exterior Width", placeholder: "e.g. 8.3 ft." },
+  { key: "fuelTankCapacity", label: "Fuel Tank Capacity (gal)", placeholder: "e.g. 55" },
+  { key: "freshWaterCapacity", label: "Fresh Water Capacity (gal)", placeholder: "e.g. 40" },
+  { key: "lpgCapacity", label: "LPG Capacity (gal)", placeholder: "e.g. 12.2" },
+  { key: "greyTankCapacity", label: "Grey Tank Capacity (gal)", placeholder: "e.g. 22" },
+  { key: "blackTankCapacity", label: "Black Tank Capacity (gal)", placeholder: "e.g. 25" },
+  { key: "hotWaterCapacity", label: "Hot Water Capacity (gal)", placeholder: "e.g. 6" },
+  { key: "gvwr", label: "GVWR (lbs)", placeholder: "e.g. 12,500" },
+  { key: "exteriorLength", label: "Exterior Length (ft)", placeholder: "e.g. 25" },
+  { key: "exteriorHeight", label: "Exterior Height (ft)", placeholder: "e.g. 10.7" },
+  { key: "exteriorWidth", label: "Exterior Width (ft)", placeholder: "e.g. 8.3" },
 ];
 
 const FEATURE_SECTIONS = [
