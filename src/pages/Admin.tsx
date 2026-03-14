@@ -252,23 +252,11 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
       {/* Specifications */}
       <div>
-        <h3 className="font-heading font-semibold text-foreground mb-3">Specifications</h3>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ALWAYS_VISIBLE_SPEC_FIELDS.map(({ key, label, placeholder }) => (
-            <div key={key}>
-              <Label>{label}</Label>
-              <Input
-                value={(form.specs as any)?.[key] || ""}
-                onChange={(e) => updateSpec(key, e.target.value)}
-                placeholder={placeholder}
-              />
-            </div>
-          ))}
-        </div>
-        <h4 className="font-heading font-medium text-foreground mt-6 mb-3">Optional Specs (toggle to enable)</h4>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Specifications (toggle to enable)</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {TOGGLEABLE_SPEC_FIELDS.map(({ key, label, placeholder }) => {
-            const hasValue = !!(form.specs as any)?.[key];
+            const specVal = key === "vin" ? (form.vin || (form.specs as any)?.vin || "") : ((form.specs as any)?.[key] || "");
+            const hasValue = !!specVal;
             return (
               <div key={key} className="space-y-1.5">
                 <div className="flex items-center justify-between">
@@ -276,18 +264,21 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
                   <Switch
                     checked={hasValue}
                     onCheckedChange={(checked) => {
-                      if (!checked) updateSpec(key, "");
+                      if (!checked) {
+                        if (key === "vin") { update("vin", ""); updateSpec("vin", ""); }
+                        else updateSpec(key, "");
+                      }
                     }}
                   />
                 </div>
-                {hasValue || true ? (
-                  <Input
-                    value={(form.specs as any)?.[key] || ""}
-                    onChange={(e) => updateSpec(key, e.target.value)}
-                    placeholder={placeholder}
-                    disabled={false}
-                  />
-                ) : null}
+                <Input
+                  value={specVal}
+                  onChange={(e) => {
+                    if (key === "vin") { update("vin", e.target.value); updateSpec("vin", e.target.value); }
+                    else updateSpec(key, e.target.value);
+                  }}
+                  placeholder={placeholder}
+                />
               </div>
             );
           })}
