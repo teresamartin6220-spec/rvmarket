@@ -210,11 +210,23 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
       {/* Images */}
       <div>
-        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 30)</h3>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 30) — {form.images?.length || 0}/30</h3>
         <div className="flex gap-2 mt-2">
-          <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste image URL..." className="flex-1" />
+          <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste single image URL..." className="flex-1" />
           <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 30}>
             <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="mt-3">
+          <Label>Bulk Paste URLs (one per line or comma-separated)</Label>
+          <Textarea
+            value={bulkImageUrls}
+            onChange={(e) => setBulkImageUrls(e.target.value)}
+            rows={4}
+            placeholder={"https://example.com/img1.jpg\nhttps://example.com/img2.jpg\nhttps://example.com/img3.jpg"}
+          />
+          <Button type="button" variant="outline" size="sm" className="mt-2" onClick={addBulkImages} disabled={(form.images?.length || 0) >= 30}>
+            <Plus className="h-4 w-4 mr-1" /> Add All URLs
           </Button>
         </div>
         <div className="mt-2">
