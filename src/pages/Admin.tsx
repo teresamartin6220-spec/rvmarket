@@ -85,12 +85,16 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 }
 
 function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; onSave: (l: Partial<DBListing>) => void; onCancel: () => void }) {
+  const existingSpecs = listing.specs && typeof listing.specs === "object" ? listing.specs as Record<string, any> : {};
+  // Migrate VIN into specs if it exists on top-level but not in specs
+  if (listing.vin && !existingSpecs.vin) existingSpecs.vin = listing.vin;
   const [form, setForm] = useState<Partial<DBListing>>({
     ...listing,
-    specs: listing.specs && typeof listing.specs === "object" ? listing.specs : {},
+    specs: existingSpecs,
     features: listing.features && typeof listing.features === "object" ? listing.features : {},
   });
   const [imageUrl, setImageUrl] = useState("");
+  const [bulkImageUrls, setBulkImageUrls] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const update = (key: string, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
