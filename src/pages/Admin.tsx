@@ -160,7 +160,6 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
           </div>
           <div><Label>Year</Label><Input type="number" value={form.year} onChange={(e) => update("year", Number(e.target.value))} /></div>
           <div><Label>Stock Number</Label><Input value={form.stock_number || ""} onChange={(e) => update("stock_number", e.target.value)} /></div>
-          <div><Label>VIN #</Label><Input value={form.vin || ""} onChange={(e) => update("vin", e.target.value)} placeholder="Enter VIN number" /></div>
           <div><Label>Price (USD)</Label><Input type="number" value={form.price} onChange={(e) => update("price", Number(e.target.value))} /></div>
           <div><Label>Mileage</Label><Input type="number" value={form.mileage} onChange={(e) => update("mileage", Number(e.target.value))} /></div>
           <div><Label>Sleeps</Label><Input type="number" value={form.sleeps} onChange={(e) => update("sleeps", Number(e.target.value))} /></div>
