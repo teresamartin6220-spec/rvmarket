@@ -428,6 +428,9 @@ const Admin = () => {
   });
 
   const sortedListings = [...filteredListings].sort((a, b) => {
+    // Hidden items always go to the bottom
+    if (a.is_hidden && !b.is_hidden) return 1;
+    if (!a.is_hidden && b.is_hidden) return -1;
     switch (sortBy) {
       case "oldest": return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
       case "az": return (a.title || "").localeCompare(b.title || "");
@@ -437,6 +440,42 @@ const Admin = () => {
       default: return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
     }
   });
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === sortedListings.length) setSelectedIds(new Set());
+    else setSelectedIds(new Set(sortedListings.map(r => r.id)));
+  };
+
+  const bulkHide = async (hide: boolean) => {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    for (const id of ids) {
+      await supabase.from("rv_listings").update({ is_hidden: hide }).eq("id", id);
+    }
+    toast.success(`${ids.length} listing(s) ${hide ? "hidden" : "shown"}`);
+    setSelectedIds(new Set());
+    fetchListings();
+  };
+
+  const bulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Delete ${selectedIds.size} listing(s)? This cannot be undone.`)) return;
+    const ids = Array.from(selectedIds);
+    for (const id of ids) {
+      await supabase.from("rv_listings").delete().eq("id", id);
+    }
+    toast.success(`${ids.length} listing(s) deleted`);
+    setSelectedIds(new Set());
+    fetchListings();
+  };
 
   const handleSave = async (rv: Partial<DBListing>) => {
     if (!rv.title || !rv.brand || !rv.price) {
