@@ -44,7 +44,7 @@ const emptyListing: Partial<DBListing> = {
   price: 0, mileage: 0, sleeps: 4, transmission: "Automatic",
   condition: "Excellent", type: "THOR MAJESTIC 23A",
   description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false, is_featured: false, is_hidden: false, sales_pro: null,
-  specs: {}, features: {},
+  specs: { vin: "" }, features: {},
 };
 
 function AdminLogin({ onLogin }: { onLogin: () => void }) {
