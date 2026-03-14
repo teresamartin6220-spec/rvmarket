@@ -38,17 +38,18 @@ const RVDetail = () => {
   const features = rv.features && typeof rv.features === "object" ? rv.features as Record<string, any> : {};
 
   const specEntries = [
+    { label: "VIN", value: specs.vin || rv.vin },
     { label: "Generator", value: specs.generator },
-    { label: "Fuel Tank Capacity", value: specs.fuelTankCapacity },
-    { label: "Fresh Water Capacity", value: specs.freshWaterCapacity },
-    { label: "LPG Capacity", value: specs.lpgCapacity },
-    { label: "Grey Tank Capacity", value: specs.greyTankCapacity },
-    { label: "Black Tank Capacity", value: specs.blackTankCapacity },
-    { label: "Hot Water Capacity", value: specs.hotWaterCapacity },
-    { label: "GVWR", value: specs.gvwr },
-    { label: "Exterior Length", value: specs.exteriorLength },
-    { label: "Exterior Height", value: specs.exteriorHeight },
-    { label: "Exterior Width", value: specs.exteriorWidth },
+    { label: "Fuel Tank Capacity (gal)", value: specs.fuelTankCapacity },
+    { label: "Fresh Water Capacity (gal)", value: specs.freshWaterCapacity },
+    { label: "LPG Capacity (gal)", value: specs.lpgCapacity },
+    { label: "Grey Tank Capacity (gal)", value: specs.greyTankCapacity },
+    { label: "Black Tank Capacity (gal)", value: specs.blackTankCapacity },
+    { label: "Hot Water Capacity (gal)", value: specs.hotWaterCapacity },
+    { label: "GVWR (lbs)", value: specs.gvwr },
+    { label: "Exterior Length (ft)", value: specs.exteriorLength },
+    { label: "Exterior Height (ft)", value: specs.exteriorHeight },
+    { label: "Exterior Width (ft)", value: specs.exteriorWidth },
   ].filter(e => e.value);
 
   const rvData: Record<string, any> = {

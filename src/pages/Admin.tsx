@@ -603,8 +603,19 @@ const Admin = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
+                    <div className="flex items-center gap-2 px-4 py-2">
+                      <Checkbox
+                        checked={selectedIds.size === sortedListings.length && sortedListings.length > 0}
+                        onCheckedChange={toggleSelectAll}
+                      />
+                      <span className="text-xs text-muted-foreground">Select All</span>
+                    </div>
                      {sortedListings.map((rv) => (
-                      <div key={rv.id} className="flex items-center gap-4 rounded-lg border bg-card p-4">
+                      <div key={rv.id} className={`flex items-center gap-4 rounded-lg border bg-card p-4 ${rv.is_hidden ? "opacity-60" : ""}`}>
+                        <Checkbox
+                          checked={selectedIds.has(rv.id)}
+                          onCheckedChange={() => toggleSelect(rv.id)}
+                        />
                         {rv.images && rv.images[0] && (
                           <img src={rv.images[0]} alt={rv.title} className="h-16 w-24 rounded object-cover shrink-0" />
                         )}
