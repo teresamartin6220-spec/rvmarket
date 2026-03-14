@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy, FileText, EyeOff, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy, FileText, EyeOff, Eye, CheckSquare, Square } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,20 +18,18 @@ import type { DBListing } from "@/hooks/useListings";
 
 
 const TOGGLEABLE_SPEC_FIELDS = [
+  { key: "vin", label: "VIN #", placeholder: "Enter VIN number" },
   { key: "generator", label: "Generator", placeholder: "e.g. 4KW Onan Microlite" },
-  { key: "fuelTankCapacity", label: "Fuel Tank Capacity", placeholder: "e.g. 55 gal." },
-  { key: "freshWaterCapacity", label: "Fresh Water Capacity", placeholder: "e.g. 40 gal." },
-  { key: "lpgCapacity", label: "LPG Capacity", placeholder: "e.g. 12.2 gal." },
-  { key: "greyTankCapacity", label: "Grey Tank Capacity", placeholder: "e.g. 22 gal." },
-  { key: "blackTankCapacity", label: "Black Tank Capacity", placeholder: "e.g. 25 gal." },
-  { key: "hotWaterCapacity", label: "Hot Water Capacity", placeholder: "e.g. 6 gal." },
-];
-
-const ALWAYS_VISIBLE_SPEC_FIELDS = [
-  { key: "gvwr", label: "GVWR", placeholder: "e.g. 12,500 lbs." },
-  { key: "exteriorLength", label: "Exterior Length", placeholder: "e.g. 25 ft." },
-  { key: "exteriorHeight", label: "Exterior Height", placeholder: "e.g. 10.7 ft." },
-  { key: "exteriorWidth", label: "Exterior Width", placeholder: "e.g. 8.3 ft." },
+  { key: "fuelTankCapacity", label: "Fuel Tank Capacity (gal)", placeholder: "e.g. 55" },
+  { key: "freshWaterCapacity", label: "Fresh Water Capacity (gal)", placeholder: "e.g. 40" },
+  { key: "lpgCapacity", label: "LPG Capacity (gal)", placeholder: "e.g. 12.2" },
+  { key: "greyTankCapacity", label: "Grey Tank Capacity (gal)", placeholder: "e.g. 22" },
+  { key: "blackTankCapacity", label: "Black Tank Capacity (gal)", placeholder: "e.g. 25" },
+  { key: "hotWaterCapacity", label: "Hot Water Capacity (gal)", placeholder: "e.g. 6" },
+  { key: "gvwr", label: "GVWR (lbs)", placeholder: "e.g. 12,500" },
+  { key: "exteriorLength", label: "Exterior Length (ft)", placeholder: "e.g. 25" },
+  { key: "exteriorHeight", label: "Exterior Height (ft)", placeholder: "e.g. 10.7" },
+  { key: "exteriorWidth", label: "Exterior Width (ft)", placeholder: "e.g. 8.3" },
 ];
 
 const FEATURE_SECTIONS = [
@@ -45,7 +44,7 @@ const emptyListing: Partial<DBListing> = {
   price: 0, mileage: 0, sleeps: 4, transmission: "Automatic",
   condition: "Excellent", type: "THOR MAJESTIC 23A",
   description: "", location: "", country: "USA", images: [], is_sold: false, is_super_special: false, is_featured: false, is_hidden: false, sales_pro: null,
-  specs: {}, features: {},
+  specs: { vin: "" }, features: {},
 };
 
 function AdminLogin({ onLogin }: { onLogin: () => void }) {
@@ -86,12 +85,16 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 }
 
 function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; onSave: (l: Partial<DBListing>) => void; onCancel: () => void }) {
+  const existingSpecs = listing.specs && typeof listing.specs === "object" ? listing.specs as Record<string, any> : {};
+  // Migrate VIN into specs if it exists on top-level but not in specs
+  if (listing.vin && !existingSpecs.vin) existingSpecs.vin = listing.vin;
   const [form, setForm] = useState<Partial<DBListing>>({
     ...listing,
-    specs: listing.specs && typeof listing.specs === "object" ? listing.specs : {},
+    specs: existingSpecs,
     features: listing.features && typeof listing.features === "object" ? listing.features : {},
   });
   const [imageUrl, setImageUrl] = useState("");
+  const [bulkImageUrls, setBulkImageUrls] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const update = (key: string, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -106,6 +109,17 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
       update("images", [...(form.images || []), imageUrl.trim()]);
       setImageUrl("");
     }
+  };
+
+  const addBulkImages = () => {
+    const urls = bulkImageUrls.split(/[\n,]+/).map(u => u.trim()).filter(u => u && (u.startsWith("http://") || u.startsWith("https://")));
+    if (urls.length === 0) { toast.error("No valid URLs found"); return; }
+    const current = form.images || [];
+    const remaining = 30 - current.length;
+    const toAdd = urls.slice(0, remaining);
+    update("images", [...current, ...toAdd]);
+    setBulkImageUrls("");
+    toast.success(`Added ${toAdd.length} image(s)${urls.length > remaining ? `, ${urls.length - remaining} skipped (max 30)` : ""}`);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,7 +160,6 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
           </div>
           <div><Label>Year</Label><Input type="number" value={form.year} onChange={(e) => update("year", Number(e.target.value))} /></div>
           <div><Label>Stock Number</Label><Input value={form.stock_number || ""} onChange={(e) => update("stock_number", e.target.value)} /></div>
-          <div><Label>VIN #</Label><Input value={form.vin || ""} onChange={(e) => update("vin", e.target.value)} placeholder="Enter VIN number" /></div>
           <div><Label>Price (USD)</Label><Input type="number" value={form.price} onChange={(e) => update("price", Number(e.target.value))} /></div>
           <div><Label>Mileage</Label><Input type="number" value={form.mileage} onChange={(e) => update("mileage", Number(e.target.value))} /></div>
           <div><Label>Sleeps</Label><Input type="number" value={form.sleeps} onChange={(e) => update("sleeps", Number(e.target.value))} /></div>
@@ -197,11 +210,23 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
       {/* Images */}
       <div>
-        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 30)</h3>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 30) — {form.images?.length || 0}/30</h3>
         <div className="flex gap-2 mt-2">
-          <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste image URL..." className="flex-1" />
+          <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Paste single image URL..." className="flex-1" />
           <Button type="button" variant="outline" onClick={addImage} disabled={(form.images?.length || 0) >= 30}>
             <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="mt-3">
+          <Label>Bulk Paste URLs (one per line or comma-separated)</Label>
+          <Textarea
+            value={bulkImageUrls}
+            onChange={(e) => setBulkImageUrls(e.target.value)}
+            rows={4}
+            placeholder={"https://example.com/img1.jpg\nhttps://example.com/img2.jpg\nhttps://example.com/img3.jpg"}
+          />
+          <Button type="button" variant="outline" size="sm" className="mt-2" onClick={addBulkImages} disabled={(form.images?.length || 0) >= 30}>
+            <Plus className="h-4 w-4 mr-1" /> Add All URLs
           </Button>
         </div>
         <div className="mt-2">
@@ -227,23 +252,11 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
       {/* Specifications */}
       <div>
-        <h3 className="font-heading font-semibold text-foreground mb-3">Specifications</h3>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ALWAYS_VISIBLE_SPEC_FIELDS.map(({ key, label, placeholder }) => (
-            <div key={key}>
-              <Label>{label}</Label>
-              <Input
-                value={(form.specs as any)?.[key] || ""}
-                onChange={(e) => updateSpec(key, e.target.value)}
-                placeholder={placeholder}
-              />
-            </div>
-          ))}
-        </div>
-        <h4 className="font-heading font-medium text-foreground mt-6 mb-3">Optional Specs (toggle to enable)</h4>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Specifications (toggle to enable)</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {TOGGLEABLE_SPEC_FIELDS.map(({ key, label, placeholder }) => {
-            const hasValue = !!(form.specs as any)?.[key];
+            const specVal = key === "vin" ? (form.vin || (form.specs as any)?.vin || "") : ((form.specs as any)?.[key] || "");
+            const hasValue = !!specVal;
             return (
               <div key={key} className="space-y-1.5">
                 <div className="flex items-center justify-between">
@@ -251,18 +264,21 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
                   <Switch
                     checked={hasValue}
                     onCheckedChange={(checked) => {
-                      if (!checked) updateSpec(key, "");
+                      if (!checked) {
+                        if (key === "vin") { update("vin", ""); updateSpec("vin", ""); }
+                        else updateSpec(key, "");
+                      }
                     }}
                   />
                 </div>
-                {hasValue || true ? (
-                  <Input
-                    value={(form.specs as any)?.[key] || ""}
-                    onChange={(e) => updateSpec(key, e.target.value)}
-                    placeholder={placeholder}
-                    disabled={false}
-                  />
-                ) : null}
+                <Input
+                  value={specVal}
+                  onChange={(e) => {
+                    if (key === "vin") { update("vin", e.target.value); updateSpec("vin", e.target.value); }
+                    else updateSpec(key, e.target.value);
+                  }}
+                  placeholder={placeholder}
+                />
               </div>
             );
           })}
@@ -393,6 +409,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const fetchListings = async () => {
     setLoading(true);
@@ -411,6 +428,9 @@ const Admin = () => {
   });
 
   const sortedListings = [...filteredListings].sort((a, b) => {
+    // Hidden items always go to the bottom
+    if (a.is_hidden && !b.is_hidden) return 1;
+    if (!a.is_hidden && b.is_hidden) return -1;
     switch (sortBy) {
       case "oldest": return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
       case "az": return (a.title || "").localeCompare(b.title || "");
@@ -420,6 +440,42 @@ const Admin = () => {
       default: return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
     }
   });
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === sortedListings.length) setSelectedIds(new Set());
+    else setSelectedIds(new Set(sortedListings.map(r => r.id)));
+  };
+
+  const bulkHide = async (hide: boolean) => {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    for (const id of ids) {
+      await supabase.from("rv_listings").update({ is_hidden: hide }).eq("id", id);
+    }
+    toast.success(`${ids.length} listing(s) ${hide ? "hidden" : "shown"}`);
+    setSelectedIds(new Set());
+    fetchListings();
+  };
+
+  const bulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Delete ${selectedIds.size} listing(s)? This cannot be undone.`)) return;
+    const ids = Array.from(selectedIds);
+    for (const id of ids) {
+      await supabase.from("rv_listings").delete().eq("id", id);
+    }
+    toast.success(`${ids.length} listing(s) deleted`);
+    setSelectedIds(new Set());
+    fetchListings();
+  };
 
   const handleSave = async (rv: Partial<DBListing>) => {
     if (!rv.title || !rv.brand || !rv.price) {
@@ -508,8 +564,21 @@ const Admin = () => {
             ) : (
               <>
                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-                   <p className="text-muted-foreground">{filteredListings.length} of {listings.length} listing(s)</p>
+                   <p className="text-muted-foreground">{filteredListings.length} of {listings.length} listing(s){selectedIds.size > 0 && ` · ${selectedIds.size} selected`}</p>
                    <div className="flex flex-wrap items-center gap-3">
+                     {selectedIds.size > 0 && (
+                       <>
+                         <Button variant="outline" size="sm" onClick={() => bulkHide(true)}>
+                           <EyeOff className="h-3.5 w-3.5 mr-1" /> Hide Selected
+                         </Button>
+                         <Button variant="outline" size="sm" onClick={() => bulkHide(false)}>
+                           <Eye className="h-3.5 w-3.5 mr-1" /> Show Selected
+                         </Button>
+                         <Button variant="destructive" size="sm" onClick={bulkDelete}>
+                           <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete Selected
+                         </Button>
+                       </>
+                     )}
                      <Input
                        placeholder="Search VIN or Stock #..."
                        value={searchQuery}
@@ -534,8 +603,19 @@ const Admin = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
+                    <div className="flex items-center gap-2 px-4 py-2">
+                      <Checkbox
+                        checked={selectedIds.size === sortedListings.length && sortedListings.length > 0}
+                        onCheckedChange={toggleSelectAll}
+                      />
+                      <span className="text-xs text-muted-foreground">Select All</span>
+                    </div>
                      {sortedListings.map((rv) => (
-                      <div key={rv.id} className="flex items-center gap-4 rounded-lg border bg-card p-4">
+                      <div key={rv.id} className={`flex items-center gap-4 rounded-lg border bg-card p-4 ${rv.is_hidden ? "opacity-60" : ""}`}>
+                        <Checkbox
+                          checked={selectedIds.has(rv.id)}
+                          onCheckedChange={() => toggleSelect(rv.id)}
+                        />
                         {rv.images && rv.images[0] && (
                           <img src={rv.images[0]} alt={rv.title} className="h-16 w-24 rounded object-cover shrink-0" />
                         )}
