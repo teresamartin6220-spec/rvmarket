@@ -409,6 +409,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const fetchListings = async () => {
     setLoading(true);
