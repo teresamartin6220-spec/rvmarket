@@ -90,7 +90,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-primary-foreground/10 text-center text-xs opacity-50">
-          © {new Date().getFullYear()} RV Market. All rights reserved. | Over {companyInfo.yearsInBusiness} years in the trade.
+          © {new Date().getFullYear()} RV Market. All rights reserved.
         </div>
       </div>
     </footer>
