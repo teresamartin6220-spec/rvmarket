@@ -16,6 +16,7 @@ import About from "./pages/About";
 import CustomerCare from "./pages/CustomerCare";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import ScrollToTop from "./components/ScrollToTop"; 
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop /> {/* <--- The fix is now here */}
           <AppContent />
         </BrowserRouter>
       </TooltipProvider>
