@@ -41,7 +41,6 @@ function AppContent() {
           <Route path="/financing" element={<Financing />} />
           <Route path="/apply-financing" element={<ApplyFinancing />} />
           <Route path="/favorites" element={<Favorites />} />
-          <Route path="/favorites" element={<Favorites />} />
           <Route path="/admin" element={<Admin />} />
           {/* Legacy redirects */}
           <Route path="/customer-care" element={<Contact />} />
