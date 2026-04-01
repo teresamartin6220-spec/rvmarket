@@ -91,9 +91,8 @@ export const companyInfo = {
   country: "USA",
   hours: "Mon-Sat 8AM-6PM",
   textNumber: "+1 (940) 882-1140",
-  whatsapp: "+19408821140",
   tiktok: "https://tiktok.com/@rvmarket0",
-  yearsInBusiness: 25,
+  yearsInBusiness: 40,
 };
 
 export const DISCLAIMER = `The photographs shown are of the actual vehicle listed for sale. Government fees, taxes, title fees, registration fees, temporary tag fees, local emission fees, and dealer document fees are not included in the listed price.\n\nPrices and promotions are subject to change without notice. Specifications and equipment are based on information available at the time of posting and may be subject to change.`;

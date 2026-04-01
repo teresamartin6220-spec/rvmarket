@@ -65,7 +65,7 @@ const TradeIn = () => {
             {[
               "Competitive market-value offers",
               "Free, no-obligation valuations",
-              "Over 25 years of trade experience",
+              "Over 40 years of trade experience",
               "Apply trade value to any listing",
               "Quick and hassle-free process",
               "We handle all the paperwork",

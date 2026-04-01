@@ -1,13 +1,12 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Calendar, Users, Cog, Shield, Globe, Hash, AlertTriangle } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Users, Shield, Hash, AlertTriangle } from "lucide-react";
 import { companyInfo, DISCLAIMER } from "@/data/mockData";
 import { ImageGallery } from "@/components/rv/ImageGallery";
 import { ShareButton } from "@/components/rv/ShareButton";
 import { FinancingCalculator } from "@/components/rv/FinancingCalculator";
 import { ContactForm } from "@/components/rv/ContactForm";
 import { Button } from "@/components/ui/button";
-import { useCurrency } from "@/context/CurrencyContext";
 import { useListingById } from "@/hooks/useListings";
 
 const overviewSpecs: Array<{ key: string; icon: typeof Calendar; label: string; format?: (v: any) => string }> = [
@@ -19,7 +18,6 @@ const overviewSpecs: Array<{ key: string; icon: typeof Calendar; label: string; 
 const RVDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { listing: rv, loading } = useListingById(id);
-  const { format } = useCurrency();
 
   if (loading) {
     return <div className="w-full max-w-7xl mx-auto px-4 py-20 text-center text-muted-foreground">Loading...</div>;
@@ -54,7 +52,6 @@ const RVDetail = () => {
 
   const rvData: Record<string, any> = {
     year: rv.year,
-    mileage: rv.mileage,
     sleeps: rv.sleeps,
     condition: rv.condition || "N/A",
   };
@@ -85,18 +82,15 @@ const RVDetail = () => {
                   <span>{rv.brand}</span>
                   <span>·</span>
                   <span>Stock #{rv.stock_number || "N/A"}</span>
-                  
                 </div>
                 <h1 className="text-2xl md:text-3xl font-bold font-heading text-foreground break-words">{rv.title}</h1>
                 <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
                   <span className="flex items-center gap-1 text-sm"><MapPin className="h-4 w-4" /> {rv.location || "N/A"}</span>
-                  <span className="flex items-center gap-1 text-sm"><Globe className="h-4 w-4" /> {rv.country || "N/A"}</span>
-                  
                 </div>
               </div>
               <div className="flex flex-col items-start sm:items-end gap-1">
                 <ShareButton title={rv.title} />
-                <p className="text-3xl font-bold font-heading text-primary">{format(rv.price)}</p>
+                <p className="text-3xl font-bold font-heading text-primary">${rv.price.toLocaleString()}</p>
               </div>
             </div>
 
@@ -170,16 +164,17 @@ const RVDetail = () => {
           <div className="space-y-6">
             <div className="rounded-lg border bg-card p-6 text-center lg:sticky lg:top-20">
               <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Available for Sale</p>
-              <p className="text-4xl font-bold font-heading text-primary mt-1">{format(rv.price)}</p>
+              <p className="text-4xl font-bold font-heading text-primary mt-1">${rv.price.toLocaleString()}</p>
               <p className="text-xs text-muted-foreground mt-1">Buy outright or finance — contact us to get started</p>
               <Button className="w-full mt-4" size="lg" asChild><a href="#contact">Buy Now — Contact Us</a></Button>
-              <Button variant="outline" className="w-full mt-2" size="lg" asChild><a href="#financing">Explore Financing Options</a></Button>
+              <Button variant="outline" className="w-full mt-2" size="lg" asChild>
+                <Link to={`/apply-financing?rv=${rv.id}`}>Explore Financing Options</Link>
+              </Button>
             </div>
             <div className="rounded-lg border bg-card p-6 space-y-3">
               <h3 className="font-heading font-semibold text-foreground">{companyInfo.name}</h3>
               <div className="text-sm text-muted-foreground space-y-2">
                 <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> {companyInfo.address}, {companyInfo.city}, {companyInfo.state}</p>
-                <p>📞 {companyInfo.phone}</p>
                 <p>✉️ {companyInfo.email}</p>
                 <p>🕐 {companyInfo.hours}</p>
               </div>

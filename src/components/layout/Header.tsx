@@ -1,15 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Heart } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CurrencySelector } from "@/components/CurrencySelector";
 
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "Inventory", to: "/inventory" },
+  { label: "Financing", to: "/financing" },
   { label: "Trade In", to: "/trade-in" },
   { label: "About Us", to: "/about" },
-  { label: "Customer Care", to: "/customer-care" },
+  { label: "Contact", to: "/contact" },
 ];
 
 export function Header() {
@@ -20,10 +20,11 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-hero">
-            <span className="text-lg font-bold text-primary-foreground font-heading">R</span>
-          </div>
-          <span className="text-xl font-bold font-heading text-foreground">RV Market</span>
+          <img
+            src="https://i.ibb.co/6RXZhh90/IMG-1299.png"
+            alt="RV Market"
+            className="h-10 w-auto"
+          />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-6">
@@ -41,9 +42,11 @@ export function Header() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
-          <CurrencySelector />
+          <Link to="/favorites" className="relative p-2 hover:bg-muted rounded-lg transition" aria-label="Wishlist">
+            <Heart className="h-5 w-5 text-muted-foreground" />
+          </Link>
           <Button asChild>
-            <Link to="/inventory">Browse RVs</Link>
+            <Link to="/financing">Apply for Financing</Link>
           </Button>
         </div>
 
@@ -68,11 +71,13 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          <div className="py-2">
-            <CurrencySelector />
+          <div className="flex items-center gap-3 py-2">
+            <Link to="/favorites" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-sm text-foreground">
+              <Heart className="h-4 w-4" /> Wishlist
+            </Link>
           </div>
           <Button className="w-full" asChild>
-            <Link to="/inventory" onClick={() => setMobileOpen(false)}>Browse RVs</Link>
+            <Link to="/financing" onClick={() => setMobileOpen(false)}>Apply for Financing</Link>
           </Button>
         </div>
       )}

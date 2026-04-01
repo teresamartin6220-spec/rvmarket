@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import type { RV } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
-import { useCurrency } from "@/context/CurrencyContext";
 
 interface RVCardProps {
   rv: RV;
@@ -27,7 +26,6 @@ function useFavorites() {
 }
 
 export function RVCard({ rv, index = 0 }: RVCardProps) {
-  const { format } = useCurrency();
   const { favs, toggle } = useFavorites();
   const isFav = favs.includes(rv.id);
 
@@ -82,7 +80,7 @@ export function RVCard({ rv, index = 0 }: RVCardProps) {
 
         <div className="flex items-center justify-between pt-2 border-t">
           <span className="text-xl font-bold font-heading text-primary">
-            {format(rv.price)}
+            ${rv.price.toLocaleString()}
           </span>
           <Button size="sm" asChild>
             <Link to={`/rv/${rv.id}`}>View Details</Link>

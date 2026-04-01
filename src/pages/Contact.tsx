@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Phone, Mail, MessageCircle, Clock, MapPin, HelpCircle, FileText, Wrench } from "lucide-react";
+import { Mail, MessageSquare, Clock, MapPin, HelpCircle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,15 +10,15 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const faqs = [
-  { q: "How do I schedule a viewing?", a: "Contact us via phone, email, or WhatsApp to schedule a viewing at a time that suits you. We're available Mon-Sat 9AM-6PM." },
-  { q: "Do you offer financing?", a: "Yes! We offer competitive financing options at 3.7% APR with flexible loan terms from 36 to 72 months. Use our financing calculator on any listing page." },
+  { q: "How do I schedule a viewing?", a: "Contact us via text or email to schedule a viewing at a time that suits you. We're available Mon-Sat 8AM-6PM." },
+  { q: "Do you offer financing?", a: "Yes! We offer competitive financing options with flexible loan terms. Use our financing calculator on any listing page." },
   { q: "Can I trade in my current RV?", a: "Absolutely. We accept trade-ins and offer competitive valuations. Visit our Trade-In page to get a free estimate." },
-  { q: "Do you ship internationally?", a: "Yes, we serve customers in the USA, Canada, UK, and Australia. Contact us for shipping details and quotes." },
+  { q: "Do you ship nationwide?", a: "Yes, we serve customers across the entire United States. Contact us for shipping details and quotes." },
   { q: "What warranty do you offer?", a: "All our RVs come with a comprehensive inspection report. Extended warranty options are available at the time of purchase." },
-  { q: "How do I return or exchange an RV?", a: "We offer a satisfaction guarantee. Contact our customer care team within 7 days of purchase to discuss returns or exchanges." },
+  { q: "How do I return or exchange an RV?", a: "We offer a satisfaction guarantee. Contact our team within 7 days of purchase to discuss returns or exchanges." },
 ];
 
-const CustomerCare = () => {
+const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,10 +29,9 @@ const CustomerCare = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen">
-      {/* Hero */}
       <div className="bg-gradient-hero">
         <div className="container py-16">
-          <h1 className="text-3xl md:text-4xl font-bold font-heading text-primary-foreground">Customer Care</h1>
+          <h1 className="text-3xl md:text-4xl font-bold font-heading text-primary-foreground">Contact</h1>
           <p className="text-primary-foreground/70 mt-2 max-w-xl">
             We're here to help. Reach out anytime — our team is dedicated to your satisfaction.
           </p>
@@ -40,12 +39,10 @@ const CustomerCare = () => {
       </div>
 
       <div className="container py-16 space-y-16">
-        {/* Contact Cards */}
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { icon: Phone, title: "Text Us", value: companyInfo.textNumber, href: `sms:${companyInfo.textNumber.replace(/\D/g, '')}` },
+            { icon: MessageSquare, title: "Text Us", value: companyInfo.textNumber, href: `sms:${companyInfo.textNumber.replace(/\D/g, '')}` },
             { icon: Mail, title: "Email Us", value: companyInfo.email, href: `mailto:${companyInfo.email}` },
-            { icon: MessageCircle, title: "WhatsApp", value: "Chat with us", href: `https://wa.me/${companyInfo.whatsapp.replace(/\D/g, '')}` },
             { icon: Clock, title: "Business Hours", value: companyInfo.hours, href: undefined },
           ].map(({ icon: Icon, title, value, href }) => (
             <div key={title} className="rounded-xl border bg-card p-6 text-center shadow-card">
@@ -54,9 +51,7 @@ const CustomerCare = () => {
               </div>
               <h3 className="font-heading font-semibold text-foreground">{title}</h3>
               {href ? (
-                <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="text-sm text-primary hover:underline mt-1 block">
-                  {value}
-                </a>
+                <a href={href} className="text-sm text-primary hover:underline mt-1 block">{value}</a>
               ) : (
                 <p className="text-sm text-muted-foreground mt-1">{value}</p>
               )}
@@ -64,7 +59,6 @@ const CustomerCare = () => {
           ))}
         </section>
 
-        {/* FAQ */}
         <section>
           <div className="text-center mb-8">
             <HelpCircle className="h-10 w-10 text-primary mx-auto mb-3" />
@@ -82,7 +76,6 @@ const CustomerCare = () => {
           </div>
         </section>
 
-        {/* Contact Form */}
         <section className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <FileText className="h-10 w-10 text-primary mx-auto mb-3" />
@@ -91,29 +84,14 @@ const CustomerCare = () => {
           </div>
           <form onSubmit={handleSubmit} className="rounded-xl border bg-card p-6 space-y-4 shadow-card">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label>Name</Label>
-                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-              </div>
-              <div>
-                <Label>Email</Label>
-                <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-              </div>
+              <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
+              <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label>Phone</Label>
-                <Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-              </div>
-              <div>
-                <Label>Subject</Label>
-                <Input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required />
-              </div>
+              <div><Label>Phone</Label><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+              <div><Label>Subject</Label><Input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required /></div>
             </div>
-            <div>
-              <Label>Message</Label>
-              <Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={5} required />
-            </div>
+            <div><Label>Message</Label><Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={5} required /></div>
             <Button type="submit" className="w-full" size="lg">Send Message</Button>
           </form>
         </section>
@@ -122,4 +100,4 @@ const CustomerCare = () => {
   );
 };
 
-export default CustomerCare;
+export default Contact;
