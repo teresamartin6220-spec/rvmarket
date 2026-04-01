@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Share2 } from "lucide-react";
+import { Share2, Facebook, Twitter, Link as LinkIcon, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 export function ShareButton({ title }: { title: string }) {
@@ -19,10 +19,10 @@ export function ShareButton({ title }: { title: string }) {
   const text = encodeURIComponent(title);
 
   const links = [
-    { label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encoded}` },
-    { label: "X / Twitter", href: `https://twitter.com/intent/tweet?url=${encoded}&text=${text}` },
-    { label: "WhatsApp", href: `https://wa.me/?text=${text}%20${encoded}` },
-    { label: "Email", href: `mailto:?subject=${text}&body=${encoded}` },
+    { label: "Facebook", icon: Facebook, href: `https://www.facebook.com/sharer/sharer.php?u=${encoded}` },
+    { label: "X / Twitter", icon: Twitter, href: `https://twitter.com/intent/tweet?url=${encoded}&text=${text}` },
+    { label: "Email", icon: Mail, href: `mailto:?subject=${text}&body=${encoded}` },
+    { label: "SMS", icon: Share2, href: `sms:?body=${text}%20${encoded}` },
   ];
 
   const copyLink = () => {
@@ -44,13 +44,13 @@ export function ShareButton({ title }: { title: string }) {
         <div className="absolute right-0 top-full mt-2 w-48 rounded-lg border bg-card p-2 shadow-elevated z-10">
           {links.map((l) => (
             <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer"
-              className="block rounded-md px-3 py-2 text-sm text-foreground hover:bg-muted transition"
+              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-foreground hover:bg-muted transition"
             >
-              {l.label}
+              <l.icon className="h-4 w-4 text-muted-foreground" /> {l.label}
             </a>
           ))}
-          <button onClick={copyLink} className="w-full text-left rounded-md px-3 py-2 text-sm text-foreground hover:bg-muted transition">
-            Copy Link
+          <button onClick={copyLink} className="w-full flex items-center gap-3 text-left rounded-md px-3 py-2 text-sm text-foreground hover:bg-muted transition">
+            <LinkIcon className="h-4 w-4 text-muted-foreground" /> Copy Link
           </button>
         </div>
       )}
