@@ -40,6 +40,8 @@ function AppContent() {
           <Route path="/about/our-promise" element={<OurPromise />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/financing" element={<Financing />} />
+          <Route path="/apply-financing" element={<ApplyFinancing />} />
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/admin" element={<Admin />} />
           {/* Legacy redirects */}
