@@ -17,6 +17,8 @@ import Contact from "./pages/Contact";
 import Financing from "./pages/Financing";
 import Favorites from "./pages/Favorites";
 import OurPromise from "./pages/OurPromise";
+import ApplyFinancing from "./pages/ApplyFinancing";
+import OurPromise from "./pages/OurPromise";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/ScrollToTop";
