@@ -18,7 +18,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <img src="https://i.ibb.co/KpS2tK5F/IMG-1769.jpg" alt="RV Market" className="h-10 w-auto brightness-0 invert" />
+              <img src="https://i.ibb.co/Rk7Hkg73/IMG-1811-removebg-preview.png" alt="RV Market" className="h-10 w-auto brightness-0 invert" />
             </div>
             <p className="text-sm opacity-70">
               Your trusted marketplace for quality pre-owned RVs. Over {companyInfo.yearsInBusiness} years of experience serving customers nationwide.
