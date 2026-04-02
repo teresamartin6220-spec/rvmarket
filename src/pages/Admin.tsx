@@ -251,23 +251,36 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
         )}
       </div>
 
-      {/* Specifications */}
       <div>
-        <h3 className="font-heading font-semibold text-foreground mb-3">Specifications (toggle to enable)</h3>
+        <h3 className="font-heading font-semibold text-foreground mb-3">Specifications (toggle to enable visibility)</h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {TOGGLEABLE_SPEC_FIELDS.map(({ key, label, placeholder }) => {
-            const specVal = key === "vin" ? (form.vin || (form.specs as any)?.vin || "") : ((form.specs as any)?.[key] || "");
-            const hasValue = !!specVal;
+            const isVin = key === "vin";
+            const isMileage = key === "mileage";
+            const specVal = isVin
+              ? (form.vin || (form.specs as any)?.vin || "")
+              : isMileage
+              ? String(form.mileage || (form.specs as any)?.mileage || "")
+              : ((form.specs as any)?.[key] || "");
+            const isEnabled = isVin
+              ? ((form.specs as any)?.vinVisible !== false && !!specVal)
+              : isMileage
+              ? ((form.specs as any)?.mileageVisible !== false)
+              : !!specVal;
             return (
               <div key={key} className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label>{label}</Label>
                   <Switch
-                    checked={hasValue}
+                    checked={isEnabled}
                     onCheckedChange={(checked) => {
-                      if (!checked) {
-                        if (key === "vin") { update("vin", ""); updateSpec("vin", ""); }
-                        else updateSpec(key, "");
+                      if (isVin) {
+                        // Toggle visibility without clearing value
+                        setForm((prev) => ({ ...prev, specs: { ...(prev.specs || {}), vinVisible: checked } }));
+                      } else if (isMileage) {
+                        setForm((prev) => ({ ...prev, specs: { ...(prev.specs || {}), mileageVisible: checked } }));
+                      } else if (!checked) {
+                        updateSpec(key, "");
                       }
                     }}
                   />
@@ -275,7 +288,8 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
                 <Input
                   value={specVal}
                   onChange={(e) => {
-                    if (key === "vin") { update("vin", e.target.value); updateSpec("vin", e.target.value); }
+                    if (isVin) { update("vin", e.target.value); updateSpec("vin", e.target.value); }
+                    else if (isMileage) { update("mileage", Number(e.target.value) || 0); updateSpec("mileage", e.target.value); }
                     else updateSpec(key, e.target.value);
                   }}
                   placeholder={placeholder}
