@@ -8,6 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { companyInfo } from "@/data/mockData";
 import { useState } from "react";
 import { toast } from "sonner";
+import { formatPhone, maskPhoneInput } from "@/lib/phoneFormat";
 
 const faqs = [
   { q: "How do I schedule a viewing?", a: "Contact us via text or email to schedule a viewing at a time that suits you. We're available Mon-Sat 8AM-6PM." },
@@ -29,19 +30,23 @@ const Contact = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen">
-      <div className="bg-gradient-hero">
-        <div className="container py-16">
-          <h1 className="text-3xl md:text-4xl font-bold font-heading text-primary-foreground">Contact</h1>
-          <p className="text-primary-foreground/70 mt-2 max-w-xl">
-            We're here to help. Reach out anytime — our team is dedicated to your satisfaction.
-          </p>
+      {/* Hero with background image */}
+      <div className="relative">
+        <img src="https://images.unsplash.com/photo-1527786356703-4b100091cd2c?w=1400" alt="" className="w-full h-64 md:h-80 object-cover" />
+        <div className="absolute inset-0 bg-black/50 flex items-center">
+          <div className="container">
+            <h1 className="text-3xl md:text-4xl font-bold font-heading text-white">Contact</h1>
+            <p className="text-white/80 mt-2 max-w-xl">
+              We're here to help. Reach out anytime — our team is dedicated to your satisfaction.
+            </p>
+          </div>
         </div>
       </div>
 
       <div className="container py-16 space-y-16">
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { icon: MessageSquare, title: "Text Us", value: companyInfo.textNumber, href: `sms:${companyInfo.textNumber.replace(/\D/g, '')}` },
+            { icon: MessageSquare, title: "Text Us", value: formatPhone(companyInfo.textNumber), href: `sms:${companyInfo.textNumber.replace(/\D/g, '')}` },
             { icon: Mail, title: "Email Us", value: companyInfo.email, href: `mailto:${companyInfo.email}` },
             { icon: Clock, title: "Business Hours", value: companyInfo.hours, href: undefined },
           ].map(({ icon: Icon, title, value, href }) => (
@@ -88,7 +93,15 @@ const Contact = () => {
               <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div><Label>Phone</Label><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+              <div>
+                <Label>Phone</Label>
+                <Input
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: maskPhoneInput(e.target.value) })}
+                  placeholder="(xxx) xxx-xxxx"
+                />
+              </div>
               <div><Label>Subject</Label><Input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required /></div>
             </div>
             <div><Label>Message</Label><Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={5} required /></div>
