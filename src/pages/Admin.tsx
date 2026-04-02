@@ -579,7 +579,14 @@ const Admin = () => {
             ) : (
               <>
                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-                   <p className="text-muted-foreground">{filteredListings.length} of {listings.length} listing(s){selectedIds.size > 0 && ` · ${selectedIds.size} selected`}</p>
+                   <p className="text-muted-foreground">
+                     {filteredListings.length} of {listings.length} listing(s)
+                     {" · "}
+                     <span className="text-green-600">{listings.filter(r => !r.is_hidden).length} shown</span>
+                     {" · "}
+                     <span className="text-orange-500">{listings.filter(r => r.is_hidden).length} hidden</span>
+                     {selectedIds.size > 0 && ` · ${selectedIds.size} selected`}
+                   </p>
                    <div className="flex flex-wrap items-center gap-3">
                      {selectedIds.size > 0 && (
                        <>
