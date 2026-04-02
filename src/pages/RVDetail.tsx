@@ -35,8 +35,12 @@ const RVDetail = () => {
   const specs = rv.specs && typeof rv.specs === "object" ? rv.specs as Record<string, any> : {};
   const features = rv.features && typeof rv.features === "object" ? rv.features as Record<string, any> : {};
 
+  const vinVisible = specs.vinVisible !== false && (specs.vin || rv.vin);
+  const mileageVisible = specs.mileageVisible !== false;
+
   const specEntries = [
-    { label: "VIN", value: specs.vin || rv.vin },
+    ...(vinVisible ? [{ label: "VIN", value: specs.vin || rv.vin }] : []),
+    ...(mileageVisible ? [{ label: "Mileage", value: rv.mileage ? `${rv.mileage.toLocaleString()} mi` : undefined }] : []),
     { label: "Generator", value: specs.generator },
     { label: "Fuel Tank Capacity (gal)", value: specs.fuelTankCapacity },
     { label: "Fresh Water Capacity (gal)", value: specs.freshWaterCapacity },
