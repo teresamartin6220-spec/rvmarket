@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { MapPin, Mail, Clock, MessageSquare } from "lucide-react";
 import { companyInfo } from "@/data/mockData";
+import { formatPhone } from "@/lib/phoneFormat";
 
 function TikTokIcon({ className }: { className?: string }) {
   return (
@@ -15,17 +16,15 @@ export function Footer() {
     <footer className="border-t bg-foreground text-primary-foreground">
       <div className="container py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <img src="https://i.ibb.co/6RXZhh90/IMG-1299.png" alt="RV Market" className="h-10 w-auto brightness-0 invert" />
+              <img src="https://i.ibb.co/KpS2tK5F/IMG-1769.jpg" alt="RV Market" className="h-10 w-auto brightness-0 invert" />
             </div>
             <p className="text-sm opacity-70">
               Your trusted marketplace for quality pre-owned RVs. Over {companyInfo.yearsInBusiness} years of experience serving customers nationwide.
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4 className="font-heading font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm opacity-70">
@@ -38,7 +37,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h4 className="font-heading font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-3 text-sm opacity-70">
@@ -48,13 +46,12 @@ export function Footer() {
               <li className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4 shrink-0" />
                 <a href={`sms:${companyInfo.textNumber.replace(/\D/g, '')}`} className="hover:opacity-100 transition">
-                  Text: {companyInfo.textNumber}
+                  Text: {formatPhone(companyInfo.textNumber)}
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Social */}
           <div>
             <h4 className="font-heading font-semibold mb-4">Follow Us</h4>
             <div className="flex gap-3">

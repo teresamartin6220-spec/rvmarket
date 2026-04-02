@@ -8,6 +8,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useListingById } from "@/hooks/useListings";
+import { maskPhoneInput } from "@/lib/phoneFormat";
 
 const ApplyFinancing = () => {
   const [searchParams] = useSearchParams();
@@ -79,7 +80,15 @@ const ApplyFinancing = () => {
             <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div><Label>Phone</Label><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+            <div>
+              <Label>Phone</Label>
+              <Input
+                type="tel"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: maskPhoneInput(e.target.value) })}
+                placeholder="(xxx) xxx-xxxx"
+              />
+            </div>
             <div>
               <Label>Down Payment ($)</Label>
               <Input

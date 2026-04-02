@@ -11,6 +11,7 @@ import { useListings } from "@/hooks/useListings";
 import { companyInfo } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { maskPhoneInput } from "@/lib/phoneFormat";
 
 function getFavs(): string[] {
   try { return JSON.parse(localStorage.getItem("rv_favorites") || "[]"); } catch { return []; }
@@ -30,6 +31,7 @@ const Favorites = () => {
     localStorage.setItem("rv_favorites", JSON.stringify(updated));
     setFavIds(updated);
     setSelectedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
+    window.dispatchEvent(new Event("wishlist-updated"));
   };
 
   const toggleSelect = (id: string) => {
@@ -119,7 +121,15 @@ const Favorites = () => {
                 <p className="text-sm text-muted-foreground">Select the RVs you're interested in and send us an inquiry.</p>
                 <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
                 <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></div>
-                <div><Label>Phone</Label><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+                <div>
+                  <Label>Phone</Label>
+                  <Input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: maskPhoneInput(e.target.value) })}
+                    placeholder="(xxx) xxx-xxxx"
+                  />
+                </div>
                 <div><Label>Message</Label><Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={3} placeholder="Any specific questions?" /></div>
                 <Button type="submit" className="w-full" disabled={loading || selectedIds.size === 0}>
                   {loading ? "Sending..." : `Send Inquiry (${selectedIds.size} selected)`}

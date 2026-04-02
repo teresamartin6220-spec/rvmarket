@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { companyInfo } from "@/data/mockData";
 import { useState } from "react";
 import { toast } from "sonner";
+import { maskPhoneInput } from "@/lib/phoneFormat";
 
 const TradeIn = () => {
   const [form, setForm] = useState({
@@ -24,21 +25,23 @@ const TradeIn = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen">
-      {/* Hero */}
-      <div className="bg-gradient-warm">
-        <div className="container py-16">
-          <div className="flex items-center gap-3 mb-3">
-            <RefreshCw className="h-8 w-8 text-accent-foreground" />
-            <h1 className="text-3xl md:text-4xl font-bold font-heading text-accent-foreground">Trade In Your RV</h1>
+      {/* Hero with background image */}
+      <div className="relative">
+        <img src="https://images.unsplash.com/photo-1533591380348-14193f1de18f?w=1400" alt="" className="w-full h-64 md:h-80 object-cover" />
+        <div className="absolute inset-0 bg-black/50 flex items-center">
+          <div className="container">
+            <div className="flex items-center gap-3 mb-3">
+              <RefreshCw className="h-8 w-8 text-white" />
+              <h1 className="text-3xl md:text-4xl font-bold font-heading text-white">Trade In Your RV</h1>
+            </div>
+            <p className="text-white/80 mt-2 max-w-xl">
+              Ready to upgrade? We buy used RVs and offer competitive trade-in values. Get a free, no-obligation valuation today.
+            </p>
           </div>
-          <p className="text-accent-foreground/80 mt-2 max-w-xl">
-            Ready to upgrade? We buy used RVs and offer competitive trade-in values. Get a free, no-obligation valuation today.
-          </p>
         </div>
       </div>
 
       <div className="container py-16 space-y-16">
-        {/* How It Works */}
         <section>
           <h2 className="text-2xl font-bold font-heading text-foreground text-center mb-8">How It Works</h2>
           <div className="grid gap-6 sm:grid-cols-3">
@@ -58,7 +61,6 @@ const TradeIn = () => {
           </div>
         </section>
 
-        {/* Benefits */}
         <section className="rounded-xl bg-muted/50 p-8">
           <h2 className="text-2xl font-bold font-heading text-foreground mb-6">Why Trade With Us</h2>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -78,7 +80,6 @@ const TradeIn = () => {
           </div>
         </section>
 
-        {/* Form */}
         <section className="max-w-2xl mx-auto">
           <h2 className="text-2xl font-bold font-heading text-foreground text-center mb-2">Get Your Free Valuation</h2>
           <p className="text-muted-foreground text-center mb-8">Tell us about your RV and we'll get back to you with an offer.</p>
@@ -89,7 +90,15 @@ const TradeIn = () => {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
                 <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></div>
-                <div className="sm:col-span-2"><Label>Phone</Label><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+                <div className="sm:col-span-2">
+                  <Label>Phone</Label>
+                  <Input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: maskPhoneInput(e.target.value) })}
+                    placeholder="(xxx) xxx-xxxx"
+                  />
+                </div>
               </div>
             </div>
 
