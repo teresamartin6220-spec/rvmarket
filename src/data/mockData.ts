@@ -31,6 +31,18 @@ export const US_LOCATIONS = [
   "Tampa, FL", "Miami, FL", "Atlanta, GA", "Charlotte, NC", "Nashville, TN",
   "Seattle, WA", "Portland, OR", "Salt Lake City, UT", "Boise, ID", "Albuquerque, NM",
   "Oklahoma City, OK", "Kansas City, MO", "Memphis, TN", "Raleigh, NC", "Jacksonville, FL",
+  "Los Angeles, CA", "San Diego, CA", "San Francisco, CA", "Sacramento, CA", "Fresno, CA",
+  "San Jose, CA", "Long Beach, CA", "Chicago, IL", "Indianapolis, IN", "Columbus, OH",
+  "Cleveland, OH", "Cincinnati, OH", "Detroit, MI", "Grand Rapids, MI", "Milwaukee, WI",
+  "Minneapolis, MN", "St. Paul, MN", "St. Louis, MO", "Omaha, NE", "Wichita, KS",
+  "Louisville, KY", "Lexington, KY", "Richmond, VA", "Virginia Beach, VA", "Norfolk, VA",
+  "Baltimore, MD", "Philadelphia, PA", "Pittsburgh, PA", "Harrisburg, PA", "Newark, NJ",
+  "Boston, MA", "Providence, RI", "Hartford, CT", "New Haven, CT", "Buffalo, NY",
+  "Albany, NY", "Rochester, NY", "Syracuse, NY", "Charleston, SC", "Columbia, SC",
+  "Savannah, GA", "Birmingham, AL", "Montgomery, AL", "Mobile, AL", "New Orleans, LA",
+  "Baton Rouge, LA", "Shreveport, LA", "Little Rock, AR", "Tulsa, OK", "El Paso, TX",
+  "Lubbock, TX", "Amarillo, TX", "Corpus Christi, TX", "Spokane, WA", "Tacoma, WA",
+  "Reno, NV", "Honolulu, HI", "Anchorage, AK", "Knoxville, TN", "Chattanooga, TN",
 ] as const;
 
 export type RVType = typeof RV_TYPES[number];

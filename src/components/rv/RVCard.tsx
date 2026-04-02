@@ -20,6 +20,7 @@ function useFavorites() {
     const updated = favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id];
     localStorage.setItem("rv_favorites", JSON.stringify(updated));
     setFavs(updated);
+    window.dispatchEvent(new Event("wishlist-updated"));
   };
 
   return { favs, toggle };
