@@ -45,7 +45,7 @@ export function Header() {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <img
-            src="https://i.ibb.co/KpS2tK5F/IMG-1769.jpg"
+            src="https://i.ibb.co/Rk7Hkg73/IMG-1811-removebg-preview.png"
             alt="RV Market"
             className="h-10 w-auto"
           />

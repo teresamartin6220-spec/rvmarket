@@ -96,7 +96,7 @@ export interface RV {
 export const companyInfo = {
   name: "RV Market",
   phone: "+1 (940) 882-1140",
-  email: "rvmarketused@gmail.com",
+  email: "sales@rvmarket.org",
   address: "850 S Northlake Rd",
   city: "Coppell",
   state: "TX 75019",
