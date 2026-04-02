@@ -19,6 +19,7 @@ import type { DBListing } from "@/hooks/useListings";
 
 const TOGGLEABLE_SPEC_FIELDS = [
   { key: "vin", label: "VIN #", placeholder: "Enter VIN number" },
+  { key: "mileage", label: "Mileage", placeholder: "e.g. 25000" },
   { key: "generator", label: "Generator", placeholder: "e.g. 4KW Onan Microlite" },
   { key: "fuelTankCapacity", label: "Fuel Tank Capacity (gal)", placeholder: "e.g. 55" },
   { key: "freshWaterCapacity", label: "Fresh Water Capacity (gal)", placeholder: "e.g. 40" },
