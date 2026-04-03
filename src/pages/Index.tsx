@@ -56,8 +56,19 @@ const Index = () => {
     }));
   }, [listings]);
 
-  // Manual slide — no auto-slide for featured
-  const maxSlideIndex = Math.max(0, featured.length - 4);
+  // Responsive: 1 card on mobile, 2 on sm, 4 on lg
+  const [cardsPerView, setCardsPerView] = useState(1);
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setCardsPerView(w >= 1024 ? 4 : w >= 640 ? 2 : 1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const maxSlideIndex = Math.max(0, featured.length - cardsPerView);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
