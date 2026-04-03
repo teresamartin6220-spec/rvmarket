@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Search, ArrowRight, Shield, Award, Headphones, Truck, RefreshCw, DollarSign } from "lucide-react";
 import { motion } from "framer-motion";
