@@ -226,7 +226,7 @@ const Index = () => {
       {/* Trade-In CTA */}
       <section className="relative">
         <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1533591380348-14193f1de18f?w=1400" alt="" className="h-full w-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=2000" alt="" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-black/60" />
         </div>
         <div className="container relative py-16 text-center">

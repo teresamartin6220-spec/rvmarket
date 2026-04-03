@@ -27,7 +27,7 @@ const TradeIn = () => {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen">
       {/* Hero with background image */}
       <div className="relative">
-        <img src="https://images.unsplash.com/photo-1533591380348-14193f1de18f?w=1400" alt="" className="w-full h-64 md:h-80 object-cover" />
+        <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=2000" alt="" className="w-full h-64 md:h-80 object-cover" />
         <div className="absolute inset-0 bg-black/50 flex items-center">
           <div className="container">
             <div className="flex items-center gap-3 mb-3">
