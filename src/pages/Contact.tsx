@@ -9,6 +9,7 @@ import { companyInfo } from "@/data/mockData";
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatPhone, maskPhoneInput } from "@/lib/phoneFormat";
+import { supabase } from "@/integrations/supabase/client";
 
 const faqs = [
   { q: "How do I schedule a viewing?", a: "Contact us via text or email to schedule a viewing at a time that suits you. We're available Mon-Sat 8AM-6PM." },

@@ -4,8 +4,7 @@ import { Calculator, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PhoneInput, getDialCode } from "@/components/ui/phone-input";
-import { useCurrency } from "@/context/CurrencyContext";
+import { maskPhoneInput } from "@/lib/phoneFormat";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -20,23 +19,23 @@ const INTEREST_RATE = 3.7;
 
 export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculatorProps) {
   const [open, setOpen] = useState(false);
-  const [downPayment, setDownPayment] = useState<number | "">("");
+  const [downPayment, setDownPayment] = useState("");
   const [loanTerm, setLoanTerm] = useState(60);
   const [applyOpen, setApplyOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", countryCode: "US", phone: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [loading, setLoading] = useState(false);
-  const { format, currency } = useCurrency();
+
+  const dpNumber = downPayment ? Number(downPayment.replace(/,/g, "")) : 0;
 
   const monthlyPayment = useMemo(() => {
-    const dp = typeof downPayment === "number" ? downPayment : 0;
-    const principal = price - dp;
+    const principal = price - dpNumber;
     const monthlyRate = INTEREST_RATE / 100 / 12;
     if (monthlyRate === 0) return principal / loanTerm;
     return (
       (principal * monthlyRate * Math.pow(1 + monthlyRate, loanTerm)) /
       (Math.pow(1 + monthlyRate, loanTerm) - 1)
     );
-  }, [price, downPayment, loanTerm]);
+  }, [price, dpNumber, loanTerm]);
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,8 +47,8 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
         rv_price: price,
         name: form.name,
         email: form.email,
-        phone: `${getDialCode(form.countryCode)} ${form.phone}`,
-        down_payment: typeof downPayment === "number" ? downPayment : 0,
+        phone: form.phone || null,
+        down_payment: dpNumber,
         loan_term: loanTerm,
         estimated_monthly: Math.round(monthlyPayment),
       };
@@ -62,7 +61,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
 
       toast.success("Financing application submitted! We'll be in touch.");
       setApplyOpen(false);
-      setForm({ name: "", email: "", countryCode: "US", phone: "" });
+      setForm({ name: "", email: "", phone: "" });
     } catch (err: any) {
       toast.error("Failed to submit. Please try again.");
       console.error(err);
@@ -102,16 +101,16 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
               <div className="grid gap-4 sm:grid-cols-2 pt-4">
                 <div>
                   <Label>RV Price</Label>
-                  <Input value={format(price)} readOnly className="bg-muted" />
+                  <Input value={`$${price.toLocaleString()}`} readOnly className="bg-muted" />
                 </div>
                 <div>
                   <Label>Down Payment (USD)</Label>
                   <Input
-                    type="number"
                     value={downPayment}
-                    onChange={(e) => setDownPayment(e.target.value === "" ? "" : Number(e.target.value))}
-                    min={0}
-                    max={price}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9]/g, "");
+                      setDownPayment(raw ? Number(raw).toLocaleString() : "");
+                    }}
                     placeholder="Enter down payment"
                   />
                 </div>
@@ -142,7 +141,7 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
               <div className="rounded-lg bg-muted p-4 text-center">
                 <p className="text-sm text-muted-foreground">Estimated Monthly Payment</p>
                 <p className="text-3xl font-bold font-heading text-primary mt-1">
-                  {currency.symbol}{Math.round(monthlyPayment * currency.rate).toLocaleString()}<span className="text-base font-normal text-muted-foreground">/mo</span>
+                  ${Math.round(monthlyPayment).toLocaleString()}<span className="text-base font-normal text-muted-foreground">/mo</span>
                 </p>
               </div>
 
@@ -163,16 +162,16 @@ export function FinancingCalculator({ price, rvTitle, rvId }: FinancingCalculato
                       <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
                     </div>
                   </div>
-                   <div>
-                     <Label>Phone</Label>
-                     <PhoneInput
-                       countryCode={form.countryCode}
-                       phone={form.phone}
-                       onCountryCodeChange={(code) => setForm({ ...form, countryCode: code })}
-                       onPhoneChange={(phone) => setForm({ ...form, phone })}
-                       required
-                     />
-                   </div>
+                  <div>
+                    <Label>Phone</Label>
+                    <Input
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: maskPhoneInput(e.target.value) })}
+                      placeholder="(xxx) xxx-xxxx"
+                      required
+                    />
+                  </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Submitting..." : "Submit Financing Application"}
                   </Button>

@@ -120,9 +120,13 @@ const Index = () => {
           {loading ? (
             <div className="text-center py-16 text-muted-foreground">Loading deals...</div>
           ) : (
-            <div className="relative overflow-hidden">
+            <div
+              className="relative overflow-hidden"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
               <div
-                className="flex transition-transform duration-700 ease-in-out"
+                className="flex transition-transform duration-500 ease-out"
                 style={{ transform: `translateX(-${slideIndex * 25}%)` }}
               >
                 {featured.map((rv, i) => (
@@ -131,10 +135,10 @@ const Index = () => {
                   </div>
                 ))}
               </div>
-              {/* Slide indicators */}
+              {/* Slide dots */}
               {featured.length > 4 && (
                 <div className="flex justify-center gap-2 mt-6">
-                  {Array.from({ length: Math.max(1, featured.length - 3) }).map((_, i) => (
+                  {Array.from({ length: maxSlideIndex + 1 }).map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setSlideIndex(i)}
