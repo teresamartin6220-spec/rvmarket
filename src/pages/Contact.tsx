@@ -24,6 +24,24 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      await supabase.from("inquiries").insert({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || null,
+        message: `[${form.subject}] ${form.message}`,
+        rv_title: "General Contact",
+      });
+
+      await supabase.functions.invoke("notify-email", {
+        body: {
+          type: "contact",
+          data: { name: form.name, email: form.email, phone: form.phone, subject: form.subject, message: form.message },
+        },
+      });
+    } catch (err) {
+      console.error("Notification error:", err);
+    }
     toast.success("Your message has been sent! We'll get back to you within 24 hours.");
     setForm({ name: "", email: "", phone: "", subject: "", message: "" });
   };
