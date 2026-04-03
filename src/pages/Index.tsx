@@ -55,14 +55,20 @@ const Index = () => {
     }));
   }, [listings]);
 
-  // Auto-slide for featured
-  useEffect(() => {
-    if (featured.length <= 4) return;
-    const timer = setInterval(() => {
-      setSlideIndex((prev) => (prev + 1) % Math.max(1, featured.length - 3));
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [featured.length]);
+  // Manual slide — no auto-slide for featured
+  const maxSlideIndex = Math.max(0, featured.length - 4);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) setSlideIndex((p) => Math.min(p + 1, maxSlideIndex));
+      else setSlideIndex((p) => Math.max(p - 1, 0));
+    }
+  }, [maxSlideIndex]);
 
   // Auto-slide for trusted images
   useEffect(() => {
