@@ -56,8 +56,19 @@ const Index = () => {
     }));
   }, [listings]);
 
-  // Manual slide — no auto-slide for featured
-  const maxSlideIndex = Math.max(0, featured.length - 4);
+  // Responsive: 1 card on mobile, 2 on sm, 4 on lg
+  const [cardsPerView, setCardsPerView] = useState(1);
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setCardsPerView(w >= 1024 ? 4 : w >= 640 ? 2 : 1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const maxSlideIndex = Math.max(0, featured.length - cardsPerView);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -127,7 +138,7 @@ const Index = () => {
             >
               <div
                 className="flex transition-transform duration-500 ease-out"
-                style={{ transform: `translateX(-${slideIndex * 25}%)` }}
+                style={{ transform: `translateX(-${slideIndex * (100 / cardsPerView)}%)` }}
               >
                 {featured.map((rv, i) => (
                   <div key={rv.id} className="w-full sm:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
