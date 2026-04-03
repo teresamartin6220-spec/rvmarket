@@ -138,7 +138,7 @@ const Index = () => {
             >
               <div
                 className="flex transition-transform duration-500 ease-out"
-                style={{ transform: `translateX(-${slideIndex * 25}%)` }}
+                style={{ transform: `translateX(-${slideIndex * (100 / cardsPerView)}%)` }}
               >
                 {featured.map((rv, i) => (
                   <div key={rv.id} className="w-full sm:w-1/2 lg:w-1/4 flex-shrink-0 px-3">
