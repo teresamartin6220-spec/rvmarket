@@ -25,6 +25,7 @@ const Index = () => {
   const { listings, loading } = useListings();
   const [slideIndex, setSlideIndex] = useState(0);
   const [trustedSlide, setTrustedSlide] = useState(0);
+  const touchStartX = useRef(0);
 
   const featured = useMemo(() => {
     const featuredListings = listings.filter((rv) => rv.is_featured);
