@@ -95,14 +95,14 @@ export interface RV {
 
 export const companyInfo = {
   name: "RV Market",
-  phone: "+1 (940) 882-1140",
+  phone: "+1 (423) 858-0168",
   email: "sales@rvmarket.org",
   address: "850 S Northlake Rd",
   city: "Coppell",
   state: "TX 75019",
   country: "USA",
   hours: "Mon-Sat 8AM-6PM",
-  textNumber: "+1 (940) 882-1140",
+  textNumber: "+1 (423) 858-0168",
   tiktok: "https://tiktok.com/@rvmarket0",
   yearsInBusiness: 40,
 };
