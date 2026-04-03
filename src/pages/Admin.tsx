@@ -633,44 +633,90 @@ const Admin = () => {
                       <span className="text-xs text-muted-foreground">Select All</span>
                     </div>
                      {sortedListings.map((rv) => (
-                      <div key={rv.id} className={`flex items-center gap-4 rounded-lg border bg-card p-4 ${rv.is_hidden ? "opacity-60" : ""}`}>
-                        <Checkbox
-                          checked={selectedIds.has(rv.id)}
-                          onCheckedChange={() => toggleSelect(rv.id)}
-                        />
-                        {rv.images && rv.images[0] && (
-                          <img src={rv.images[0]} alt={rv.title} className="h-16 w-24 rounded object-cover shrink-0" />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-foreground truncate">
-                            {rv.title}
-                            {rv.is_sold && <span className="ml-2 text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded">SOLD</span>}
-                            {rv.is_super_special && <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded">⭐ SPECIAL</span>}
-                            {rv.is_featured && <span className="ml-2 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">⭐ FEATURED</span>}
-                            {rv.is_hidden && <span className="ml-2 text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">HIDDEN</span>}
-                          </p>
-                          <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
-                          <p className="text-xs text-muted-foreground">{rv.location && `📍 ${rv.location}`}{rv.vin && ` · VIN: ${rv.vin}`}{rv.stock_number && ` · Stock #${rv.stock_number}`}</p>
+                      <div key={rv.id} className={`rounded-lg border bg-card p-3 ${rv.is_hidden ? "opacity-60" : ""}`}>
+                        {/* Mobile: stacked layout */}
+                        <div className="flex flex-col sm:hidden gap-2">
+                          <div className="flex items-start gap-3">
+                            <Checkbox
+                              checked={selectedIds.has(rv.id)}
+                              onCheckedChange={() => toggleSelect(rv.id)}
+                              className="mt-1"
+                            />
+                            {rv.images && rv.images[0] && (
+                              <img src={rv.images[0]} alt={rv.title} className="h-20 w-20 rounded object-cover shrink-0 mx-auto" />
+                            )}
+                          </div>
+                          <div className="text-xs text-foreground text-center space-y-0.5">
+                            <p className="font-semibold truncate">
+                              {rv.year} {rv.brand} {rv.model} — ${rv.price?.toLocaleString()}
+                              {rv.is_sold && <span className="ml-1 text-[10px] bg-destructive text-destructive-foreground px-1.5 py-0.5 rounded">SOLD</span>}
+                              {rv.is_super_special && <span className="ml-1 text-[10px] bg-amber-500 text-white px-1.5 py-0.5 rounded">⭐</span>}
+                              {rv.is_featured && <span className="ml-1 text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded">FEATURED</span>}
+                              {rv.is_hidden && <span className="ml-1 text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">HIDDEN</span>}
+                            </p>
+                            <p className="text-muted-foreground">Stock #{rv.stock_number || "N/A"} · {rv.location || "N/A"}</p>
+                          </div>
+                          <div className="flex items-center justify-center gap-3 pt-1">
+                            <Button variant="outline" size="sm" onClick={async () => {
+                              const newHidden = !rv.is_hidden;
+                              const { error } = await supabase.from("rv_listings").update({ is_hidden: newHidden }).eq("id", rv.id);
+                              if (error) { toast.error("Failed to toggle visibility"); return; }
+                              toast.success(newHidden ? "Vehicle hidden" : "Vehicle visible");
+                              fetchListings();
+                            }} title={rv.is_hidden ? "Unhide" : "Hide"}>
+                              {rv.is_hidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv, id: undefined, title: `${rv.title} (Copy)`, stock_number: null, vin: null })} title="Duplicate">
+                              <Copy className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv })}>
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => handleDelete(rv.id)}>
+                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex gap-2 shrink-0">
-                          <Button variant="outline" size="sm" onClick={async () => {
-                            const newHidden = !rv.is_hidden;
-                            const { error } = await supabase.from("rv_listings").update({ is_hidden: newHidden }).eq("id", rv.id);
-                            if (error) { toast.error("Failed to toggle visibility"); return; }
-                            toast.success(newHidden ? "Vehicle hidden" : "Vehicle visible");
-                            fetchListings();
-                          }} title={rv.is_hidden ? "Unhide" : "Hide"}>
-                            {rv.is_hidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-                          </Button>
-                          <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv, id: undefined, title: `${rv.title} (Copy)`, stock_number: null, vin: null })} title="Duplicate">
-                            <Copy className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv })}>
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleDelete(rv.id)}>
-                            <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                          </Button>
+                        {/* Desktop: row layout */}
+                        <div className="hidden sm:flex items-center gap-4">
+                          <Checkbox
+                            checked={selectedIds.has(rv.id)}
+                            onCheckedChange={() => toggleSelect(rv.id)}
+                          />
+                          {rv.images && rv.images[0] && (
+                            <img src={rv.images[0]} alt={rv.title} className="h-16 w-24 rounded object-cover shrink-0" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-foreground truncate">
+                              {rv.title}
+                              {rv.is_sold && <span className="ml-2 text-xs bg-destructive text-destructive-foreground px-2 py-0.5 rounded">SOLD</span>}
+                              {rv.is_super_special && <span className="ml-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded">⭐ SPECIAL</span>}
+                              {rv.is_featured && <span className="ml-2 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">⭐ FEATURED</span>}
+                              {rv.is_hidden && <span className="ml-2 text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">HIDDEN</span>}
+                            </p>
+                            <p className="text-xs text-muted-foreground">{rv.type} · {rv.year} · ${rv.price?.toLocaleString()} · {rv.country}</p>
+                            <p className="text-xs text-muted-foreground">{rv.location && `📍 ${rv.location}`}{rv.vin && ` · VIN: ${rv.vin}`}{rv.stock_number && ` · Stock #${rv.stock_number}`}</p>
+                          </div>
+                          <div className="flex gap-2 shrink-0">
+                            <Button variant="outline" size="sm" onClick={async () => {
+                              const newHidden = !rv.is_hidden;
+                              const { error } = await supabase.from("rv_listings").update({ is_hidden: newHidden }).eq("id", rv.id);
+                              if (error) { toast.error("Failed to toggle visibility"); return; }
+                              toast.success(newHidden ? "Vehicle hidden" : "Vehicle visible");
+                              fetchListings();
+                            }} title={rv.is_hidden ? "Unhide" : "Hide"}>
+                              {rv.is_hidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv, id: undefined, title: `${rv.title} (Copy)`, stock_number: null, vin: null })} title="Duplicate">
+                              <Copy className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => setEditingRV({ ...rv })}>
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => handleDelete(rv.id)}>
+                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}

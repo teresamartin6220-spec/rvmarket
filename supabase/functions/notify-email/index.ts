@@ -46,6 +46,17 @@ serve(async (req) => {
         <p><strong>Loan Term:</strong> ${data.loan_term || 60} months</p>
         <p><strong>Est. Monthly:</strong> $${data.estimated_monthly?.toLocaleString() || "N/A"}</p>
       `;
+    } else if (type === "contact") {
+      subject = `New Contact Message: ${data.subject || "General"}`;
+      html = `
+        <h2>New Contact Form Message</h2>
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Phone:</strong> ${data.phone || "Not provided"}</p>
+        <p><strong>Subject:</strong> ${data.subject || "N/A"}</p>
+        <h3>Message:</h3>
+        <p>${data.message || "No message"}</p>
+      `;
     } else {
       return new Response(JSON.stringify({ error: "Invalid type" }), {
         status: 400,

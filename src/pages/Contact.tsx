@@ -9,6 +9,7 @@ import { companyInfo } from "@/data/mockData";
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatPhone, maskPhoneInput } from "@/lib/phoneFormat";
+import { supabase } from "@/integrations/supabase/client";
 
 const faqs = [
   { q: "How do I schedule a viewing?", a: "Contact us via text or email to schedule a viewing at a time that suits you. We're available Mon-Sat 8AM-6PM." },
@@ -22,8 +23,26 @@ const faqs = [
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      await supabase.from("inquiries").insert({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || null,
+        message: `[${form.subject}] ${form.message}`,
+        rv_title: "General Contact",
+      });
+
+      await supabase.functions.invoke("notify-email", {
+        body: {
+          type: "contact",
+          data: { name: form.name, email: form.email, phone: form.phone, subject: form.subject, message: form.message },
+        },
+      });
+    } catch (err) {
+      console.error("Notification error:", err);
+    }
     toast.success("Your message has been sent! We'll get back to you within 24 hours.");
     setForm({ name: "", email: "", phone: "", subject: "", message: "" });
   };

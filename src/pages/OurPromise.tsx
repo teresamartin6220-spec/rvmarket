@@ -32,12 +32,15 @@ const promises = [
 const OurPromise = () => {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen">
-      <div className="bg-gradient-hero">
-        <div className="container py-16">
-          <h1 className="text-3xl md:text-4xl font-bold font-heading text-primary-foreground">Our Promise</h1>
-          <p className="text-primary-foreground/70 mt-2 max-w-xl">
-            Over {companyInfo.yearsInBusiness} years of delivering trust, quality, and exceptional service to RV buyers nationwide.
-          </p>
+      <div className="relative">
+        <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=1400" alt="" className="w-full h-64 md:h-80 object-cover" />
+        <div className="absolute inset-0 bg-black/50 flex items-center">
+          <div className="container">
+            <h1 className="text-3xl md:text-4xl font-bold font-heading text-white">Our Promise</h1>
+            <p className="text-white/80 mt-2 max-w-xl">
+              Over {companyInfo.yearsInBusiness} years of delivering trust, quality, and exceptional service to RV buyers nationwide.
+            </p>
+          </div>
         </div>
       </div>
 

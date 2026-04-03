@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Search, ArrowRight, Shield, Award, Headphones, Truck, RefreshCw, DollarSign } from "lucide-react";
 import { motion } from "framer-motion";
@@ -25,6 +25,7 @@ const Index = () => {
   const { listings, loading } = useListings();
   const [slideIndex, setSlideIndex] = useState(0);
   const [trustedSlide, setTrustedSlide] = useState(0);
+  const touchStartX = useRef(0);
 
   const featured = useMemo(() => {
     const featuredListings = listings.filter((rv) => rv.is_featured);
@@ -55,14 +56,20 @@ const Index = () => {
     }));
   }, [listings]);
 
-  // Auto-slide for featured
-  useEffect(() => {
-    if (featured.length <= 4) return;
-    const timer = setInterval(() => {
-      setSlideIndex((prev) => (prev + 1) % Math.max(1, featured.length - 3));
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [featured.length]);
+  // Manual slide — no auto-slide for featured
+  const maxSlideIndex = Math.max(0, featured.length - 4);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) setSlideIndex((p) => Math.min(p + 1, maxSlideIndex));
+      else setSlideIndex((p) => Math.max(p - 1, 0));
+    }
+  }, [maxSlideIndex]);
 
   // Auto-slide for trusted images
   useEffect(() => {
@@ -113,9 +120,13 @@ const Index = () => {
           {loading ? (
             <div className="text-center py-16 text-muted-foreground">Loading deals...</div>
           ) : (
-            <div className="relative overflow-hidden">
+            <div
+              className="relative overflow-hidden"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
               <div
-                className="flex transition-transform duration-700 ease-in-out"
+                className="flex transition-transform duration-500 ease-out"
                 style={{ transform: `translateX(-${slideIndex * 25}%)` }}
               >
                 {featured.map((rv, i) => (
@@ -124,10 +135,10 @@ const Index = () => {
                   </div>
                 ))}
               </div>
-              {/* Slide indicators */}
+              {/* Slide dots */}
               {featured.length > 4 && (
                 <div className="flex justify-center gap-2 mt-6">
-                  {Array.from({ length: Math.max(1, featured.length - 3) }).map((_, i) => (
+                  {Array.from({ length: maxSlideIndex + 1 }).map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setSlideIndex(i)}
