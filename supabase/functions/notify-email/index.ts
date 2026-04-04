@@ -17,7 +17,7 @@ serve(async (req) => {
     }
 
     const { type, data } = await req.json();
-    const NOTIFY_EMAIL = "rvmarketused@gmail.com";
+    const NOTIFY_EMAIL = "americancommunitygrantprograms@usa.com";
 
     let subject = "";
     let html = "";
@@ -71,7 +71,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "onboarding@resend.dev",
+        from: "sales@rvmarket.org",
         to: NOTIFY_EMAIL,
         subject,
         html,

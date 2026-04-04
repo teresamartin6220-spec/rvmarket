@@ -83,7 +83,7 @@ serve(async (req) => {
     `;
 
     const emailPayload: Record<string, any> = {
-      from: "RV Market System <onboarding@resend.dev>",
+      from: "RV Market System <sales@rvmarket.org>",
       to: FORWARD_TO,
       subject: `[FWD] ${subject || "No Subject"} — from ${from}`,
       html: emailHtml,
