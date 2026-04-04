@@ -1,0 +1,1 @@
+CREATE POLICY "Anyone can update inquiries" ON public.inquiries FOR UPDATE TO public USING (true);
