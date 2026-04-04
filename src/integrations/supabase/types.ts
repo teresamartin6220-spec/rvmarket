@@ -109,9 +109,12 @@ export type Database = {
           id: string
           message: string | null
           name: string
+          original_subject: string | null
           phone: string | null
+          resend_message_id: string | null
           rv_id: string | null
           rv_title: string | null
+          status: string | null
         }
         Insert: {
           created_at?: string
@@ -119,9 +122,12 @@ export type Database = {
           id?: string
           message?: string | null
           name: string
+          original_subject?: string | null
           phone?: string | null
+          resend_message_id?: string | null
           rv_id?: string | null
           rv_title?: string | null
+          status?: string | null
         }
         Update: {
           created_at?: string
@@ -129,9 +135,12 @@ export type Database = {
           id?: string
           message?: string | null
           name?: string
+          original_subject?: string | null
           phone?: string | null
+          resend_message_id?: string | null
           rv_id?: string | null
           rv_title?: string | null
+          status?: string | null
         }
         Relationships: [
           {
@@ -309,6 +318,44 @@ export type Database = {
           year?: number
         }
         Relationships: []
+      }
+      sent_emails: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          inquiry_id: string | null
+          recipient_email: string
+          resend_message_id: string | null
+          subject: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          inquiry_id?: string | null
+          recipient_email: string
+          resend_message_id?: string | null
+          subject: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          inquiry_id?: string | null
+          recipient_email?: string
+          resend_message_id?: string | null
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sent_emails_inquiry_id_fkey"
+            columns: ["inquiry_id"]
+            isOneToOne: false
+            referencedRelation: "inquiries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transactions: {
         Row: {
