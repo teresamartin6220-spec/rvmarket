@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
           <p style="margin:4px 0 0;color:#a0c4e8;font-size:12px;">Your Trusted RV Dealer</p>
         </td></tr>
         <tr><td style="padding:32px;">
-          <div style="font-size:15px;line-height:1.7;color:#27684a;">${body.replace(/\n/g, '<br>')}</div>
+          <div style="font-size:15px;line-height:1.7;color: #27684a;">${body.replace(/\n/g, '<br>')}</div>
           <hr style="border:none;border-top:1px solid #fcfaf8;margin:24px 0;">
           <p style="font-size:13px;color:#666;">Best regards,<br><strong>RV Market Sales Team</strong></p>
           <p style="font-size:12px;color:#999;margin-top:16px;">
