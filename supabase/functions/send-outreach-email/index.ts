@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
           <p style="font-size:13px;color:#666;">Best regards,<br><strong>RV Market Sales Team</strong></p>
           <p style="font-size:12px;color:#999;margin-top:16px;">
             📧 sales@rvmarket.org<br>
-            🌐 <a href="https://rvmarket.org" style="color:#1a3a5c;">rvmarket</a>
+            🌐 <a href="https://rvmarket.org" style="color:#1a3a5c;">rvmarket.org</a>
           </p>
         </td></tr>
         <tr><td style="background:#f8f9fa;padding:16px 32px;text-align:center;">
