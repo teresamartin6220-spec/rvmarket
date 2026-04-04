@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy, FileText, EyeOff, Eye, CheckSquare, Square } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, X, Image, BarChart3, Copy, FileText, EyeOff, Eye, CheckSquare, Square, Reply, Send, Mail } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,9 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import type { DBListing } from "@/hooks/useListings";
-
-
 
 const TOGGLEABLE_SPEC_FIELDS = [
   { key: "vin", label: "VIN #", placeholder: "Enter VIN number" },
@@ -87,7 +86,6 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 
 function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; onSave: (l: Partial<DBListing>) => void; onCancel: () => void }) {
   const existingSpecs = listing.specs && typeof listing.specs === "object" ? listing.specs as Record<string, any> : {};
-  // Migrate VIN into specs if it exists on top-level but not in specs
   if (listing.vin && !existingSpecs.vin) existingSpecs.vin = listing.vin;
   const [form, setForm] = useState<Partial<DBListing>>({
     ...listing,
@@ -145,7 +143,6 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
 
   return (
     <div className="space-y-8">
-      {/* Basic Info */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Basic Information</h3>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -203,13 +200,11 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
         </div>
       </div>
 
-      {/* Description */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Description</h3>
         <Textarea value={form.description || ""} onChange={(e) => update("description", e.target.value)} rows={5} placeholder="Full RV description..." />
       </div>
 
-      {/* Images */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Images (up to 30) — {form.images?.length || 0}/30</h3>
         <div className="flex gap-2 mt-2">
@@ -275,7 +270,6 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
                     checked={isEnabled}
                     onCheckedChange={(checked) => {
                       if (isVin) {
-                        // Toggle visibility without clearing value
                         setForm((prev) => ({ ...prev, specs: { ...(prev.specs || {}), vinVisible: checked } }));
                       } else if (isMileage) {
                         setForm((prev) => ({ ...prev, specs: { ...(prev.specs || {}), mileageVisible: checked } }));
@@ -300,7 +294,6 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
         </div>
       </div>
 
-      {/* Features */}
       <div>
         <h3 className="font-heading font-semibold text-foreground mb-3">Features & Equipment</h3>
         <p className="text-xs text-muted-foreground mb-4">Enter one feature per line</p>
@@ -332,6 +325,9 @@ function ApplicationsTab() {
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"financing" | "inquiries">("financing");
+  const [replyingTo, setReplyingTo] = useState<any | null>(null);
+  const [replyBody, setReplyBody] = useState("");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -346,6 +342,44 @@ function ApplicationsTab() {
     };
     load();
   }, []);
+
+  const handleReply = async () => {
+    if (!replyBody.trim() || !replyingTo) return;
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-sales-reply", {
+        body: {
+          to: replyingTo.email,
+          originalSubject: replyingTo.original_subject || replyingTo.rv_title || "Your Inquiry",
+          resendMessageId: replyingTo.resend_message_id || null,
+          body: replyBody,
+          inquiryId: replyingTo.id,
+        },
+      });
+      if (error) throw error;
+
+      // Save to sent_emails
+      await supabase.from("sent_emails" as any).insert({
+        recipient_email: replyingTo.email,
+        subject: `Re: ${replyingTo.original_subject || replyingTo.rv_title || "Your Inquiry"}`,
+        body: replyBody,
+        resend_message_id: data?.messageId || null,
+        inquiry_id: replyingTo.id,
+      });
+
+      // Update inquiry status
+      await supabase.from("inquiries").update({ status: "replied" } as any).eq("id", replyingTo.id);
+
+      setInquiries(prev => prev.map(i => i.id === replyingTo.id ? { ...i, status: "replied" } : i));
+      toast.success("Reply sent successfully!");
+      setReplyingTo(null);
+      setReplyBody("");
+    } catch (err: any) {
+      toast.error(`Failed to send reply: ${err.message || "Unknown error"}`);
+    } finally {
+      setSending(false);
+    }
+  };
 
   if (loading) return <div className="text-center py-16 text-muted-foreground">Loading applications...</div>;
 
@@ -393,10 +427,20 @@ function ApplicationsTab() {
             <div key={inq.id} className="rounded-lg border bg-card p-4 space-y-2">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-semibold text-foreground">{inq.name}</p>
+                  <p className="font-semibold text-foreground">
+                    {inq.name}
+                    {inq.status === "replied" && (
+                      <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Replied</span>
+                    )}
+                  </p>
                   <p className="text-sm text-muted-foreground">{inq.email}{inq.phone && ` · ${inq.phone}`}</p>
                 </div>
-                <span className="text-xs text-muted-foreground">{new Date(inq.created_at).toLocaleDateString()}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{new Date(inq.created_at).toLocaleDateString()}</span>
+                  <Button variant="outline" size="sm" onClick={() => { setReplyingTo(inq); setReplyBody(""); }}>
+                    <Reply className="h-3.5 w-3.5 mr-1" /> Reply
+                  </Button>
+                </div>
               </div>
               {inq.rv_title && <p className="text-sm text-foreground">RV: {inq.rv_title}</p>}
               {inq.message && <p className="text-sm text-muted-foreground">{inq.message}</p>}
@@ -404,9 +448,119 @@ function ApplicationsTab() {
           ))}
         </div>
       )}
+
+      {/* Reply Dialog */}
+      <Dialog open={!!replyingTo} onOpenChange={(open) => { if (!open) setReplyingTo(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Reply to {replyingTo?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs text-muted-foreground">To</Label>
+              <p className="text-sm font-medium text-foreground">{replyingTo?.email}</p>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Subject</Label>
+              <p className="text-sm text-foreground">Re: {replyingTo?.original_subject || replyingTo?.rv_title || "Your Inquiry"}</p>
+            </div>
+            {replyingTo?.message && (
+              <div className="bg-muted rounded p-3">
+                <Label className="text-xs text-muted-foreground">Original Message</Label>
+                <p className="text-sm text-foreground mt-1">{replyingTo.message}</p>
+              </div>
+            )}
+            <div>
+              <Label>Your Reply</Label>
+              <Textarea
+                value={replyBody}
+                onChange={(e) => setReplyBody(e.target.value)}
+                rows={6}
+                placeholder="Type your reply..."
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReplyingTo(null)}>Cancel</Button>
+            <Button onClick={handleReply} disabled={sending || !replyBody.trim()}>
+              {sending ? "Sending..." : <><Send className="h-4 w-4 mr-1" /> Send Reply</>}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+function ComposeEmailModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [to, setTo] = useState("");
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const handleSend = async () => {
+    if (!to.trim() || !subject.trim() || !body.trim()) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-outreach-email", {
+        body: { to, subject, body },
+      });
+      if (error) throw error;
+
+      // Save to sent_emails
+      await supabase.from("sent_emails" as any).insert({
+        recipient_email: to,
+        subject,
+        body,
+        resend_message_id: data?.messageId || null,
+      });
+
+      toast.success("Email sent successfully!");
+      setTo("");
+      setSubject("");
+      setBody("");
+      onClose();
+    } catch (err: any) {
+      toast.error(`Failed to send: ${err.message || "Unknown error"}`);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Compose New Email</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div>
+            <Label>Recipient Email</Label>
+            <Input type="email" value={to} onChange={(e) => setTo(e.target.value)} placeholder="customer@example.com" />
+          </div>
+          <div>
+            <Label>Subject</Label>
+            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Email subject..." />
+          </div>
+          <div>
+            <Label>Message Body</Label>
+            <Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={8} placeholder="Type your message..." />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button onClick={handleSend} disabled={sending || !to.trim() || !subject.trim() || !body.trim()}>
+            {sending ? "Sending..." : <><Send className="h-4 w-4 mr-1" /> Send Email</>}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest First" },
   { value: "oldest", label: "Oldest First" },
@@ -425,6 +579,7 @@ const Admin = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [composeOpen, setComposeOpen] = useState(false);
 
   const fetchListings = async () => {
     setLoading(true);
@@ -443,7 +598,6 @@ const Admin = () => {
   });
 
   const sortedListings = [...filteredListings].sort((a, b) => {
-    // Hidden items always go to the bottom
     if (a.is_hidden && !b.is_hidden) return 1;
     if (!a.is_hidden && b.is_hidden) return -1;
     switch (sortBy) {
@@ -552,9 +706,14 @@ const Admin = () => {
       <div className="border-b bg-card">
         <div className="container flex h-14 items-center justify-between">
           <h1 className="text-xl font-bold font-heading text-foreground">Admin Dashboard</h1>
-          <Button variant="ghost" size="sm" onClick={() => setAuthed(false)}>
-            <LogOut className="h-4 w-4 mr-2" /> Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setComposeOpen(true)}>
+              <Mail className="h-4 w-4 mr-1" /> Compose
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setAuthed(false)}>
+              <LogOut className="h-4 w-4 mr-2" /> Logout
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -735,6 +894,8 @@ const Admin = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <ComposeEmailModal open={composeOpen} onClose={() => setComposeOpen(false)} />
     </div>
   );
 };
