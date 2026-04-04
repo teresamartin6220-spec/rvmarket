@@ -194,7 +194,7 @@ function RVForm({ listing, onSave, onCancel }: { listing: Partial<DBListing>; on
             </Label>
             <Label className="flex items-center gap-2">
               <input type="checkbox" checked={form.is_featured || false} onChange={(e) => update("is_featured", e.target.checked)} className="rounded" />
-              ⭐ Featured on Homepage
+              ⭐ Featured on Homepage.
             </Label>
           </div>
         </div>
