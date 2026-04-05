@@ -492,6 +492,46 @@ function ApplicationsTab() {
   );
 }
 
+function SentMessagesTab() {
+  const [emails, setEmails] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetch = async () => {
+      setLoading(true);
+      const { data, error } = await supabase.from("sent_emails").select("*").order("created_at", { ascending: false });
+      if (error) { toast.error("Failed to load sent messages"); console.error(error); }
+      else setEmails(data || []);
+      setLoading(false);
+    };
+    fetch();
+  }, []);
+
+  if (loading) return <div className="text-center py-16 text-muted-foreground">Loading sent messages...</div>;
+
+  return (
+    <div className="space-y-3">
+      {emails.length === 0 ? (
+        <p className="text-center py-8 text-muted-foreground">No sent messages yet.</p>
+      ) : emails.map((email) => (
+        <div key={email.id} className="rounded-lg border bg-card p-4 space-y-2">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="font-semibold text-foreground">{email.subject}</p>
+              <p className="text-sm text-muted-foreground">To: {email.recipient_email}</p>
+            </div>
+            <span className="text-xs text-muted-foreground shrink-0">{new Date(email.created_at).toLocaleString()}</span>
+          </div>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-3">{email.body}</p>
+          {email.resend_message_id && (
+            <p className="text-xs text-muted-foreground">Message ID: {email.resend_message_id}</p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ComposeEmailModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
@@ -724,6 +764,9 @@ const Admin = () => {
             <TabsTrigger value="applications" className="flex items-center gap-1.5">
               <FileText className="h-3.5 w-3.5" /> Applications
             </TabsTrigger>
+            <TabsTrigger value="sent" className="flex items-center gap-1.5">
+              <Send className="h-3.5 w-3.5" /> Sent Messages
+            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-1.5">
               <BarChart3 className="h-3.5 w-3.5" /> Analytics
             </TabsTrigger>
@@ -887,6 +930,10 @@ const Admin = () => {
 
           <TabsContent value="applications">
             <ApplicationsTab />
+          </TabsContent>
+
+          <TabsContent value="sent">
+            <SentMessagesTab />
           </TabsContent>
 
           <TabsContent value="analytics">
