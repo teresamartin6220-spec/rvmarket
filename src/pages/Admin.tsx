@@ -892,6 +892,10 @@ const Admin = () => {
             <ApplicationsTab />
           </TabsContent>
 
+          <TabsContent value="sent">
+            <SentMessagesTab />
+          </TabsContent>
+
           <TabsContent value="analytics">
             <AnalyticsDashboard />
           </TabsContent>
