@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
         <tr><td style="background: #27684a;padding:24px 32px;text-align:center;">
-          <h1 style="margin:0;color: #ffffff;font-size:22px;font-weight:700;">RV Market</h1>
+          <h1 style="margin:0;color: #fcfaf8;font-size:22px;font-weight:700;">RV Market</h1>
           <p style="margin:4px 0 0;color:#a0c4e8;font-size:12px;">Your Trusted RV Dealer</p>
         </td></tr>
         <tr><td style="padding:32px;">
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
           <p style="font-size:13px;color:#666;">Best regards,<br><strong>RV Market Sales Team</strong></p>
           <p style="font-size:12px;color:#999;margin-top:16px;">
             📧 sales@rvmarket.org<br>
-            🌐 <a href="https://rvmarket.org" style="color:#1a3a5c;">rvmarket.org</a>
+            🌐 <a href="https://rvmarket.org" style="color:#1a3a5c;">Our site</a>
           </p>
         </td></tr>
         <tr><td style="background:#f8f9fa;padding:16px 32px;text-align:center;">
