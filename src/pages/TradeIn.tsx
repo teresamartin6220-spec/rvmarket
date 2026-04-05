@@ -18,10 +18,36 @@ const TradeIn = () => {
     mileage: "", condition: "", description: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Trade-in request submitted! We'll contact you with a valuation within 48 hours.");
-    setForm({ name: "", email: "", phone: "", rvYear: "", rvMake: "", rvModel: "", rvType: "", mileage: "", condition: "", description: "" });
+    setLoading(true);
+    try {
+      const tradeDetails = `Trade-In: ${form.rvYear} ${form.rvMake} ${form.rvModel} (${form.rvType || "N/A"}) - Mileage: ${form.mileage || "N/A"}, Condition: ${form.condition || "N/A"}. ${form.description}`;
+
+      await supabase.from("inquiries").insert({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || null,
+        message: tradeDetails,
+        rv_title: "Trade-In Request",
+      });
+
+      await supabase.functions.invoke("notify-email", {
+        body: {
+          type: "trade-in",
+          data: { name: form.name, email: form.email, phone: form.phone, ...form },
+        },
+      });
+
+      toast.success("Trade-in request submitted! We'll contact you with a valuation within 48 hours.");
+      setForm({ name: "", email: "", phone: "", rvYear: "", rvMake: "", rvModel: "", rvType: "", mileage: "", condition: "", description: "" });
+    } catch {
+      toast.error("Failed to submit. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
