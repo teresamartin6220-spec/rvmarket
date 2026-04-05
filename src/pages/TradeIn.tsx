@@ -9,6 +9,7 @@ import { companyInfo } from "@/data/mockData";
 import { useState } from "react";
 import { toast } from "sonner";
 import { maskPhoneInput } from "@/lib/phoneFormat";
+import { supabase } from "@/integrations/supabase/client";
 
 const TradeIn = () => {
   const [form, setForm] = useState({
