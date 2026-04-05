@@ -167,8 +167,8 @@ const TradeIn = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full" size="lg">
-              Submit Trade-In Request <ArrowRight className="ml-2 h-4 w-4" />
+            <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              {loading ? "Submitting..." : <>Submit Trade-In Request <ArrowRight className="ml-2 h-4 w-4" /></>}
             </Button>
           </form>
         </section>

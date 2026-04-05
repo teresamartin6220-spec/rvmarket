@@ -57,6 +57,23 @@ serve(async (req) => {
         <h3>Message:</h3>
         <p>${data.message || "No message"}</p>
       `;
+    } else if (type === "trade-in") {
+      subject = `New Trade-In Request from ${data.name}`;
+      html = `
+        <h2>New Trade-In Request</h2>
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Phone:</strong> ${data.phone || "Not provided"}</p>
+        <h3>RV Details:</h3>
+        <p><strong>Year:</strong> ${data.rvYear || "N/A"}</p>
+        <p><strong>Make:</strong> ${data.rvMake || "N/A"}</p>
+        <p><strong>Model:</strong> ${data.rvModel || "N/A"}</p>
+        <p><strong>Type:</strong> ${data.rvType || "N/A"}</p>
+        <p><strong>Mileage:</strong> ${data.mileage || "N/A"}</p>
+        <p><strong>Condition:</strong> ${data.condition || "N/A"}</p>
+        <h3>Additional Details:</h3>
+        <p>${data.description || "None provided"}</p>
+      `;
     } else {
       return new Response(JSON.stringify({ error: "Invalid type" }), {
         status: 400,
