@@ -724,6 +724,9 @@ const Admin = () => {
             <TabsTrigger value="applications" className="flex items-center gap-1.5">
               <FileText className="h-3.5 w-3.5" /> Applications
             </TabsTrigger>
+            <TabsTrigger value="sent" className="flex items-center gap-1.5">
+              <Send className="h-3.5 w-3.5" /> Sent Messages
+            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-1.5">
               <BarChart3 className="h-3.5 w-3.5" /> Analytics
             </TabsTrigger>
