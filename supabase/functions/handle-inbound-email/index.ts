@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,6 +20,10 @@ serve(async (req) => {
       throw new Error("RESEND_API_KEY is not configured");
     }
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const payload = await req.json();
     const { from, subject, html, text, attachments: inboundAttachments } = payload;
 
@@ -34,12 +39,18 @@ serve(async (req) => {
     // Process attachments
     const resendAttachments: Array<{ filename: string; content: string }> = [];
     const attachmentLinks: string[] = [];
+    const dbAttachments: Array<{ filename: string; url: string; size: number }> = [];
 
     if (Array.isArray(inboundAttachments)) {
       for (const att of inboundAttachments) {
         const url = att.url || att.content_url;
         const filename = att.filename || att.name || "attachment";
         const size = att.size || 0;
+
+        // Always save attachment info for DB
+        if (url) {
+          dbAttachments.push({ filename, url, size });
+        }
 
         if (size > MAX_ATTACHMENT_SIZE) {
           attachmentLinks.push(
@@ -109,6 +120,26 @@ serve(async (req) => {
     }
 
     console.log("Email forwarded successfully:", result);
+
+    // Extract sender name and email from the "from" field
+    const fromMatch = (from || "").match(/^(.+?)\s*<(.+?)>$/);
+    const senderName = fromMatch ? fromMatch[1].trim() : from || "Unknown";
+    const senderEmail = fromMatch ? fromMatch[2].trim() : from || "";
+
+    // Save to inquiries table so it shows in admin dashboard
+    await supabase.from("inquiries").insert({
+      name: senderName,
+      email: senderEmail,
+      message: text || html || "(empty body)",
+      original_subject: subject || "No Subject",
+      resend_message_id: result.id || null,
+      rv_title: null,
+      rv_id: null,
+      status: "new",
+      attachments: dbAttachments.length > 0 ? dbAttachments : [],
+    });
+
+    console.log("Inbound email saved to inquiries table");
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
