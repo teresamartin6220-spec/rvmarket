@@ -456,13 +456,24 @@ function ApplicationsTab() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">{new Date(inq.created_at).toLocaleDateString()}</span>
-                  <Button variant="outline" size="sm" onClick={() => { setReplyingTo(inq); setReplyBody(""); }}>
+                   <Button variant="outline" size="sm" onClick={() => { setReplyingTo(inq); setReplyBody(""); setReplyAttachments([]); }}>
                     <Reply className="h-3.5 w-3.5 mr-1" /> Reply
                   </Button>
                 </div>
               </div>
               {inq.rv_title && <p className="text-sm text-foreground">RV: {inq.rv_title}</p>}
+              {inq.original_subject && <p className="text-xs text-muted-foreground">Subject: {inq.original_subject}</p>}
               {inq.message && <p className="text-sm text-muted-foreground">{inq.message}</p>}
+              {/* Show attachments */}
+              {Array.isArray(inq.attachments) && inq.attachments.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {inq.attachments.map((att: any, i: number) => (
+                    <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded hover:bg-muted/80 text-primary">
+                      <Paperclip className="h-3 w-3" /> {att.filename} {att.size ? `(${(att.size / 1024).toFixed(0)}KB)` : ""}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
