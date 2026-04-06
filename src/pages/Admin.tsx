@@ -509,6 +509,22 @@ function ApplicationsTab() {
                 placeholder="Type your reply..."
               />
             </div>
+            <div>
+              <label className="inline-flex items-center gap-2 cursor-pointer rounded-md border px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition">
+                <Paperclip className="h-4 w-4" /> Attach Files
+                <input type="file" multiple className="hidden" onChange={handleReplyFileSelect} />
+              </label>
+              {replyAttachments.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {replyAttachments.map((att, i) => (
+                    <span key={i} className="inline-flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded">
+                      <Paperclip className="h-3 w-3" /> {att.filename}
+                      <button onClick={() => setReplyAttachments(prev => prev.filter((_, idx) => idx !== i))} className="ml-1 hover:text-destructive"><X className="h-3 w-3" /></button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setReplyingTo(null)}>Cancel</Button>
