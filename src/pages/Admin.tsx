@@ -328,6 +328,22 @@ function ApplicationsTab() {
   const [replyingTo, setReplyingTo] = useState<any | null>(null);
   const [replyBody, setReplyBody] = useState("");
   const [sending, setSending] = useState(false);
+  const [replyAttachments, setReplyAttachments] = useState<Array<{ filename: string; content: string }>>([]);
+
+  const handleReplyFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    for (const file of Array.from(files)) {
+      if (file.size > 10 * 1024 * 1024) { toast.error(`${file.name} is too large (max 10MB)`); continue; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(",")[1];
+        setReplyAttachments(prev => [...prev, { filename: file.name, content: base64 }]);
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = "";
+  };
 
   useEffect(() => {
     const load = async () => {
