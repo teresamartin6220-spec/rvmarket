@@ -382,6 +382,7 @@ function ApplicationsTab() {
         body: replyBody,
         resend_message_id: data?.messageId || null,
         inquiry_id: replyingTo.id,
+        attachments: replyAttachments.length > 0 ? replyAttachments.map(a => ({ filename: a.filename })) : [],
       });
 
       // Update inquiry status
@@ -391,6 +392,7 @@ function ApplicationsTab() {
       toast.success("Reply sent successfully!");
       setReplyingTo(null);
       setReplyBody("");
+      setReplyAttachments([]);
     } catch (err: any) {
       toast.error(`Failed to send reply: ${err.message || "Unknown error"}`);
     } finally {
