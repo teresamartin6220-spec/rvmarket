@@ -569,6 +569,15 @@ function SentMessagesTab() {
             <span className="text-xs text-muted-foreground shrink-0">{new Date(email.created_at).toLocaleString()}</span>
           </div>
           <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-3">{email.body}</p>
+          {Array.isArray(email.attachments) && email.attachments.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {email.attachments.map((att: any, i: number) => (
+                <span key={i} className="inline-flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded">
+                  <Paperclip className="h-3 w-3" /> {att.filename}
+                </span>
+              ))}
+            </div>
+          )}
           {email.resend_message_id && (
             <p className="text-xs text-muted-foreground">Message ID: {email.resend_message_id}</p>
           )}
