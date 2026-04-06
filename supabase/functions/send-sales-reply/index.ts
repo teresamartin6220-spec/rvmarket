@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
 
-    const { to, originalSubject, resendMessageId, body, inquiryId } = await req.json();
+    const { to, originalSubject, resendMessageId, body, inquiryId, attachments } = await req.json();
 
     if (!to || !body) {
       return new Response(JSON.stringify({ error: "Missing required fields: to, body" }), {
@@ -61,6 +61,10 @@ Deno.serve(async (req) => {
     };
     if (Object.keys(headers).length > 0) {
       emailPayload.headers = headers;
+    }
+    // Add attachments if provided (base64 encoded)
+    if (Array.isArray(attachments) && attachments.length > 0) {
+      emailPayload.attachments = attachments;
     }
 
     const res = await fetch("https://api.resend.com/emails", {

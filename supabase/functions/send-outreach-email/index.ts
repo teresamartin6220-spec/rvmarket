@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
 
-    const { to, subject, body } = await req.json();
+    const { to, subject, body, attachments } = await req.json();
 
     if (!to || !subject || !body) {
       return new Response(JSON.stringify({ error: "Missing required fields: to, subject, body" }), {
@@ -43,18 +43,25 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
+    const emailPayload: Record<string, unknown> = {
+      from: "RV Market <sales@rvmarket.org>",
+      to: [to],
+      subject,
+      html,
+    };
+
+    // Add attachments if provided
+    if (Array.isArray(attachments) && attachments.length > 0) {
+      emailPayload.attachments = attachments;
+    }
+
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${RESEND_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        from: "RV Market <sales@rvmarket.org>",
-        to: [to],
-        subject,
-        html,
-      }),
+      body: JSON.stringify(emailPayload),
     });
 
     const result = await res.json();

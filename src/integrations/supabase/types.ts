@@ -104,6 +104,7 @@ export type Database = {
       }
       inquiries: {
         Row: {
+          attachments: Json | null
           created_at: string
           email: string
           id: string
@@ -117,6 +118,7 @@ export type Database = {
           status: string | null
         }
         Insert: {
+          attachments?: Json | null
           created_at?: string
           email: string
           id?: string
@@ -130,6 +132,7 @@ export type Database = {
           status?: string | null
         }
         Update: {
+          attachments?: Json | null
           created_at?: string
           email?: string
           id?: string
@@ -321,6 +324,7 @@ export type Database = {
       }
       sent_emails: {
         Row: {
+          attachments: Json | null
           body: string
           created_at: string
           id: string
@@ -330,6 +334,7 @@ export type Database = {
           subject: string
         }
         Insert: {
+          attachments?: Json | null
           body: string
           created_at?: string
           id?: string
@@ -339,6 +344,7 @@ export type Database = {
           subject: string
         }
         Update: {
+          attachments?: Json | null
           body?: string
           created_at?: string
           id?: string
