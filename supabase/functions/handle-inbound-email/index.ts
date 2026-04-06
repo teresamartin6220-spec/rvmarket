@@ -25,7 +25,32 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const payload = await req.json();
-    const { from, subject, html, text, attachments: inboundAttachments } = payload;
+    console.log("Raw inbound payload keys:", JSON.stringify(Object.keys(payload)));
+
+    // Resend wraps inbound email data inside a "data" property
+    const emailData = payload.data || payload;
+    console.log("Email data keys:", JSON.stringify(Object.keys(emailData)));
+
+    // Extract fields - handle both string and object "from" formats
+    let from = "";
+    if (typeof emailData.from === "string") {
+      from = emailData.from;
+    } else if (emailData.from && typeof emailData.from === "object") {
+      // Resend may send { name: "...", address: "..." }
+      const name = emailData.from.name || "";
+      const address = emailData.from.address || emailData.from.email || "";
+      from = name ? `${name} <${address}>` : address;
+    }
+
+    const subject = emailData.subject || "";
+    const html = emailData.html || "";
+    const text = emailData.text || "";
+    const inboundAttachments = emailData.attachments || [];
+
+    console.log("Parsed from:", from);
+    console.log("Parsed subject:", subject);
+    console.log("Has html:", !!html, "Has text:", !!text);
+    console.log("Attachments count:", Array.isArray(inboundAttachments) ? inboundAttachments.length : 0);
 
     // Safety: skip if from contains onresend.com or notifications@
     const fromAddress = (from || "").toLowerCase();
@@ -43,13 +68,26 @@ serve(async (req) => {
 
     if (Array.isArray(inboundAttachments)) {
       for (const att of inboundAttachments) {
-        const url = att.url || att.content_url;
         const filename = att.filename || att.name || "attachment";
         const size = att.size || 0;
+        const url = att.url || att.content_url || "";
+        const base64Content = att.content || "";
 
-        // Always save attachment info for DB
-        if (url) {
-          dbAttachments.push({ filename, url, size });
+        // Save attachment info for DB
+        if (url || base64Content) {
+          dbAttachments.push({ filename, url: url || "(inline)", size });
+        }
+
+        // If we have base64 content directly from Resend, use it
+        if (base64Content) {
+          if (size <= MAX_ATTACHMENT_SIZE) {
+            resendAttachments.push({ filename, content: base64Content });
+          } else {
+            attachmentLinks.push(
+              `<p>📎 <strong>${filename}</strong> (too large - ${Math.round(size / 1024 / 1024)}MB)</p>`
+            );
+          }
+          continue;
         }
 
         if (size > MAX_ATTACHMENT_SIZE) {
@@ -84,19 +122,22 @@ serve(async (req) => {
       ? `<hr/><h3>Attachments (Download Links)</h3>${attachmentLinks.join("")}`
       : "";
 
+    const bodyContent = html || text || "(empty body)";
+    const subjectLine = subject || "(no subject)";
+
     const emailHtml = `
       <h2>Forwarded Email from sales@rvmarket.org</h2>
-      <p><strong>From:</strong> ${from}</p>
-      <p><strong>Subject:</strong> ${subject || "(no subject)"}</p>
+      <p><strong>From:</strong> ${from || "Unknown sender"}</p>
+      <p><strong>Subject:</strong> ${subjectLine}</p>
       <hr/>
-      <div>${html || text || "(empty body)"}</div>
+      <div>${bodyContent}</div>
       ${attachmentSection}
     `;
 
     const emailPayload: Record<string, any> = {
       from: "RV Market System <sales@rvmarket.org>",
       to: FORWARD_TO,
-      subject: `[FWD] ${subject || "No Subject"} — from ${from}`,
+      subject: `[FWD] ${subjectLine} — from ${from || "Unknown"}`,
       html: emailHtml,
     };
 
@@ -123,15 +164,15 @@ serve(async (req) => {
 
     // Extract sender name and email from the "from" field
     const fromMatch = (from || "").match(/^(.+?)\s*<(.+?)>$/);
-    const senderName = fromMatch ? fromMatch[1].trim() : from || "Unknown";
-    const senderEmail = fromMatch ? fromMatch[2].trim() : from || "";
+    const senderName = fromMatch ? fromMatch[1].trim() : (from || "Unknown");
+    const senderEmail = fromMatch ? fromMatch[2].trim() : (from || "unknown@unknown.com");
 
     // Save to inquiries table so it shows in admin dashboard
     await supabase.from("inquiries").insert({
       name: senderName,
       email: senderEmail,
       message: text || html || "(empty body)",
-      original_subject: subject || "No Subject",
+      original_subject: subject || null,
       resend_message_id: result.id || null,
       rv_title: null,
       rv_id: null,
