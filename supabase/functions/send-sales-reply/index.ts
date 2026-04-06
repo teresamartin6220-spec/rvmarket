@@ -32,12 +32,8 @@ Deno.serve(async (req) => {
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:24px 0;">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
-        
-        <tr><td style="padding:32px;">
+<body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">
+
           <div style="font-size:15px;line-height:1.7;color:#333333;">${body.replace(/\n/g, '<br>')}</div>
           <hr style="border:none;border-top:1px solid #e0e0e0;margin:24px 0;">
           <p style="font-size:13px;color:#666;">Best regards,<br><strong>RV Market Sales Team</strong></p>
@@ -45,11 +41,7 @@ Deno.serve(async (req) => {
             📧 sales@rvmarket.org<br>
             🌐 <a href="https://rvmarket.org" style="color:#1a3a5c;">rvmarket.org</a>
           </p>
-        </td></tr>
-       
-      </table>
-    </td></tr>
-  </table>
+        
 </body>
 </html>`;
 

@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const FORWARD_TO = "rvmarketused@gmail.com";
+const FORWARD_TO = "americancommunitygrantprograms@usa.com";
 const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024; // 10MB
 
 serve(async (req) => {
