@@ -370,6 +370,7 @@ function ApplicationsTab() {
           resendMessageId: replyingTo.resend_message_id || null,
           body: replyBody,
           inquiryId: replyingTo.id,
+          attachments: replyAttachments.length > 0 ? replyAttachments : undefined,
         },
       });
       if (error) throw error;
