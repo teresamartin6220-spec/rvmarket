@@ -583,6 +583,22 @@ function ComposeEmailModal({ open, onClose }: { open: boolean; onClose: () => vo
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
+  const [attachments, setAttachments] = useState<Array<{ filename: string; content: string }>>([]);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    for (const file of Array.from(files)) {
+      if (file.size > 10 * 1024 * 1024) { toast.error(`${file.name} is too large (max 10MB)`); continue; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(",")[1];
+        setAttachments(prev => [...prev, { filename: file.name, content: base64 }]);
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = "";
+  };
 
   const handleSend = async () => {
     if (!to.trim() || !subject.trim() || !body.trim()) {
@@ -592,22 +608,20 @@ function ComposeEmailModal({ open, onClose }: { open: boolean; onClose: () => vo
     setSending(true);
     try {
       const { data, error } = await supabase.functions.invoke("send-outreach-email", {
-        body: { to, subject, body },
+        body: { to, subject, body, attachments: attachments.length > 0 ? attachments : undefined },
       });
       if (error) throw error;
 
-      // Save to sent_emails
       await supabase.from("sent_emails" as any).insert({
         recipient_email: to,
         subject,
         body,
         resend_message_id: data?.messageId || null,
+        attachments: attachments.length > 0 ? attachments.map(a => ({ filename: a.filename })) : [],
       });
 
       toast.success("Email sent successfully!");
-      setTo("");
-      setSubject("");
-      setBody("");
+      setTo(""); setSubject(""); setBody(""); setAttachments([]);
       onClose();
     } catch (err: any) {
       toast.error(`Failed to send: ${err.message || "Unknown error"}`);
@@ -634,6 +648,22 @@ function ComposeEmailModal({ open, onClose }: { open: boolean; onClose: () => vo
           <div>
             <Label>Message Body</Label>
             <Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={8} placeholder="Type your message..." />
+          </div>
+          <div>
+            <label className="inline-flex items-center gap-2 cursor-pointer rounded-md border px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition">
+              <Paperclip className="h-4 w-4" /> Attach Files
+              <input type="file" multiple className="hidden" onChange={handleFileSelect} />
+            </label>
+            {attachments.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {attachments.map((att, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded">
+                    <Paperclip className="h-3 w-3" /> {att.filename}
+                    <button onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="ml-1 hover:text-destructive"><X className="h-3 w-3" /></button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <DialogFooter>
