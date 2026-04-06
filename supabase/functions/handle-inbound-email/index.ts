@@ -137,7 +137,7 @@ serve(async (req) => {
     const emailPayload: Record<string, any> = {
       from: "RV Market System <sales@rvmarket.org>",
       to: FORWARD_TO,
-      subject: `[FWD] ${subjectLine} — from ${from || "Unknown"}`,
+      subject: `${subjectLine} — from ${from || "Unknown"}`,
       html: emailHtml,
     };
 
